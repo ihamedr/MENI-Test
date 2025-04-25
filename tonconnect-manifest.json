@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "name": "MENI",
   "description": "Meme Explorer with TON wallet integration",
-  "iconUrl": "https://meni-test.onrender.com/logo.png",
+  "iconUrl": "logo.png",
   "url": "https://meni-test.onrender.com",
-  "termsOfUseUrl": "https://meni-test.onrender.com/terms.html",
-  "privacyPolicyUrl": "https://meni-test.onrender.com/privacy.html",
+  "termsOfUseUrl": "terms.html",
+  "privacyPolicyUrl": "privacy.html",
   "returnUrl": "https://meni-test.onrender.com"
 }

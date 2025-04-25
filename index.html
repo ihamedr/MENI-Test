@@ -7,214 +7,43 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect.umd.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background-color: #1f1f1f;
-      font-family: 'Space Grotesk', sans-serif;
-      color: #f5f5f5;
-    }
-    header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0.5rem 0;
-      background-color: #2b2b2b;
-      border-bottom: 2px solid #ff9900;
-      position: relative;
-    }
-    .header-top {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    .wallet-button, .wallet-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    .wallet-button button {
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      background-color: #ff9900;
-      color: #1f1f1f;
-      font-family: 'Space Grotesk', sans-serif;
-      border: none;
-      cursor: pointer;
-    }
-    .wallet-icon {
-      display: none;
-      align-items: center;
-      background-color: #ff9900;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      justify-content: center;
-    }
-    .wallet-icon img {
-      width: 22px;
-      height: 22px;
-    }
-    .logo-container img { height: 100px; }
-    .categories {
-      margin-top: 0.2rem;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-    }
-    .categories button {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.75rem;
-      padding: 0.4rem 1rem;
-      border: none;
-      border-radius: 12px;
-      background-color: #ff9900;
-      color: #1f1f1f;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .categories button:hover { background-color: #ffa733; }
-    .gallery {
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-    .meme-card {
-      background-color: #292929;
-      border: 2px solid #444;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
-      transition: transform 0.2s;
-    }
-    .meme-card:hover {
-      transform: scale(1.02);
-      border-color: #ff9900;
-    }
-    .meme-card img { width: 100%; display: block; }
-    .meme-title {
-      padding: 0.5rem 1rem 0.2rem;
-      font-size: 0.75rem;
-      text-align: center;
-      color: #ff9900;
-    }
-    .like-section {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding-bottom: 1rem;
-    }
-    .like-btn {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      color: #888;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-    .like-btn.liked { color: #ff9900; }
-    .nav-bar {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #2b2b2b;
-      border-radius: 20px;
-      padding: 0.8rem 2rem;
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
-    }
-    .nav-bar button {
-      background: none;
-      border: none;
-      color: #f5f5f5;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-    .nav-bar button:hover { color: #ff9900; }
+    body { background: #1f1f1f; font-family: 'Space Grotesk', sans-serif; color: #f5f5f5; margin: 0; padding: 0; }
+    header { text-align: center; padding: 1rem; background: #2b2b2b; border-bottom: 2px solid #ff9900; }
+    .wallet-button button { padding: 0.5rem 1rem; border-radius: 999px; background: #ff9900; border: none; color: #1f1f1f; cursor: pointer; }
+    .wallet-icon { display: none; margin-top: 1rem; }
   </style>
 </head>
 <body>
   <header>
-    <div class="header-top">
-      <div class="wallet-button" id="walletBtn">
-        <button onclick="connectWallet()">Connect Wallet</button>
-      </div>
-      <div class="wallet-icon" id="walletIcon">
-        <img src="wallet.png" alt="Wallet Icon">
-      </div>
-      <div class="logo-container">
-        <img src="logo.png" alt="MENI Logo" />
-      </div>
+    <div class="wallet-button" id="walletBtn">
+      <button onclick="connectWallet()">Connect Wallet</button>
     </div>
-    <div class="categories">
-      <button>NEW</button>
-      <button>TREND</button>
-      <button>POPULAR</button>
+    <div class="wallet-icon" id="walletIcon">
+      <img src="logo.png" alt="Wallet Icon" width="40" />
     </div>
+    <h1>MENI</h1>
+    <p>Explore Memes + TON Wallet Integration</p>
   </header>
 
-  <main class="gallery">
-    <!-- 10 Meme Cards -->
-    <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
-    <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
-    <div class="meme-card"><img src="meme3.jpg" alt="Meme 3"><div class="meme-title">@creator3</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">8</span></div></div>
-    <div class="meme-card"><img src="meme4.jpg" alt="Meme 4"><div class="meme-title">@creator4</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">15</span></div></div>
-    <div class="meme-card"><img src="meme5.jpg" alt="Meme 5"><div class="meme-title">@creator5</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">6</span></div></div>
-    <div class="meme-card"><img src="meme6.jpg" alt="Meme 6"><div class="meme-title">@creator6</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">10</span></div></div>
-    <div class="meme-card"><img src="meme7.jpg" alt="Meme 7"><div class="meme-title">@creator7</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">3</span></div></div>
-    <div class="meme-card"><img src="meme8.jpg" alt="Meme 8"><div class="meme-title">@creator8</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">7</span></div></div>
-    <div class="meme-card"><img src="meme9.jpg" alt="Meme 9"><div class="meme-title">@creator9</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">4</span></div></div>
-    <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
-  </main>
-
-  <div class="nav-bar">
-    <button>Profile</button>
-    <button>Explore</button>
-    <button>Tournament</button>
-  </div>
-
   <script>
-  function toggleLike(button) {
-    const countSpan = button.nextElementSibling;
-    let count = parseInt(countSpan.textContent);
-    if (button.classList.contains('liked')) {
-      button.classList.remove('liked');
-      countSpan.textContent = count - 1;
-    } else {
-      button.classList.add('liked');
-      countSpan.textContent = count + 1;
+    let tonConnect;
+
+    async function connectWallet() {
+      try {
+        const connectedWallet = await tonConnect.connect();
+        console.log("Wallet connected:", connectedWallet);
+        document.getElementById('walletBtn').style.display = 'none';
+        document.getElementById('walletIcon').style.display = 'block';
+      } catch (err) {
+        console.error("Wallet connection failed:", err);
+        alert("Failed to connect wallet.");
+      }
     }
-  }
 
-  let tonConnect;
-
-  async function connectWallet() {
-    try {
-      const connectedWallet = await tonConnect.connect();
-      console.log("Wallet connected:", connectedWallet);
-      document.getElementById('walletBtn').style.display = 'none';
-      document.getElementById('walletIcon').style.display = 'flex';
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
-      alert("Failed to connect wallet.");
-    }
-  }
-
-  window.addEventListener("DOMContentLoaded", async () => {
-    const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
-
-    // درست اینجاست:
-    tonConnect = new window.tonconnect.TonConnect({ manifestUrl });
-  });
-</script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const manifestUrl = window.location.origin + "/tonconnect-manifest.json";
+      tonConnect = new window.tonconnect.TonConnect({ manifestUrl });
+    });
+  </script>
 </body>
 </html>
