@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -159,8 +160,9 @@
       <button>TREND</button>
       <button>POPULAR</button>
     </div>
-  </header>  
-	<main class="gallery">
+  </header>
+
+ <main class="gallery">
     <!-- 10 Meme Cards -->
     <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
     <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
@@ -174,11 +176,14 @@
     <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
   </main>
 
-	<div class="nav-bar">
+
+  <div class="nav-bar">
     <button>Profile</button>
     <button>Explore</button>
     <button>Tournament</button>
-  </div>  <script>
+  </div>
+
+  <script>
     function toggleLike(button) {
       const countSpan = button.nextElementSibling;
       let count = parseInt(countSpan.textContent);
@@ -197,14 +202,16 @@
 
       window.connectWallet = async function () {
         try {
-          const connected = await tonConnect.connectWallet();
-          console.log("Wallet connected:", connected);
+          const connectedWallet = await tonConnect.connectWallet();
+          console.log("Wallet connected:", connectedWallet);
           document.getElementById('walletBtn').style.display = 'none';
           document.getElementById('walletIcon').style.display = 'flex';
         } catch (err) {
-          console.error("Wallet connection failed", err);
+          console.error("Wallet connection failed:", err);
+          alert("Failed to connect wallet. Check console for details.");
         }
-      }
-    }
-  </script></body>
+      };
+    };
+  </script>
+</body>
 </html>
