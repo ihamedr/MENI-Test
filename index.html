@@ -196,22 +196,25 @@
       }
     }
 
-    window.onload = async function () {
-      const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
-      const tonConnect = new TON_CONNECT.TonConnect({ manifestUrl });
+    let tonConnect;
 
-      window.connectWallet = async function () {
-        try {
-          const connectedWallet = await tonConnect.connectWallet();
-          console.log("Wallet connected:", connectedWallet);
-          document.getElementById('walletBtn').style.display = 'none';
-          document.getElementById('walletIcon').style.display = 'flex';
-        } catch (err) {
-          console.error("Wallet connection failed:", err);
-          alert("Failed to connect wallet. Check console for details.");
-        }
-      };
-    };
+  async function connectWallet() {
+    try {
+      const connectedWallet = await tonConnect.connectWallet();
+      console.log("Wallet connected:", connectedWallet);
+      document.getElementById('walletBtn').style.display = 'none';
+      document.getElementById('walletIcon').style.display = 'flex';
+    } catch (err) {
+      console.error("Wallet connection failed:", err);
+      alert("Failed to connect wallet.");
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
+    tonConnect = new TonConnect({ manifestUrl });
+  });
+
   </script>
 </body>
 </html>
