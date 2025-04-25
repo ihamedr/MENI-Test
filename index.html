@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MENI - Explore Memes</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect.min.js"></script>
+  <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect.umd.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -71,7 +71,7 @@ header {
 }
 
 .categories {
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
   display: flex;
   justify-content: center;
   gap: 1rem;
@@ -177,7 +177,8 @@ header {
 
   </style>
 </head>
-<body>  <header>
+<body>
+  <header>
     <div class="header-top">
       <div class="wallet-button" id="walletBtn">
         <button onclick="connectWallet()">Connect Wallet</button>
@@ -194,7 +195,8 @@ header {
       <button>TREND</button>
       <button>POPULAR</button>
     </div>
-  </header>  <main class="gallery">
+  </header>  
+	<main class="gallery">
     <!-- 10 Meme Cards -->
     <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
     <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
@@ -206,7 +208,9 @@ header {
     <div class="meme-card"><img src="meme8.jpg" alt="Meme 8"><div class="meme-title">@creator8</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">7</span></div></div>
     <div class="meme-card"><img src="meme9.jpg" alt="Meme 9"><div class="meme-title">@creator9</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">4</span></div></div>
     <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
-  </main>  <div class="nav-bar">
+  </main>
+
+	<div class="nav-bar">
     <button>Profile</button>
     <button>Explore</button>
     <button>Tournament</button>
@@ -214,16 +218,6 @@ header {
     const tonConnect = new TON_CONNECT.TonConnect({
       manifestUrl: 'https://meni-test.onrender.com/tonconnect-manifest.json'
     });
-
-    async function connectWallet() {
-      try {
-        await tonConnect.connect();
-        document.getElementById('walletBtn').style.display = 'none';
-        document.getElementById('walletIcon').style.display = 'flex';
-      } catch (err) {
-        console.error('Wallet connection failed', err);
-      }
-    }
 
     function toggleLike(button) {
       const countSpan = button.nextElementSibling;
@@ -234,6 +228,16 @@ header {
       } else {
         button.classList.add('liked');
         countSpan.textContent = count + 1;
+      }
+    }
+
+    async function connectWallet() {
+      try {
+        await tonConnect.connectWallet();
+        document.getElementById('walletBtn').style.display = 'none';
+        document.getElementById('walletIcon').style.display = 'flex';
+      } catch (error) {
+        console.error("Wallet connection failed", error);
       }
     }
   </script></body>
