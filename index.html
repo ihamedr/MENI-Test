@@ -183,36 +183,36 @@
   </div>
 
   <script>
-    function toggleLike(button) {
-      const countSpan = button.nextElementSibling;
-      let count = parseInt(countSpan.textContent);
-      if (button.classList.contains('liked')) {
-        button.classList.remove('liked');
-        countSpan.textContent = count - 1;
-      } else {
-        button.classList.add('liked');
-        countSpan.textContent = count + 1;
-      }
+  function toggleLike(button) {
+    const countSpan = button.nextElementSibling;
+    let count = parseInt(countSpan.textContent);
+    if (button.classList.contains('liked')) {
+      button.classList.remove('liked');
+      countSpan.textContent = count - 1;
+    } else {
+      button.classList.add('liked');
+      countSpan.textContent = count + 1;
     }
+  }
 
-    let tonConnect;
+  let tonConnect;
 
-    async function connectWallet() {
-      try {
-        const connectedWallet = await tonConnect.connectWallet();
-        console.log("Wallet connected:", connectedWallet);
-        document.getElementById('walletBtn').style.display = 'none';
-        document.getElementById('walletIcon').style.display = 'flex';
-      } catch (err) {
-        console.error("Wallet connection failed:", err);
-        alert("Failed to connect wallet.");
-      }
+  async function connectWallet() {
+    try {
+      const connectedWallet = await tonConnect.connect();
+      console.log("Wallet connected:", connectedWallet);
+      document.getElementById('walletBtn').style.display = 'none';
+      document.getElementById('walletIcon').style.display = 'flex';
+    } catch (err) {
+      console.error("Wallet connection failed:", err);
+      alert("Failed to connect wallet.");
     }
+  }
 
-    window.addEventListener("DOMContentLoaded", async () => {
-      const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
-      tonConnect = new tonconnect.TonConnect({ manifestUrl });
-    });
-  </script>
+  window.addEventListener("DOMContentLoaded", async () => {
+    const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
+    tonConnect = new window.tonconnect_sdk.TonConnect({ manifestUrl });
+  });
+</script>
 </body>
 </html>
