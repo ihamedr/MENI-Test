@@ -162,7 +162,7 @@
     </div>
   </header>
 
- <main class="gallery">
+  <main class="gallery">
     <!-- 10 Meme Cards -->
     <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
     <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
@@ -175,7 +175,6 @@
     <div class="meme-card"><img src="meme9.jpg" alt="Meme 9"><div class="meme-title">@creator9</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">4</span></div></div>
     <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
   </main>
-
 
   <div class="nav-bar">
     <button>Profile</button>
@@ -198,23 +197,22 @@
 
     let tonConnect;
 
-  async function connectWallet() {
-    try {
-      const connectedWallet = await tonConnect.connectWallet();
-      console.log("Wallet connected:", connectedWallet);
-      document.getElementById('walletBtn').style.display = 'none';
-      document.getElementById('walletIcon').style.display = 'flex';
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
-      alert("Failed to connect wallet.");
+    async function connectWallet() {
+      try {
+        const connectedWallet = await tonConnect.connectWallet();
+        console.log("Wallet connected:", connectedWallet);
+        document.getElementById('walletBtn').style.display = 'none';
+        document.getElementById('walletIcon').style.display = 'flex';
+      } catch (err) {
+        console.error("Wallet connection failed:", err);
+        alert("Failed to connect wallet.");
+      }
     }
-  }
 
-  window.addEventListener("DOMContentLoaded", async () => {
-    const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
-    tonConnect = new TonConnect({ manifestUrl });
-  });
-
+    window.addEventListener("DOMContentLoaded", async () => {
+      const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
+      tonConnect = new tonconnect.TonConnect({ manifestUrl });
+    });
   </script>
 </body>
 </html>
