@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MENI - Explore Memes</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect.umd.min.js"></script>
+ <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -211,7 +211,7 @@
 
   window.addEventListener("DOMContentLoaded", () => {
     const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
-    tonConnect = new window.TonConnect({ manifestUrl });
+    tonConnect = new TonConnectSDK.TonConnect({ manifestUrl });
   });
 </script>
 </body>
