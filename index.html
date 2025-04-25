@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MENI - Explore Memes</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
- <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -29,23 +29,18 @@
       align-items: center;
       position: relative;
     }
-    .wallet-button, .wallet-icon {
+    .wallet-button {
       position: absolute;
       left: 1rem;
       top: 50%;
       transform: translateY(-50%);
     }
-    .wallet-button button {
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      background-color: #ff9900;
-      color: #1f1f1f;
-      font-family: 'Space Grotesk', sans-serif;
-      border: none;
-      cursor: pointer;
-    }
     .wallet-icon {
       display: none;
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
       align-items: center;
       background-color: #ff9900;
       border-radius: 50%;
@@ -145,9 +140,7 @@
 <body>
   <header>
     <div class="header-top">
-      <div class="wallet-button" id="walletBtn">
-        <button onclick="connectWallet()">Connect Wallet</button>
-      </div>
+      <div class="wallet-button" id="walletBtn"></div>
       <div class="wallet-icon" id="walletIcon">
         <img src="wallet.png" alt="Wallet Icon">
       </div>
@@ -183,36 +176,34 @@
   </div>
 
   <script>
-  function toggleLike(button) {
-    const countSpan = button.nextElementSibling;
-    let count = parseInt(countSpan.textContent);
-    if (button.classList.contains('liked')) {
-      button.classList.remove('liked');
-      countSpan.textContent = count - 1;
-    } else {
-      button.classList.add('liked');
-      countSpan.textContent = count + 1;
+    function toggleLike(button) {
+      const countSpan = button.nextElementSibling;
+      let count = parseInt(countSpan.textContent);
+      if (button.classList.contains('liked')) {
+        button.classList.remove('liked');
+        countSpan.textContent = count - 1;
+      } else {
+        button.classList.add('liked');
+        countSpan.textContent = count + 1;
+      }
     }
-  }
 
-  let tonConnect;
+    let tonConnectUI;
 
-  async function connectWallet() {
-    try {
-      const connectedWallet = await tonConnect.connect();
-      console.log("Wallet connected:", connectedWallet);
-      document.getElementById('walletBtn').style.display = 'none';
-      document.getElementById('walletIcon').style.display = 'flex';
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
-      alert("Failed to connect wallet.");
-    }
-  }
+    window.addEventListener("DOMContentLoaded", () => {
+      tonConnectUI = new TonConnectUI.TonConnectUI({
+        manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+        buttonRootId: "walletBtn"
+      });
 
-  window.addEventListener("DOMContentLoaded", () => {
-    const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
-    tonConnect = new TonConnectSDK.TonConnect({ manifestUrl });
-  });
-</script>
+      // وضعیت اتصال
+      tonConnectUI.connectionRestored.then(() => {
+        if (tonConnectUI.connected) {
+          document.getElementById('walletBtn').style.display = 'none';
+          document.getElementById('walletIcon').style.display = 'flex';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
