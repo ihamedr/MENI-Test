@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MENI - Explore Memes</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+  <script type="module" src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -36,21 +37,20 @@
       position: relative;
     }
 
-    .wallet-button, .wallet-icon {
+    .wallet-button {
       position: absolute;
       left: 1rem;
       top: 50%;
       transform: translateY(-50%);
+      z-index: 2;
     }
 
-    .wallet-button button {
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      background-color: #ff9900;
-      color: #1f1f1f;
-      font-family: 'Space Grotesk', sans-serif;
-      border: none;
-      cursor: pointer;
+    .wallet-address {
+      position: absolute;
+      left: 1rem;
+      top: 70%;
+      font-size: 0.75rem;
+      color: #ff9900;
     }
 
     .wallet-icon {
@@ -183,11 +183,9 @@
   <header>
     <div class="header-top">
       <div class="wallet-button" id="walletBtn">
-        <button onclick="connectWallet()">Connect Wallet</button>
+        <div id="ton-connect-button"></div>
       </div>
-      <div class="wallet-icon" id="walletIcon">
-        <img src="wallet.png" alt="Wallet Icon">
-      </div>
+      <div class="wallet-address" id="walletAddress"></div>
       <div class="logo-container">
         <img src="logo.png" alt="MENI Logo" />
       </div>
@@ -219,6 +217,23 @@
     <button>Tournament</button>
   </div>
 
+  <script type="module">
+    import { TonConnectUI } from "https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js";
+
+    const tonConnectUI = new TonConnectUI({
+      manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+      buttonRootId: "ton-connect-button"
+    });
+
+    tonConnectUI.onStatusChange(wallet => {
+      if (wallet) {
+        const address = wallet.account.address;
+        const short = address.slice(0, 6) + "..." + address.slice(-4);
+        document.getElementById('walletAddress').textContent = short;
+      }
+    });
+  </script>
+
   <script>
     function toggleLike(button) {
       const countSpan = button.nextElementSibling;
@@ -230,11 +245,6 @@
         button.classList.add('liked');
         countSpan.textContent = count + 1;
       }
-    }
-
-    function connectWallet() {
-      document.getElementById('walletBtn').style.display = 'none';
-      document.getElementById('walletIcon').style.display = 'flex';
     }
   </script>
 

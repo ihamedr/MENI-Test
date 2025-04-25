@@ -1,0 +1,8 @@
+{
+  "manifest_version": "0.1.0",
+  "name": "MENI",
+  "url": "https://meni-test.onrender.com",
+  "iconUrl": "https://meni-test.onrender.com/logo.png",
+  "termsUrl": "https://meni-test.onrender.com/terms",
+  "privacyPolicyUrl": "https://meni-test.onrender.com/privacy"
+}
