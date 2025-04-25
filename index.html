@@ -193,50 +193,22 @@
       }
     }
 
-	  <script>
-  let tonConnectUI;
+    let tonConnectUI;
 
-  window.addEventListener("DOMContentLoaded", () => {
-    // راه‌اندازی تلگرام (امن در DOMContentLoaded)
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-
-    const user = tg.initDataUnsafe.user || {};
-    const telegramId = user.id || '';
-    const telegramUsername = user.username || '';
-    const telegramName = ${user.first_name || ''} ${user.last_name || ''}.trim();
-
-    // راه‌اندازی TonConnect کمی با تاخیر کوتاه
-    setTimeout(() => {
-      tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-        manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-        buttonRootId: "walletBtn"
-      });
-
-      tonConnectUI.connectionRestored.then(() => {
-        if (tonConnectUI.connected) {
-          document.getElementById('walletBtn').style.display = 'none';
-          document.getElementById('walletIcon').style.display = 'flex';
-
-          const walletAddress = tonConnectUI.account?.address;
-          if (walletAddress) {
-            fetch("https://script.google.com/macros/s/AKfycby_zaAdvZ4PcEnjHEzW7sJuNs1v7YAdPlxP4jrBh5feCal2Aowke9qElLuim3vgAX3jYA/exec", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                telegramId,
-                username: telegramUsername,
-                fullName: telegramName,
-                walletAddress
-              })
-            })
-            .then(() => alert("Wallet connected and data sent successfully!"))
-            .catch(() => alert("Error sending data to Google Sheets."));
-          }
-        }
-      });
-    }, 50); // کمی تاخیر برای اطمینان از DOM و JS attach
+window.addEventListener("DOMContentLoaded", () => {
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn"
   });
-</script>
+
+  // بررسی وضعیت اتصال
+  tonConnectUI.connectionRestored.then(() => {
+    if (tonConnectUI.connected) {
+      document.getElementById('walletBtn').style.display = 'none';
+      document.getElementById('walletIcon').style.display = 'flex';
+    }
+  });
+});
+  </script>
 </body>
 </html>
