@@ -1,191 +1,190 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MENI - Explore Memes</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
-  <script type="module" src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+  <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect.min.js"></script>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-    }
+    }body {
+  background-color: #1f1f1f;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #f5f5f5;
+}
 
-    body {
-      background-color: #1f1f1f;
-      font-family: 'Space Grotesk', sans-serif;
-      color: #f5f5f5;
-    }
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 0;
+  background-color: #2b2b2b;
+  border-bottom: 2px solid #ff9900;
+  position: relative;
+}
 
-    header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0.5rem 0;
-      background-color: #2b2b2b;
-      border-bottom: 2px solid #ff9900;
-      position: relative;
-    }
+.header-top {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
 
-    .header-top {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
+.wallet-button, .wallet-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
-    .wallet-button {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 2;
-    }
+.wallet-button button {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background-color: #ff9900;
+  color: #1f1f1f;
+  font-family: 'Space Grotesk', sans-serif;
+  border: none;
+  cursor: pointer;
+}
 
-    .wallet-address {
-      position: absolute;
-      left: 1rem;
-      top: 70%;
-      font-size: 0.75rem;
-      color: #ff9900;
-    }
+.wallet-icon {
+  display: none;
+  align-items: center;
+  background-color: #ff9900;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  justify-content: center;
+}
 
-    .wallet-icon {
-      display: none;
-      align-items: center;
-      background-color: #ff9900;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      justify-content: center;
-    }
+.wallet-icon img {
+  width: 22px;
+  height: 22px;
+}
 
-    .wallet-icon img {
-      width: 22px;
-      height: 22px;
-    }
+.logo-container img {
+  height: 100px;
+}
 
-    .logo-container img {
-      height: 100px;
-    }
+.categories {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
 
-    .categories {
-      margin-top: 0.5rem;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-    }
+.categories button {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #ff9900;
+  color: #1f1f1f;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-    .categories button {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.75rem;
-      padding: 0.4rem 1rem;
-      border: none;
-      border-radius: 12px;
-      background-color: #ff9900;
-      color: #1f1f1f;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+.categories button:hover {
+  background-color: #ffa733;
+}
 
-    .categories button:hover {
-      background-color: #ffa733;
-    }
+.gallery {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
 
-    .gallery {
-      padding: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
+.meme-card {
+  background-color: #292929;
+  border: 2px solid #444;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
+  transition: transform 0.2s;
+}
 
-    .meme-card {
-      background-color: #292929;
-      border: 2px solid #444;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
-      transition: transform 0.2s;
-    }
+.meme-card:hover {
+  transform: scale(1.02);
+  border-color: #ff9900;
+}
 
-    .meme-card:hover {
-      transform: scale(1.02);
-      border-color: #ff9900;
-    }
+.meme-card img {
+  width: 100%;
+  display: block;
+}
 
-    .meme-card img {
-      width: 100%;
-      display: block;
-    }
+.meme-title {
+  padding: 0.5rem 1rem 0.2rem;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #ff9900;
+}
 
-    .meme-title {
-      padding: 0.5rem 1rem 0.2rem;
-      font-size: 0.75rem;
-      text-align: center;
-      color: #ff9900;
-    }
+.like-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+}
 
-    .like-section {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding-bottom: 1rem;
-    }
+.like-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.3s;
+}
 
-    .like-btn {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      color: #888;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
+.like-btn.liked {
+  color: #ff9900;
+}
 
-    .like-btn.liked {
-      color: #ff9900;
-    }
+.nav-bar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2b2b2b;
+  border-radius: 20px;
+  padding: 0.8rem 2rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
+}
 
-    .nav-bar {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #2b2b2b;
-      border-radius: 20px;
-      padding: 0.8rem 2rem;
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
-    }
+.nav-bar button {
+  background: none;
+  border: none;
+  color: #f5f5f5;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
 
-    .nav-bar button {
-      background: none;
-      border: none;
-      color: #f5f5f5;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
+.nav-bar button:hover {
+  color: #ff9900;
+}
 
-    .nav-bar button:hover {
-      color: #ff9900;
-    }
   </style>
 </head>
-<body>
-
-  <header>
+<body>  <header>
     <div class="header-top">
       <div class="wallet-button" id="walletBtn">
-        <div id="ton-connect-button"></div>
+        <button onclick="connectWallet()">Connect Wallet</button>
       </div>
-      <div class="wallet-address" id="walletAddress"></div>
+      <div class="wallet-icon" id="walletIcon">
+        <img src="wallet.png" alt="Wallet Icon">
+      </div>
       <div class="logo-container">
         <img src="logo.png" alt="MENI Logo" />
       </div>
@@ -195,9 +194,7 @@
       <button>TREND</button>
       <button>POPULAR</button>
     </div>
-  </header>
-
-  <main class="gallery">
+  </header>  <main class="gallery">
     <!-- 10 Meme Cards -->
     <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
     <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
@@ -209,32 +206,25 @@
     <div class="meme-card"><img src="meme8.jpg" alt="Meme 8"><div class="meme-title">@creator8</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">7</span></div></div>
     <div class="meme-card"><img src="meme9.jpg" alt="Meme 9"><div class="meme-title">@creator9</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">4</span></div></div>
     <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
-  </main>
-
-  <div class="nav-bar">
+  </main>  <div class="nav-bar">
     <button>Profile</button>
     <button>Explore</button>
     <button>Tournament</button>
-  </div>
-
-  <script type="module">
-    import { TonConnectUI } from "https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js";
-
-    const tonConnectUI = new TonConnectUI({
-      manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-      buttonRootId: "ton-connect-button"
+  </div>  <script>
+    const tonConnect = new TON_CONNECT.TonConnect({
+      manifestUrl: 'https://meni-test.onrender.com/tonconnect-manifest.json'
     });
 
-    tonConnectUI.onStatusChange(wallet => {
-      if (wallet) {
-        const address = wallet.account.address;
-        const short = address.slice(0, 6) + "..." + address.slice(-4);
-        document.getElementById('walletAddress').textContent = short;
+    async function connectWallet() {
+      try {
+        await tonConnect.connect();
+        document.getElementById('walletBtn').style.display = 'none';
+        document.getElementById('walletIcon').style.display = 'flex';
+      } catch (err) {
+        console.error('Wallet connection failed', err);
       }
-    });
-  </script>
+    }
 
-  <script>
     function toggleLike(button) {
       const countSpan = button.nextElementSibling;
       let count = parseInt(countSpan.textContent);
@@ -246,7 +236,5 @@
         countSpan.textContent = count + 1;
       }
     }
-  </script>
-
-</body>
+  </script></body>
 </html>
