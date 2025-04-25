@@ -211,7 +211,9 @@
 
   window.addEventListener("DOMContentLoaded", async () => {
     const manifestUrl = "https://meni-test.onrender.com/tonconnect-manifest.json";
-    tonConnect = new window.TonConnectSDK.TonConnect({ manifestUrl });
+
+    // درست اینجاست:
+    tonConnect = new window.tonconnect.TonConnect({ manifestUrl });
   });
 </script>
 </body>
