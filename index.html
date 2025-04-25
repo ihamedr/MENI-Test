@@ -190,19 +190,20 @@
 
     let tonConnectUI;
 
-    window.addEventListener("DOMContentLoaded", () => {
-      tonConnectUI = new window.TonConnectUI.TonConnectUI({
-        manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-        buttonRootId: "walletBtn"
-      });
+window.addEventListener("DOMContentLoaded", () => {
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn"
+  });
 
-      tonConnectUI.connectionRestored.then(() => {
-        if (tonConnectUI.connected) {
-          document.getElementById('walletBtn').style.display = 'none';
-          document.getElementById('walletIcon').style.display = 'flex';
-        }
-      });
-    });
+  // بررسی وضعیت اتصال
+  tonConnectUI.connectionRestored.then(() => {
+    if (tonConnectUI.connected) {
+      document.getElementById('walletBtn').style.display = 'none';
+      document.getElementById('walletIcon').style.display = 'flex';
+    }
+  });
+});
   </script>
 </body>
 </html>
