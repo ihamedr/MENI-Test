@@ -163,7 +163,7 @@
       const userId = tgUser.id;
       const checkUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
 
-      fetch(${checkUrl}?user_id=${userId})
+      fetch(`${checkUrl}?user_id=${userId}`)
         .then(res => res.json())
         .then(data => {
           if (data.status === "joined") {
