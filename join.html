@@ -223,7 +223,7 @@ function showToast(message) {
   formData.append('file', file);
   formData.append('upload_preset', 'meni_upload');
 
-  showToast('Uploading to Cloudinary...');
+  showToast('Uploading...');
   uploadBtn.disabled = true;
   uploadBtn.innerHTML = "Uploading...";
 
@@ -243,7 +243,7 @@ function showToast(message) {
       throw new Error("No URL returned from Cloudinary");
     }
 
-    return fetch('https://script.google.com/macros/s/AKfycbxz7b6dMH6Fwpk4ieEPHWq2s0LThAwLKqL5QtQt65a5Rnw1jj-AiE_Eo7m9Lg5qCMa8/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbx3oOal8_yXgUWrCkS0XB-DeEs-HfEvbe_RmSsIMAfkCXGPN3ZDn2BBR5_w6ko8Qxyv/exec', {
       method: 'POST',
       body: new URLSearchParams({
         title: memeTitle,
