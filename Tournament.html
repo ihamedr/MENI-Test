@@ -131,7 +131,7 @@
         <div class="end-date">Ends: May 26</div>
       </div>
     </div>
-    <button class="join-btn" onclick="checkChannelJoin()">Join</button>
+    <button class="join-btn" id="joinBtn">Join</button>
   </div>
 
   <div class="nav-bar">
@@ -141,6 +141,9 @@
   </div>
 
   <script>
+    const joinBtn = document.getElementById('joinBtn');
+    joinBtn.addEventListener('click', checkChannelJoin);
+
     function showToast(msg) {
       const toast = document.getElementById('toast');
       toast.textContent = msg;
@@ -149,10 +152,11 @@
         toast.style.display = 'none';
       }, 2000);
     }
-	  function checkChannelJoin() {
+
+    function checkChannelJoin() {
       const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser) {
-        showToast("User data not found.");
+      if (!tgUser || !tgUser.id) {
+        showToast("User data not available");
         return;
       }
 
@@ -163,7 +167,7 @@
         .then(res => res.json())
         .then(data => {
           if (data.status === "joined") {
-            window.location.href = "join.html"; // یا هر صفحه‌ای که طراحی می‌کنی برای جوین
+            window.location.href = "join.html";
           } else {
             showToast("You need to join channel first");
             setTimeout(() => {
@@ -172,7 +176,7 @@
           }
         })
         .catch(err => {
-          console.error(err);
+          console.error("Fetch error:", err);
           showToast("Error checking channel status");
         });
     }
