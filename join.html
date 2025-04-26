@@ -198,11 +198,12 @@ function showToast(message) {
 	  function goBack() {
   window.location.href = 'Tournament.html';
 }
-   function uploadMeme() {
+  function uploadMeme() {
   if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
   }
+  
   const memeTitle = document.getElementById('memeTitle').value.trim();
   if (!memeTitle) {
     showToast('Please enter a title.');
@@ -214,12 +215,13 @@ function showToast(message) {
     showToast('Telegram data not found.');
     return;
   }
+  
   const telegramUsername = tgUser.username || "";
 
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'meni_upload'); // اینجا فعلا وایسا توضیح میدم.
+  formData.append('upload_preset', 'meni_upload');
 
   showToast('Uploading to Cloudinary...');
   uploadBtn.disabled = true;
@@ -229,13 +231,19 @@ function showToast(message) {
     method: 'POST',
     body: formData
   })
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) {
+      throw new Error('Cloudinary upload failed');
+    }
+    return res.json();
+  })
   .then(data => {
     const imageUrl = data.secure_url;
-    if (!imageUrl) throw new Error("Upload failed");
+    if (!imageUrl) {
+      throw new Error("No URL returned from Cloudinary");
+    }
 
-    // حالا اطلاعات رو می‌فرستیم به گوگل شیت
-    return fetch('https://script.google.com/macros/s/AKfycbxz7b6dMH6Fwpk4ieEPHWq2s0LThAwLKqL5QtQt65a5Rnw1jj-AiE_Eo7m9Lg5qCMa8/exec/exec', {
+    return fetch('https://script.google.com/macros/s/AKfycbxz7b6dMH6Fwpk4ieEPHWq2s0LThAwLKqL5QtQt65a5Rnw1jj-AiE_Eo7m9Lg5qCMa8/exec', {
       method: 'POST',
       body: new URLSearchParams({
         title: memeTitle,
@@ -244,7 +252,12 @@ function showToast(message) {
       })
     });
   })
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) {
+      throw new Error('Google Sheet upload failed');
+    }
+    return res.json();
+  })
   .then(result => {
     if (result.success) {
       showToast('Your meme was successfully uploaded!');
@@ -255,12 +268,12 @@ function showToast(message) {
       uploadArea.style.cursor = "default";
       removeBtn.style.display = "none";
     } else {
-      throw new Error("Google Sheet upload failed");
+      throw new Error("Google Sheet responded with failure");
     }
   })
   .catch(err => {
-    console.error("Error:", err);
-    showToast('Upload error. Try again.');
+    console.error("Upload Error:", err);
+    showToast('Error: ' + (err.message || 'Unknown error'));
     uploadBtn.disabled = false;
     uploadBtn.innerHTML = "Upload";
   });
