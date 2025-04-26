@@ -154,14 +154,14 @@
     }
 
     function checkChannelJoin() {
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
       if (!tgUser || !tgUser.id) {
         showToast("User data not available");
         return;
       }
 
       const userId = tgUser.id;
-      const checkUrl = "https://script.google.com/macros/s/AKfycbyCq3lkJF2BC46nbxGkAgkKJ0OWHMHVjxlak-0q-g8i38vyT5X_J0JrrvJyV7JpNBlw/exec";
+      const checkUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
 
       fetch(${checkUrl}?user_id=${userId})
         .then(res => res.json())
