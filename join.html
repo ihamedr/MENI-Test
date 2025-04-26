@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
+    /* استایل‌ها همون قبلی */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background-color: #1f1f1f;
@@ -168,7 +169,6 @@
           uploadText.style.display = 'none';
           uploadSubtext.style.display = 'none';
           removeBtn.style.display = 'flex';
-
           const img = new Image();
           img.onload = function() {
             uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
@@ -218,7 +218,7 @@
       uploadBtn.disabled = true;
       uploadBtn.innerHTML = "Uploading...";
 
-      fetch("https://script.google.com/macros/s/AKfycbw7uESjVEx-wG7p9cEFouEzCn-Cqtt-Y1-QV3j79dbLIIQjHR8sP1vuHdEJYK0qiW56/exec", {
+      fetch("https://meni-upload-server.onrender.com/upload", {
         method: "POST",
         body: formData
       })
