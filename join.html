@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    /* استایل‌ها همون قبلی */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background-color: #1f1f1f;
@@ -169,6 +168,7 @@
           uploadText.style.display = 'none';
           uploadSubtext.style.display = 'none';
           removeBtn.style.display = 'flex';
+
           const img = new Image();
           img.onload = function() {
             uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
@@ -188,8 +188,17 @@
       removeBtn.style.display = 'none';
       uploadArea.style.height = '300px';
     });
-
-    function uploadMeme() {
+function showToast(message) {
+  toast.textContent = message;
+  toast.style.display = 'block';
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3000);
+}
+	  function goBack() {
+  window.location.href = 'Tournament.html';
+}
+   function uploadMeme() {
   if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
