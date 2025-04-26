@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tournaments - MENI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #1f1f1f;
+      font-family: 'Space Grotesk', sans-serif;
+      color: #f5f5f5;
+      padding: 1.5rem;
+      padding-bottom: 80px;
+    }
+    h2 {
+      text-align: center;
+      color: #ff9900;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+    }
+    .tournament-card {
+      background-color: #2b2b2b;
+      border-radius: 16px;
+      border: 2px solid #444;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px rgba(255,153,0,0.1);
+    }
+    .tournament-info {
+      display: flex;
+      align-items: center;
+    }
+    .tournament-info img {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ff9900;
+      margin-right: 1rem;
+    }
+    .tournament-text .name {
+      font-size: 1rem;
+      color: #f5f5f5;
+    }
+    .tournament-text .prize {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+    .tournament-text .prize strong {
+      color: #ff9900;
+    }
+    .tournament-text .end-date {
+      font-size: 0.75rem;
+      color: #888;
+    }
+    .join-btn {
+      background-color: #ff9900;
+      color: #1f1f1f;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .join-btn:hover {
+      background-color: #ffa733;
+    }
+    .toast {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff9900;
+      color: #1f1f1f;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-family: 'Space Grotesk', sans-serif;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 999;
+    }
+    .nav-bar {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #2b2b2b;
+      border-radius: 20px;
+      padding: 0.8rem 2rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
+      z-index: 10;
+    }
+    .nav-bar button {
+      background: none;
+      border: none;
+      color: #f5f5f5;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .nav-bar button.active,
+    .nav-bar button:hover {
+      color: #ff9900;
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast">You need to join channel first</div>
+
+  <h2>Active Tournaments</h2>
+
+  <div class="tournament-card">
+    <div class="tournament-info">
+      <img src="tournament-profile.jpg" alt="Tournament">
+      <div class="tournament-text">
+        <div class="name">Test Tournament</div>
+        <div class="prize">Prize Pool: <strong>50 USDT</strong></div>
+        <div class="end-date">Ends: May 26</div>
+      </div>
+    </div>
+    <button class="join-btn" onclick="checkChannelJoin()">Join</button>
+  </div>
+
+  <div class="nav-bar">
+    <button onclick="location.href='profile.html'">Profile</button>
+    <button onclick="location.href='index.html'">Explore</button>
+    <button class="active">Tournament</button>
+  </div>
+
+  <script>
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2000);
+    }
+	  function checkChannelJoin() {
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      if (!tgUser) {
+        showToast("User data not found.");
+        return;
+      }
+
+      const userId = tgUser.id;
+      const checkUrl = "https://script.google.com/macros/s/AKfycbyCq3lkJF2BC46nbxGkAgkKJ0OWHMHVjxlak-0q-g8i38vyT5X_J0JrrvJyV7JpNBlw/exec";
+
+      fetch(${checkUrl}?user_id=${userId})
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "joined") {
+            window.location.href = "join.html"; // یا هر صفحه‌ای که طراحی می‌کنی برای جوین
+          } else {
+            showToast("You need to join channel first");
+            setTimeout(() => {
+              window.location.href = "https://t.me/meni_dao";
+            }, 2000);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          showToast("Error checking channel status");
+        });
+    }
+  </script>
+</body>
+</html>
