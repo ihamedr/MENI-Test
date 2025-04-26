@@ -154,7 +154,7 @@
     }
 
     function checkChannelJoin() {
-      const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
       if (!tgUser || !tgUser.id) {
         showToast("User data not available");
         return;
@@ -167,11 +167,11 @@
         .then(res => res.json())
         .then(data => {
           if (data.status === "joined") {
-            window.location.href = "join.html";
+            window.location.href = "join.html"; // صفحه مخصوص جوین
           } else {
             showToast("You need to join channel first");
             setTimeout(() => {
-              window.location.href = "https://t.me/meni_dao";
+              window.location.href = "https://t.me/meni_dao"; // آدرس چنلت
             }, 2000);
           }
         })
