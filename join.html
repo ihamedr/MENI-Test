@@ -172,7 +172,7 @@ function checkIfUploaded() {
     return;
   }
   
-  fetch(https://meni-server.onrender.com/check-upload/${tgUser.id})
+  fetch(`https://meni-server.onrender.com/check-upload/${tgUser.id}`)
     .then(res => res.json())
     .then(data => {
       if (data.uploaded) {
