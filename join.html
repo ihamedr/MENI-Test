@@ -215,40 +215,33 @@ function showToast(message) {
     showToast('Telegram data not found.');
     return;
   }
-  
+
   const telegramUsername = tgUser.username || "unknown";
-  const telegramId = tgUser.id || "unknown"; // آیدی عددی جدید اضافه شد
-  const uploadTime = new Date().toISOString(); // زمان به صورت ISO
+  const telegramId = tgUser.id; // آیدی عددی
+  const uploadTime = new Date().toISOString();
 
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'meni_upload');
-
-  // اضافه کردن context (اطلاعات اضافه)
-  const contextData = [
-    `itle=${memeTitle}`,
-   `telegramUsername=${telegramUsername}`,
-   `telegramId=${telegramId}`,
-   `likes=0`,
-   `votes=0`,
-   `uploadTime=${uploadTime}`
-  ].join('|');
-
-  formData.append('context', contextData);
+  formData.append('title', memeTitle);
+  formData.append('telegramUsername', telegramUsername);
+  formData.append('telegramId', telegramId);
+  formData.append('uploadTime', uploadTime);
+  formData.append('likes', 0); // اضافه شد
+  formData.append('votes', 0); // اضافه شد
 
   showToast('Uploading your meme...');
   uploadBtn.disabled = true;
   uploadBtn.innerHTML = "Uploading...";
 
-  fetch('https://api.cloudinary.com/v1_1/doosolmoo/image/upload', {
+  fetch('https://meni-server.onrender.com/upload', {
     method: 'POST',
     body: formData
   })
   .then(res => res.json())
   .then(data => {
-    if (!data.secure_url) {
-      throw new Error("Upload failed");
+    if (!data.success) {
+      throw new Error(data.message || "Upload failed");
     }
     showToast('Your meme was successfully uploaded!');
     uploadBtn.innerHTML = "Uploaded";
