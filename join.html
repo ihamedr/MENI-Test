@@ -198,7 +198,7 @@ function showToast(message) {
 	  function goBack() {
   window.location.href = 'Tournament.html';
 }
-  function uploadMeme() {
+	 function uploadMeme() {
   if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
@@ -217,6 +217,7 @@ function showToast(message) {
   }
   
   const telegramUsername = tgUser.username || "unknown";
+  const telegramId = tgUser.id || "unknown"; // آیدی عددی جدید اضافه شد
   const uploadTime = new Date().toISOString(); // زمان به صورت ISO
 
   const file = fileInput.files[0];
@@ -226,11 +227,12 @@ function showToast(message) {
 
   // اضافه کردن context (اطلاعات اضافه)
   const contextData = [
-    `title=${memeTitle}`,
-    `telegramUsername=${telegramUsername}`,
-    `likes=0`,
-    `votes=0`,
-    `uploadTime=${uploadTime}`
+    `itle=${memeTitle}`,
+   `telegramUsername=${telegramUsername}`,
+   `telegramId=${telegramId}`,
+   `likes=0`,
+   `votes=0`,
+   `uploadTime=${uploadTime}`
   ].join('|');
 
   formData.append('context', contextData);
