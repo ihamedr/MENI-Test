@@ -198,7 +198,7 @@ function showToast(message) {
 	  function goBack() {
   window.location.href = 'Tournament.html';
 }
-	 function uploadMeme() {
+	function uploadMeme() {
   if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
@@ -223,26 +223,49 @@ function showToast(message) {
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('title', memeTitle);
-  formData.append('telegramUsername', telegramUsername);
-  formData.append('telegramId', telegramId);
-  formData.append('uploadTime', uploadTime);
-  formData.append('likes', 0); // اضافه شد
-  formData.append('votes', 0); // اضافه شد
+  formData.append('upload_preset', 'meni_upload');
+
+  // درست کردن context
+  const contextData = `title=${memeTitle}|telegramUsername=${telegramUsername}|telegramId=${telegramId}|likes=0|votes=0|uploadTime=${uploadTime}`;
+  formData.append('context', contextData);
 
   showToast('Uploading your meme...');
   uploadBtn.disabled = true;
   uploadBtn.innerHTML = "Uploading...";
 
-  fetch('https://meni-server.onrender.com/upload', {
+  fetch('https://api.cloudinary.com/v1_1/doosolmoo/image/upload', {
     method: 'POST',
     body: formData
   })
   .then(res => res.json())
   .then(data => {
-    if (!data.success) {
-      throw new Error(data.message || "Upload failed");
+    if (!data.secure_url) {
+      throw new Error("Upload failed");
     }
+
+    // بعد از آپلود موفق، حالا اطلاعات رو به سرور خودمون هم بفرست
+    return fetch('https://meni-server.onrender.com/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        memeUrl: data.secure_url,
+        title: memeTitle,
+        telegramUsername: telegramUsername,
+        telegramId: telegramId,
+        likes: 0,
+        votes: 0,
+        uploadTime: uploadTime
+      })
+    });
+  })
+  .then(res => res.json())
+  .then(serverData => {
+    if (!serverData.success) {
+      throw new Error(serverData.message || 'Server error');
+    }
+
     showToast('Your meme was successfully uploaded!');
     uploadBtn.innerHTML = "Uploaded";
     uploadBtn.style.backgroundColor = "#444";
