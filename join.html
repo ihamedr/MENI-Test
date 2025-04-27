@@ -198,7 +198,7 @@ function showToast(message) {
 	  function goBack() {
   window.location.href = 'Tournament.html';
 }
-  function uploadMeme() {
+ function uploadMeme() {
   if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
@@ -223,7 +223,7 @@ function showToast(message) {
   formData.append('file', file);
   formData.append('upload_preset', 'meni_upload');
 
-  showToast('Uploading...');
+  showToast('Uploading to Cloudinary...');
   uploadBtn.disabled = true;
   uploadBtn.innerHTML = "Uploading...";
 
@@ -231,34 +231,31 @@ function showToast(message) {
     method: 'POST',
     body: formData
   })
-  .then(res => {
-    if (!res.ok) {
-      throw new Error('Cloudinary upload failed');
-    }
-    return res.json();
-  })
+  .then(res => res.json())
   .then(data => {
     const imageUrl = data.secure_url;
     if (!imageUrl) {
       throw new Error("No URL returned from Cloudinary");
     }
 
+    showToast('Uploading to Google Sheets...');
+
     return fetch('https://script.google.com/macros/s/AKfycbx4nFjhk-5yTXJCtwAN3EDp5pbNEQ_865WfeLXK6JTPGcQP2x1mF8aUoIrgNBy1JXkG/exec', {
       method: 'POST',
-      body: new URLSearchParams({
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         title: memeTitle,
         fileUrl: imageUrl,
         telegramUsername: telegramUsername
-      })
+      }),
     });
   })
-  .then(res => {
-    if (!res.ok) {
-      throw new Error('Google Sheet upload failed');
-    }
-    return res.json();
-  })
-  .then(result => {
+  .then(res => res.text()) // متن خام
+  .then(text => {
+    alert('Server Response: ' + text);
+    const result = JSON.parse(text);
     if (result.success) {
       showToast('Your meme was successfully uploaded!');
       uploadBtn.innerHTML = "Uploaded";
@@ -268,7 +265,7 @@ function showToast(message) {
       uploadArea.style.cursor = "default";
       removeBtn.style.display = "none";
     } else {
-      throw new Error("Google Sheet responded with failure");
+      throw new Error(result.error || "Unknown error from server");
     }
   })
   .catch(err => {
