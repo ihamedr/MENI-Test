@@ -136,50 +136,55 @@
 
   <div class="nav-bar">
     <button onclick="location.href='profile.html'">Profile</button>
-    <button onclick="location.href='index.html'">Explore</button>
+    <button onclick="location.href='explore.html'">Explore</button>
     <button class="active">Tournament</button>
   </div>
 
   <script>
-    const joinBtn = document.getElementById('joinBtn');
-    joinBtn.addEventListener('click', checkChannelJoin);
+  const joinBtn = document.getElementById('joinBtn');
+  joinBtn.addEventListener('click', checkChannelJoin);
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 2000);
-    }
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2000);
+  }
 
-    function checkChannelJoin() {
+  function checkChannelJoin() {
+    let userId = sessionStorage.getItem('user_id');
+
+    if (!userId) {
       const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
       if (!tgUser || !tgUser.id) {
         showToast("User data not available");
         return;
       }
-
-      const userId = tgUser.id;
-      const checkUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
-
-      fetch(`${checkUrl}?user_id=${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "joined") {
-            window.location.href = "join.html"; // صفحه مخصوص جوین
-          } else {
-            showToast("You need to join channel first");
-            setTimeout(() => {
-              window.location.href = "https://t.me/meni_dao"; // آدرس چنلت
-            }, 2000);
-          }
-        })
-        .catch(err => {
-          console.error("Fetch error:", err);
-          showToast("Error checking channel status");
-        });
+      userId = tgUser.id;
+      sessionStorage.setItem('user_id', userId); // ذخیره برای دفعات بعد
     }
+
+    const checkUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
+
+    fetch(${checkUrl}?user_id=${userId})
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "joined") {
+          window.location.href = "join.html"; // صفحه مخصوص جوین
+        } else {
+          showToast("You need to join channel first");
+          setTimeout(() => {
+            window.location.href = "https://t.me/meni_dao"; // آدرس چنل
+          }, 2000);
+        }
+      })
+      .catch(err => {
+        console.error("Fetch error:", err);
+        showToast("Error checking channel status");
+      });
+  }
   </script>
 </body>
 </html>
