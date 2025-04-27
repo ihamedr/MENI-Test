@@ -141,53 +141,17 @@
   </div>
 
   <script>
-    const fileInput = document.getElementById('fileInput');
-    const uploadArea = document.getElementById('uploadArea');
-    const previewImage = document.getElementById('previewImage');
-    const uploadText = document.getElementById('uploadText');
-    const uploadSubtext = document.getElementById('uploadSubtext');
-    const removeBtn = document.getElementById('removeBtn');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const toast = document.getElementById('toast');
+   const fileInput = document.getElementById('fileInput');
+const uploadArea = document.getElementById('uploadArea');
+const previewImage = document.getElementById('previewImage');
+const uploadText = document.getElementById('uploadText');
+const uploadSubtext = document.getElementById('uploadSubtext');
+const removeBtn = document.getElementById('removeBtn');
+const uploadBtn = document.getElementById('uploadBtn');
+const toast = document.getElementById('toast');
 
-    uploadArea.addEventListener('click', () => {
-      if (!uploadBtn.disabled) {
-        fileInput.click();
-      } else {
-        showToast("You have already uploaded your meme.");
-      }
-    });
+let alreadyUploaded = false;
 
-    fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          previewImage.src = e.target.result;
-          previewImage.style.display = 'block';
-          uploadText.style.display = 'none';
-          uploadSubtext.style.display = 'none';
-          removeBtn.style.display = 'flex';
-
-          const img = new Image();
-          img.onload = function() {
-            uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    removeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      fileInput.value = '';
-      previewImage.style.display = 'none';
-      uploadText.style.display = 'block';
-      uploadSubtext.style.display = 'block';
-      removeBtn.style.display = 'none';
-      uploadArea.style.height = '300px';
-    });
 function showToast(message) {
   toast.textContent = message;
   toast.style.display = 'block';
@@ -195,10 +159,82 @@ function showToast(message) {
     toast.style.display = 'none';
   }, 3000);
 }
-	  function goBack() {
+
+function goBack() {
   window.location.href = 'Tournament.html';
 }
-	function uploadMeme() {
+
+// ابتدا چک کنیم که آیا کاربر قبلا میم آپلود کرده یا نه
+function checkIfUploaded() {
+  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+  if (!tgUser) {
+    console.error('Telegram user data not found.');
+    return;
+  }
+  
+  fetch(https://meni-server.onrender.com/check-upload/${tgUser.id})
+    .then(res => res.json())
+    .then(data => {
+      if (data.uploaded) {
+        alreadyUploaded = true;
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = "Already Uploaded";
+        uploadBtn.style.backgroundColor = "#444";
+        uploadBtn.style.color = "#aaa";
+        uploadArea.style.backgroundColor = "#3a3a3a";
+        uploadArea.style.cursor = "default";
+      }
+    })
+    .catch(err => {
+      console.error("Check upload error:", err);
+    });
+}
+
+uploadArea.addEventListener('click', () => {
+  if (!uploadBtn.disabled) {
+    fileInput.click();
+  } else {
+    showToast("You have already uploaded your meme.");
+  }
+});
+
+fileInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImage.src = e.target.result;
+      previewImage.style.display = 'block';
+      uploadText.style.display = 'none';
+      uploadSubtext.style.display = 'none';
+      removeBtn.style.display = 'flex';
+
+      const img = new Image();
+      img.onload = function() {
+        uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+removeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  fileInput.value = '';
+  previewImage.style.display = 'none';
+  uploadText.style.display = 'block';
+  uploadSubtext.style.display = 'block';
+  removeBtn.style.display = 'none';
+  uploadArea.style.height = '300px';
+});
+
+function uploadMeme() {
+  if (alreadyUploaded) {
+    showToast("You have already uploaded your meme.");
+    return;
+  }
+
   if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
@@ -243,7 +279,6 @@ function showToast(message) {
       throw new Error("Upload failed");
     }
 
-    // بعد از آپلود موفق، حالا اطلاعات رو به سرور خودمون هم بفرست
     return fetch('https://meni-server.onrender.com/upload', {
       method: 'POST',
       headers: {
@@ -273,6 +308,7 @@ function showToast(message) {
     uploadArea.style.backgroundColor = "#3a3a3a";
     uploadArea.style.cursor = "default";
     removeBtn.style.display = "none";
+    alreadyUploaded = true;
   })
   .catch(err => {
     console.error("Upload Error:", err);
@@ -281,6 +317,9 @@ function showToast(message) {
     uploadBtn.innerHTML = "Upload";
   });
 }
+
+// اجرای چک اولیه وقتی صفحه لود شد
+document.addEventListener('DOMContentLoaded', checkIfUploaded);
   </script>
 </body>
 </html>
