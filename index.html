@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MENI - Explore Memes</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    if (!sessionStorage.getItem('loadingShown')) {
-      sessionStorage.setItem('loadingShown', 'true');
-      window.location.href = "loading.html";
-    }
-  </script>
+	<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+	<script>
+  if (!sessionStorage.getItem('loadingShown')) {
+    sessionStorage.setItem('loadingShown', 'true');
+    window.location.href = "loading.html";
+  }
+</script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -29,10 +29,10 @@
       border-bottom: 2px solid #ff9900;
       position: relative;
     }
-    .tc-connect-button {
-      font-size: 10px !important;
-      border-radius: 8px !important;
-    }
+	  .tc-connect-button {
+  font-size: 10px !important;
+  border-radius: 8px !important;
+}
     .header-top {
       width: 100%;
       display: flex;
@@ -82,55 +82,55 @@
       transition: background-color 0.3s;
     }
     .categories button:hover { background-color: #ffa733; }
-    .gallery {
-      column-count: 2;
-      column-gap: 1rem;
-      padding: 1rem;
-    }
+   .gallery {
+  column-count: 2;
+  column-gap: 1rem;
+  padding: 1rem;
+}
 
-    @media (min-width: 600px) {
-      .gallery {
-        column-count: 3;
-      }
-    }
-    @media (min-width: 900px) {
-      .gallery {
-        column-count: 4;
-      }
-    }
+@media (min-width: 600px) {
+  .gallery {
+    column-count: 3;
+  }
+}
+@media (min-width: 900px) {
+  .gallery {
+    column-count: 4;
+  }
+}
 
-    .meme-card {
-      background-color: #292929;
-      border: 2px solid #444;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-      display: inline-block;
-      width: 100%;
-      box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
-      overflow: hidden;
-    }
+.meme-card {
+  background-color: #292929;
+  border: 2px solid #444;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: inline-block;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
+  overflow: hidden;
+}
 
-    .meme-card img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+.meme-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 
-    .meme-title {
-      padding: 0.5rem 1rem 0.2rem;
-      font-size: 0.75rem;
-      text-align: center;
-      color: #ff9900;
-    }
+.meme-title {
+  padding: 0.5rem 1rem 0.2rem;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #ff9900;
+}
 
-    .like-section {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding-bottom: 1rem;
+.like-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+}
     }
-
     .like-btn {
       background: none;
       border: none;
@@ -163,7 +163,8 @@
       transition: color 0.3s;
     }
     .nav-bar button.active,
-    .nav-bar button:hover { color: #ff9900; }
+	  .nav-bar button:hover { color: #ff9900; }
+	  .nav-bar button:hover { color: #ff9900; }
   </style>
 </head>
 <body>
@@ -183,19 +184,26 @@
       <button>POPULAR</button>
     </div>
   </header>
-
-  <main class="gallery">
-    <!-- اینجا پیام "There is no meme here yet!" نمایش داده میشه اگر میم‌ها وجود نداشته باشند -->
-    <div id="noMemesMessage" style="display: none; text-align: center; color: #ff9900; padding: 2rem;">
-      There is no meme here yet!
-    </div>
+<main class="gallery">
+    <!-- 10 Meme Cards -->
+    <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
+    <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
+    <div class="meme-card"><img src="meme3.jpg" alt="Meme 3"><div class="meme-title">@creator3</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">8</span></div></div>
+    <div class="meme-card"><img src="meme4.jpg" alt="Meme 4"><div class="meme-title">@creator4</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">15</span></div></div>
+    <div class="meme-card"><img src="meme5.jpg" alt="Meme 5"><div class="meme-title">@creator5</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">6</span></div></div>
+    <div class="meme-card"><img src="meme6.jpg" alt="Meme 6"><div class="meme-title">@creator6</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">10</span></div></div>
+    <div class="meme-card"><img src="meme7.jpg" alt="Meme 7"><div class="meme-title">@creator7</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">3</span></div></div>
+    <div class="meme-card"><img src="meme8.jpg" alt="Meme 8"><div class="meme-title">@creator8</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">7</span></div></div>
+    <div class="meme-card"><img src="meme9.jpg" alt="Meme 9"><div class="meme-title">@creator9</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">4</span></div></div>
+    <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
   </main>
+  
 
-  <div class="nav-bar">
-    <button onclick="location.href='profile.html'">Profile</button>
-    <button class="active" onclick="location.href='index.html'">Explore</button>
-    <button onclick="location.href='Tournament.html'">Tournament</button>
-  </div>
+ <div class="nav-bar">
+  <button onclick="location.href='profile.html'">Profile</button>
+  <button class="active" onclick="location.href='index.html'">Explore</button>
+  <button onclick="location.href='Tournament.html'">Tournament</button>
+</div>
 
   <script>
     function toggleLike(button) {
@@ -212,60 +220,20 @@
 
     let tonConnectUI;
 
-    window.addEventListener("DOMContentLoaded", () => {
-      tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-        manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-        buttonRootId: "walletBtn"
-      });
+window.addEventListener("DOMContentLoaded", () => {
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn"
+  });
 
-      // بررسی وضعیت اتصال
-      tonConnectUI.connectionRestored.then(() => {
-        if (tonConnectUI.connected) {
-          document.getElementById('walletBtn').style.display = 'none';
-          document.getElementById('walletIcon').style.display = 'flex';
-        }
-      });
-
-      // در اینجا میم‌ها رو از سرور بارگذاری می‌کنیم
-      fetch('https://meni-test.onrender.com/memes') // اینجا باید URL مناسب برای دریافت میم‌ها قرار بگیره
-        .then(response => response.json())
-        .then(data => {
-          if (data.length === 0) {
-            document.getElementById('noMemesMessage').style.display = 'block';
-          } else {
-            data.forEach(meme => {
-              // نمایش میم‌ها در گالری
-              const memeCard = document.createElement('div');
-              memeCard.className = 'meme-card';
-              memeCard.innerHTML = `
-                <img src="${meme.memeUrl}" alt="Meme">
-                <div class="meme-title">${meme.telegramUsername}</div>
-                <div class="like-section">
-                  <button class="like-btn" onclick="toggleLike(this)">♥</button>
-                  <span class="like-count">${meme.likes}</span>
-                  <button class="vote-btn" onclick="voteMeme(${meme.id})">Vote</button>
-                </div>
-              `;
-              document.querySelector('.gallery').appendChild(memeCard);
-            });
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching memes:", error);
-        });
-    });
-
-    function voteMeme(memeId) {
-      // اینجا رای دادن به میم‌ها مدیریت میشه
-      fetch(`https://meni-test.onrender.com/vote/${memeId}, { method: 'POST' }`)
-        .then(response => response.json())
-        .then(data => {
-          console.log('Voted successfully:', data);
-        })
-        .catch(error => {
-          console.error('Vote error:', error);
-        });
+  // بررسی وضعیت اتصال
+  tonConnectUI.connectionRestored.then(() => {
+    if (tonConnectUI.connected) {
+      document.getElementById('walletBtn').style.display = 'none';
+      document.getElementById('walletIcon').style.display = 'flex';
     }
+  });
+});
   </script>
-	</body>
+</body>
 </html>
