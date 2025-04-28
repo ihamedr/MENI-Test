@@ -257,7 +257,7 @@
 
     function voteMeme(memeId) {
       // اینجا رای دادن به میم‌ها مدیریت میشه
-      fetch(https://meni-test.onrender.com/vote/${memeId}, { method: 'POST' })
+      fetch(`https://meni-test.onrender.com/vote/${memeId}, { method: 'POST' }`)
         .then(response => response.json())
         .then(data => {
           console.log('Voted successfully:', data);
