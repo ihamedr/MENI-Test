@@ -184,7 +184,20 @@
       <button>POPULAR</button>
     </div>
   </header>
-<main class="gallery" id="gallery"></main>
+<main class="gallery">
+    <!-- 10 Meme Cards -->
+    <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
+    <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
+    <div class="meme-card"><img src="meme3.jpg" alt="Meme 3"><div class="meme-title">@creator3</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">8</span></div></div>
+    <div class="meme-card"><img src="meme4.jpg" alt="Meme 4"><div class="meme-title">@creator4</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">15</span></div></div>
+    <div class="meme-card"><img src="meme5.jpg" alt="Meme 5"><div class="meme-title">@creator5</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">6</span></div></div>
+    <div class="meme-card"><img src="meme6.jpg" alt="Meme 6"><div class="meme-title">@creator6</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">10</span></div></div>
+    <div class="meme-card"><img src="meme7.jpg" alt="Meme 7"><div class="meme-title">@creator7</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">3</span></div></div>
+    <div class="meme-card"><img src="meme8.jpg" alt="Meme 8"><div class="meme-title">@creator8</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">7</span></div></div>
+    <div class="meme-card"><img src="meme9.jpg" alt="Meme 9"><div class="meme-title">@creator9</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">4</span></div></div>
+    <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
+  </main>
+  
 
  <div class="nav-bar">
   <button onclick="location.href='profile.html'">Profile</button>
@@ -221,59 +234,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-  async function loadMemes() {
-    try {
-      const res = await fetch('https://meni-test.onrender.com/memes');
-      const memes = await res.json();
-      const gallery = document.getElementById('gallery');
-      memes.forEach(meme => {
-        const memeCard = document.createElement('div');
-        memeCard.className = 'meme-card';
-        memeCard.innerHTML = `
-          <img src="${meme.url}" alt="Meme">
-          <div class="meme-title">@${meme.telegramUsername}</div>
-          <div class="like-section">
-            <button class="like-btn" onclick="likeMeme(this, '${meme.id}')">♥</button>
-            <span class="like-count">${meme.likes}</span>
-          </div>
-        `;
-        gallery.appendChild(memeCard);
-      });
-    } catch (err) {
-      console.error('Error loading memes:', err);
-    }
-  }
-
-  async function likeMeme(button, memeId) {
-    const countSpan = button.nextElementSibling;
-    let currentLikes = parseInt(countSpan.textContent);
-
-    const increment = !button.classList.contains('liked');
-    button.classList.toggle('liked');
-
-    try {
-      const res = await fetch('https://meni-test.onrender.com/like', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memeId, increment })
-      });
-      const data = await res.json();
-      if (data.success) {
-        countSpan.textContent = data.likes;
-      } else {
-        console.error('Failed to update like.');
-        // اگر ارور داد، حالت دکمه رو برگردونیم:
-        button.classList.toggle('liked');
-        countSpan.textContent = increment ? currentLikes : currentLikes;
-      }
-    } catch (err) {
-      console.error('Error liking meme:', err);
-      button.classList.toggle('liked');
-      countSpan.textContent = increment ? currentLikes : currentLikes;
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', loadMemes);
   </script>
 </body>
 </html>

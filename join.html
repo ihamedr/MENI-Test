@@ -253,7 +253,7 @@ function uploadMeme() {
   }
 
   const telegramUsername = tgUser.username || "unknown";
-  const telegramId = tgUser.id;
+  const telegramId = tgUser.id; // آیدی عددی
   const uploadTime = new Date().toISOString();
 
   const file = fileInput.files[0];
@@ -261,8 +261,8 @@ function uploadMeme() {
   formData.append('file', file);
   formData.append('upload_preset', 'meni_upload');
 
-  // درست کردن context همراه voters
-  const contextData = `title=${memeTitle}|telegramUsername=${telegramUsername}|telegramId=${telegramId}|likes=0|votes=0|uploadTime=${uploadTime}|voters=[]`;
+  // درست کردن context
+  const contextData = `title=${memeTitle}|telegramUsername=${telegramUsername}|telegramId=${telegramId}|likes=0|votes=0|uploadTime=${uploadTime}`;
   formData.append('context', contextData);
 
   showToast('Uploading your meme...');
