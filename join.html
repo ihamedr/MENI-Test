@@ -228,7 +228,64 @@ removeBtn.addEventListener('click', (e) => {
   removeBtn.style.display = 'none';
   uploadArea.style.height = '300px';
 });
+window.addEventListener('load', () => {
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = "Checking...";
+  uploadBtn.style.backgroundColor = "#666";
+  uploadBtn.style.cursor = "wait";
 
+  const uploaded = localStorage.getItem('uploaded');
+
+  if (uploaded === 'true') {
+    lockUploadButton();
+  } else {
+    checkIfAlreadyUploaded();
+  }
+});
+
+function lockUploadButton() {
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = "Already Uploaded!";
+  uploadBtn.style.backgroundColor = "#bbb";
+  uploadBtn.style.color = "#888";
+  uploadBtn.style.cursor = "not-allowed";
+  uploadArea.style.backgroundColor = "#3a3a3a";
+}
+
+function checkIfAlreadyUploaded() {
+  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+  if (!tgUser) {
+    showToast('Telegram data not found.');
+    return;
+  }
+
+  const telegramId = tgUser.id || "unknown";
+
+  fetch(`https://meni-server.onrender.com/check-upload/${telegramId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.uploaded) {
+        lockUploadButton();
+        localStorage.setItem('uploaded', 'true');
+      } else {
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = "Upload Meme";
+        uploadBtn.style.backgroundColor = "#444";
+        uploadBtn.style.color = "#fff";
+        uploadBtn.style.cursor = "pointer";
+        localStorage.setItem('uploaded', 'false');
+      }
+    })
+    .catch(err => {
+      console.error("Error checking upload status:", err);
+      showToast('Error checking upload status');
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = "Upload Meme";
+      uploadBtn.style.backgroundColor = "#444";
+      uploadBtn.style.color = "#fff";
+      uploadBtn.style.cursor = "pointer";
+    });
+}
 function uploadMeme() {
   if (alreadyUploaded) {
     showToast("You have already uploaded your meme.");
