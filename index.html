@@ -176,13 +176,9 @@
           <img src="${meme.url}" alt="${meme.title}" />
           <div class="meme-title">@${meme.telegramUsername}</div>
           <div class="like-section">
-            <button class="like-btn ${meme.likes > 0 ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
-              ♥
-            </button>
+            <button class="like-btn ${meme.likes > 0 ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
             <span class="like-count">${meme.likes}</span>
-            <button class="vote-btn" onclick="voteMeme('${meme.id}', this)">
-              ♥
-            </button>
+            <button class="vote-btn ${meme.voters.includes(telegramId) ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
             <span class="vote-count">${meme.votes}</span>
           </div>
         `;
@@ -197,13 +193,8 @@
         btn.classList.add("liked");
         likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
-        await fetch(`https://meni-server.onrender.com/memes/${memeId}/like`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            memeId,
-            telegramId
-          })
+        await fetch(https://meni-server.onrender.com/memes/${memeId}/like, {
+          method: "POST"
         });
       }
     }
@@ -212,13 +203,10 @@
       const voteCount = btn.nextElementSibling;
       if (btn.classList.contains("voted")) return;
 
-      const res = await fetch(`https://meni-server.onrender.com/memes/${memeId}/vote`, {
+      const res = await fetch(https://meni-server.onrender.com/memes/${memeId}/vote, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          memeId,
-          telegramId
-        })
+        body: JSON.stringify({ voterId: telegramId })
       });
 
       const result = await res.json();
@@ -227,7 +215,7 @@
         btn.classList.add("voted");
         voteCount.textContent = parseInt(voteCount.textContent) + 1;
       } else {
-        alert(result.message || "You have already voted!");
+        alert(result.error || "You have already voted!");
       }
     }
 
