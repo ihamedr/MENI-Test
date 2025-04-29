@@ -262,7 +262,7 @@ function uploadMeme() {
   formData.append('upload_preset', 'meni_upload');
 
   // درست کردن context
-  const contextData = `title=${memeTitle}|telegramUsername=${telegramUsername}|telegramId=${telegramId}|likes=0|votes=0|uploadTime=${uploadTime}`;
+  const contextData = `title=${memeTitle}|telegramUsername=${telegramUsername}|telegramId=${telegramId}|likes=0|votes=0|uploadTime=${uploadTime}|voters=[]`;
   formData.append('context', contextData);
 
   showToast('Uploading your meme...');
