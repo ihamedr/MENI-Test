@@ -164,7 +164,7 @@
     const telegramUsername = telegramUser.username || 'unknown';
 
     async function fetchMemes() {
-      const res = await fetch("https://meni-test.onrender.com/memes");
+      const res = await fetch("https://meni-server.onrender.com/memes");
       const memes = await res.json();
       const gallery = document.getElementById("gallery");
       gallery.innerHTML = "";
@@ -197,7 +197,7 @@
         btn.classList.add("liked");
         likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
-        await fetch("https://meni-test.onrender.com/like", {
+        await fetch("https://meni-server.onrender.com/like", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -212,7 +212,7 @@
       const voteCount = btn.nextElementSibling;
       if (btn.classList.contains("voted")) return;
 
-      const res = await fetch("https://meni-test.onrender.com/vote", {
+      const res = await fetch("https://meni-server.onrender.com/vote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
