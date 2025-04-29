@@ -193,9 +193,9 @@
         btn.classList.add("liked");
         likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
-        await fetch(`https://meni-server.onrender.com/memes/${memeId}/like, {
+        await fetch(`https://meni-server.onrender.com/memes/${memeId}/like`, {
           method: "POST"
-        }`);
+        });
       }
     }
 
@@ -203,11 +203,11 @@
       const voteCount = btn.nextElementSibling;
       if (btn.classList.contains("voted")) return;
 
-      const res = await fetch(`https://meni-server.onrender.com/memes/${memeId}/vote, {
+      const res = await fetch(`https://meni-server.onrender.com/memes/${memeId}/vote`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ voterId: telegramId })
-      }`);
+      });
 
       const result = await res.json();
 
