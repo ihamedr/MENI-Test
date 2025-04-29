@@ -178,7 +178,7 @@
           <div class="like-section">
             <button class="like-btn ${meme.likes > 0 ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
             <span class="like-count">${meme.likes}</span>
-            <button class="vote-btn ${meme.voters.includes(telegramId) ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
+            <button class="vote-btn ${(Array.isArray(meme.voters) && meme.voters.includes(telegramId)) ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
             <span class="vote-count">${meme.votes}</span>
           </div>
         `;
