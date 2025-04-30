@@ -155,80 +155,80 @@
     <button class="active" onclick="location.href='index.html'">Explore</button>
     <button onclick="location.href='Tournament.html'">Tournament</button>
   </div>
+    <script>
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+  const telegramUser = tg.initDataUnsafe.user || {};
+  const telegramId = telegramUser.id;
+  const telegramUsername = telegramUser.username || 'unknown';
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-    const telegramUser = tg.initDataUnsafe.user || {};
-    const telegramId = telegramUser.id;
-    const telegramUsername = telegramUser.username || 'unknown';
+  async function fetchMemes() {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec");
+    const memes = await res.json();
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
 
-    async function fetchMemes() {
-      const res = await fetch("https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec");
-      const memes = await res.json();
-      const gallery = document.getElementById("gallery");
-      gallery.innerHTML = "";
+    memes.forEach(meme => {
+      if (!meme.id || !meme.url) return;
 
-      memes.forEach(meme => {
-        const card = document.createElement("div");
-        card.className = "meme-card";
-        card.innerHTML = `
-          <img src="${meme.url}" alt="${meme.title}" />
-          <div class="meme-title">@${meme.telegramUsername}</div>
-          <div class="like-section">
-            <button class="like-btn ${meme.likes > 0 ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
-            <span class="like-count">${meme.likes}</span>
-            <button class="vote-btn ${(Array.isArray(meme.voters) && meme.voters.includes(telegramId)) ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
-            <span class="vote-count">${meme.votes}</span>
-          </div>
-        `;
-        gallery.appendChild(card);
-      });
+      const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
+      const hasVoted = voters.includes(String(telegramId));
+
+      const card = document.createElement("div");
+      card.className = "meme-card";
+      card.innerHTML = `
+        <img src="${meme.url}" alt="${meme.title || ''}" />
+        <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
+        <div class="like-section">
+          <button class="like-btn ${meme.likes > 0 ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
+          <span class="like-count">${meme.likes || 0}</span>
+          <button class="vote-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
+          <span class="vote-count">${meme.votes || 0}</span>
+        </div>
+      `;
+      gallery.appendChild(card);
+    });
+  }
+
+  async function runGoogleScript() {
+    await fetch("https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec?runScript=true");
+  }
+
+  async function likeMeme(memeId, btn) {
+    const likeCount = btn.nextElementSibling;
+    if (btn.classList.contains("liked")) return;
+
+    btn.classList.add("liked");
+    likeCount.textContent = parseInt(likeCount.textContent) + 1;
+
+    await fetch(`https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec?secret=meni2025!&id=${memeId}&action=like`, {
+      method: "POST"
+    });
+  }
+
+  async function voteMeme(memeId, btn) {
+    const voteCount = btn.nextElementSibling;
+    if (btn.classList.contains("voted")) return;
+
+    const res = await fetch(`https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec?secret=meni2025!&id=${memeId}&action=vote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ voterId: telegramId })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      btn.classList.add("voted");
+      voteCount.textContent = parseInt(voteCount.textContent) + 1;
+    } else {
+      alert(result.error || "You have already voted!");
     }
-async function runGoogleScript() {
-      await fetch("https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec?runScript=true", {
-        method: "GET"
-      });
-    }
+  }
 
-    async function likeMeme(memeId, btn) {
-      const likeCount = btn.nextElementSibling;
-      const liked = btn.classList.contains("liked");
-      if (!liked) {
-        btn.classList.add("liked");
-        likeCount.textContent = parseInt(likeCount.textContent) + 1;
-
-        await fetch(`https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec?secret=meni2025!&id=${memeId}&action=like`, {
-          method: "POST"
-        });
-      }
-    }
-
-    async function voteMeme(memeId, btn) {
-      const voteCount = btn.nextElementSibling;
-      if (btn.classList.contains("voted")) return;
-
-      const res = await fetch(`https://script.google.com/macros/s/AKfycbzyKlqArvmju-pN5BQqbEsjKX2EW0Sfm6hrHJPSAM62o6CiM_RuUmGEjNqOb93GqKg-/exec?secret=meni2025!&id=${memeId}&action=vote`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ voterId: telegramId })
-      });
-
-      const result = await res.json();
-
-      if (result.success) {
-        btn.classList.add("voted");
-        voteCount.textContent = parseInt(voteCount.textContent) + 1;
-      } else {
-        alert(result.error || "You have already voted!");
-      }
-    }
-
-    window.onload = () => {
-      fetchMemes();
-      runGoogleScript();  // اجرای اسکریپت Google Sheets
-    };
-
-  </script>
+  window.onload = () => {
+    fetchMemes();
+    runGoogleScript();
+  };
+</script>
 </body>
 </html>
