@@ -190,6 +190,10 @@
     });
   }
 
+  async function runGoogleScript() {
+    await fetch("https://script.google.com/macros/s/AKfycbwp1yhcW3YhzTj6wIU2ttoONr6U9-SkgaL8Jp7KUTUlxZDxyPLATnYJcNGImCnxUyrw/exec");
+  }
+
   async function likeMeme(memeId, btn) {
   const likeCount = btn.nextElementSibling;
   if (btn.classList.contains("liked")) return;
@@ -201,6 +205,8 @@
     method: "PUT"
   });
 }
+
+
   async function voteMeme(memeId, btn) {
   const voteCount = btn.nextElementSibling;
   if (btn.classList.contains("voted")) return;
@@ -209,14 +215,9 @@
     method: "PUT"
   });
 
-    const resultText = await res.text();
-    if (resultText === "Updated") {
-      btn.classList.add("voted");
-      voteCount.textContent = parseInt(voteCount.textContent) + 1;
-    } else {
-      alert("You have already voted or something went wrong!");
-    }
-  }
+  btn.classList.add("voted");
+  voteCount.textContent = parseInt(voteCount.textContent) + 1;
+}
 
   window.onload = () => {
     fetchMemes();
