@@ -213,7 +213,7 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ voterId: telegramId })
    
-
+  }
     const result = await res.json();
     if (result.success) {
       btn.classList.add("voted");
