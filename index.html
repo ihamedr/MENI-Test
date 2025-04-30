@@ -163,7 +163,7 @@
   const telegramUsername = telegramUser.username || 'unknown';
 
   async function fetchMemes() {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbzOu835n-YbGyHOGNTIFsoiVEM_bJqQkV2-iEZ1f7aZE43Jl6n9wyQetOpBMGp2b1Tl/exec");
+    const res = await fetch("https://script.google.com/macros/s/AKfycby-DYznmTFPwNWPpNmNUTBVNVH5-O9Hex84x9zoeLaCkisFqclEW4akboc4CqPxnWLU/exec");
     const memes = await res.json();
     const gallery = document.getElementById("gallery");
     gallery.innerHTML = "";
@@ -191,7 +191,7 @@
   }
 
   async function runGoogleScript() {
-    await fetch("https://script.google.com/macros/s/AKfycbzOu835n-YbGyHOGNTIFsoiVEM_bJqQkV2-iEZ1f7aZE43Jl6n9wyQetOpBMGp2b1Tl/exec?runScript=true");
+    await fetch("https://script.google.com/macros/s/AKfycby-DYznmTFPwNWPpNmNUTBVNVH5-O9Hex84x9zoeLaCkisFqclEW4akboc4CqPxnWLU/exec");
   }
 
   async function likeMeme(memeId, btn) {
@@ -201,7 +201,7 @@
     btn.classList.add("liked");
     likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
-    await fetch(`https://script.google.com/macros/s/AKfycbzOu835n-YbGyHOGNTIFsoiVEM_bJqQkV2-iEZ1f7aZE43Jl6n9wyQetOpBMGp2b1Tl/exec?secret=meni2025!&id=${memeId}&action=like`, {
+    await fetch(`https://script.google.com/macros/s/AKfycby-DYznmTFPwNWPpNmNUTBVNVH5-O9Hex84x9zoeLaCkisFqclEW4akboc4CqPxnWLU/exec?secret=meni2025!&id=${memeId}&action=like`, {
       method: "PUT"
     });
   }
@@ -210,7 +210,7 @@
     const voteCount = btn.nextElementSibling;
     if (btn.classList.contains("voted")) return;
 
-    const res = await fetch(`https://script.google.com/macros/s/AKfycbzOu835n-YbGyHOGNTIFsoiVEM_bJqQkV2-iEZ1f7aZE43Jl6n9wyQetOpBMGp2b1Tl/exec?secret=meni2025!&id=${memeId}&action=vote&voterId=${telegramId}`, {
+    const res = await fetch(`https://script.google.com/macros/s/AKfycby-DYznmTFPwNWPpNmNUTBVNVH5-O9Hex84x9zoeLaCkisFqclEW4akboc4CqPxnWLU/exec?secret=meni2025!&id=${memeId}&action=vote&voterId=${telegramId}`, {
       method: "PUT"
     });
 
