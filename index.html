@@ -163,7 +163,7 @@
   const telegramUsername = telegramUser.username || 'unknown';
 
   async function fetchMemes() {
-    const res = await fetch("https://script.google.com/macros/s/AKfycbwp1yhcW3YhzTj6wIU2ttoONr6U9-SkgaL8Jp7KUTUlxZDxyPLATnYJcNGImCnxUyrw/exec");
+    const res = await fetch("https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec");
     const memes = await res.json();
     const gallery = document.getElementById("gallery");
     gallery.innerHTML = "";
@@ -191,33 +191,37 @@
   }
 
   async function runGoogleScript() {
-    await fetch("https://script.google.com/macros/s/AKfycbwp1yhcW3YhzTj6wIU2ttoONr6U9-SkgaL8Jp7KUTUlxZDxyPLATnYJcNGImCnxUyrw/exec");
+    await fetch("https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec");
   }
 
   async function likeMeme(memeId, btn) {
-  const likeCount = btn.nextElementSibling;
-  if (btn.classList.contains("liked")) return;
+    const likeCount = btn.nextElementSibling;
+    if (btn.classList.contains("liked")) return;
 
-  btn.classList.add("liked");
-  likeCount.textContent = parseInt(likeCount.textContent) + 1;
+    btn.classList.add("liked");
+    likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
-  await fetch(`https://script.google.com/macros/s/AKfycbwp1yhcW3YhzTj6wIU2ttoONr6U9-SkgaL8Jp7KUTUlxZDxyPLATnYJcNGImCnxUyrw/exec?secret=meni2025!&id=${memeId}&action=like`, {
-    method: "PUT"
-  });
-}
-
+    await fetch(`https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec?secret=meni2025!&id=${memeId}&action=like`, {
+      method: "PUT"
+    });
+  }
 
   async function voteMeme(memeId, btn) {
-  const voteCount = btn.nextElementSibling;
-  if (btn.classList.contains("voted")) return;
+    const voteCount = btn.nextElementSibling;
+    if (btn.classList.contains("voted")) return;
 
-  await fetch(`https://script.google.com/macros/s/AKfycbwp1yhcW3YhzTj6wIU2ttoONr6U9-SkgaL8Jp7KUTUlxZDxyPLATnYJcNGImCnxUyrw/exec?secret=meni2025!&id=${memeId}&action=vote`, {
-    method: "PUT"
-  });
+    const res = await fetch(`https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec?secret=meni2025!&id=${memeId}&action=vote&voterId=${telegramId}`, {
+      method: "PUT"
+    });
 
-  btn.classList.add("voted");
-  voteCount.textContent = parseInt(voteCount.textContent) + 1;
-}
+    const resultText = await res.text();
+    if (resultText === "Updated") {
+      btn.classList.add("voted");
+      voteCount.textContent = parseInt(voteCount.textContent) + 1;
+    } else {
+      alert("You have already voted or something went wrong!");
+    }
+  }
 
   window.onload = () => {
     fetchMemes();
