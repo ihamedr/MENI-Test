@@ -167,6 +167,12 @@
   async function fetchMemes() {
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec';
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`);
+    
+    if (!res.ok) {
+      console.error("Failed to fetch memes:", res.statusText);
+      return;
+    }
+
     const memes = await res.json();
     const gallery = document.getElementById("gallery");
     gallery.innerHTML = "";
@@ -201,9 +207,21 @@
     likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
     const scriptUrl = `https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec?secret=meni2025!&id=${memeId}&action=like`;
-    await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`, {
+    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`, {
       method: "PUT"
     });
+
+    if (!res.ok) {
+      console.error("Failed to like meme:", res.statusText);
+      return;
+    }
+
+    const result = await res.json();
+    if (result.success) {
+      console.log('Meme liked successfully');
+    } else {
+      alert("Something went wrong with liking the meme!");
+    }
   }
 
   async function voteMeme(memeId, btn) {
@@ -215,8 +233,13 @@
       method: "PUT"
     });
 
-    const resultText = await res.text();
-    if (resultText === "Updated") {
+    if (!res.ok) {
+      console.error("Failed to vote on meme:", res.statusText);
+      return;
+    }
+
+    const result = await res.json();
+    if (result.success) {
       btn.classList.add("voted");
       voteCount.textContent = parseInt(voteCount.textContent) + 1;
     } else {
