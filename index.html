@@ -165,7 +165,7 @@
   const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
 
   async function fetchMemes() {
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxqngZt-k_1lQc-G0okKxFCfFJ0EI1zvgv1zN3HqfKm8Mrn4VZVG6mUUZREkcwrMvgt/exec';
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`);
     
     if (!res.ok) {
@@ -199,53 +199,52 @@
     });
   }
 
-  async function likeMeme(memeId, btn) {
-    const likeCount = btn.nextElementSibling;
-    if (btn.classList.contains("liked")) return;
+ async function likeMeme(memeId, btn) {
+  const likeCount = btn.nextElementSibling;
+  if (btn.classList.contains("liked")) return;
 
-    btn.classList.add("liked");
-    likeCount.textContent = parseInt(likeCount.textContent) + 1;
+  btn.classList.add("liked");
+  likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
-    const scriptUrl = `https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec?secret=meni2025!&id=${memeId}&action=like`;
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`, {
-      method: "PUT"
-    });
+  const scriptUrl = `https://script.google.com/macros/s/AKfycbxqngZt-k_1lQc-G0okKxFCfFJ0EI1zvgv1zN3HqfKm8Mrn4VZVG6mUUZREkcwrMvgt/exec?secret=meni2025!&id=$memeId}&action=like`;
+  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`, {
+    method: "POST"
+  });
 
-    if (!res.ok) {
-      console.error("Failed to like meme:", res.statusText);
-      return;
-    }
-
-    const result = await res.json();
-    if (result.success) {
-      console.log('Meme liked successfully');
-    } else {
-      alert("Something went wrong with liking the meme!");
-    }
+  if (!res.ok) {
+    console.error("Failed to like meme:", res.statusText);
+    return;
   }
+
+  const resultText = await res.text();
+  if (resultText !== 'Updated') {
+    alert("Something went wrong with liking the meme!");
+  }
+}
+
 
   async function voteMeme(memeId, btn) {
-    const voteCount = btn.nextElementSibling;
-    if (btn.classList.contains("voted")) return;
+  const voteCount = btn.nextElementSibling;
+  if (btn.classList.contains("voted")) return;
 
-    const scriptUrl = `https://script.google.com/macros/s/AKfycbwdxMCs2twfb-u8ks1_Uo6n3_ZinTsIrLWZSvs0e0rcE8n65O2RJ7giFy9o5sMVSDL2/exec?secret=meni2025!&id=${memeId}&action=vote&voterId=${telegramId}`;
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`, {
-      method: "PUT"
-    });
+  const scriptUrl = `https://script.google.com/macros/s/AKfycbxqngZt-k_1lQc-G0okKxFCfFJ0EI1zvgv1zN3HqfKm8Mrn4VZVG6mUUZREkcwrMvgt/exec?secret=meni2025!&id=${memeId}&action=vote&voterId=${telegramId}`;
+  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptUrl)}`, {
+    method: "POST"
+  });
 
-    if (!res.ok) {
-      console.error("Failed to vote on meme:", res.statusText);
-      return;
-    }
-
-    const result = await res.json();
-    if (result.success) {
-      btn.classList.add("voted");
-      voteCount.textContent = parseInt(voteCount.textContent) + 1;
-    } else {
-      alert("You have already voted or something went wrong!");
-    }
+  if (!res.ok) {
+    console.error("Failed to vote on meme:", res.statusText);
+    return;
   }
+
+  const resultText = await res.text();
+  if (resultText === "Updated") {
+    btn.classList.add("voted");
+    voteCount.textContent = parseInt(voteCount.textContent) + 1;
+  } else {
+    alert("You have already voted or something went wrong!");
+  }
+}
 
   window.onload = () => {
     fetchMemes();
