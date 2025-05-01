@@ -183,7 +183,7 @@
       const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
       const hasVoted = voters.includes(String(telegramId));
 
-      const likedKey = liked_${meme.id};
+      const likedKey = `liked_${meme.id}`;
       const hasLiked = localStorage.getItem(likedKey);
 
       const card = document.createElement("div");
