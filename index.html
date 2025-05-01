@@ -163,7 +163,7 @@
   const telegramUsername = telegramUser.username || 'unknown';
 
   const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
-  const scriptBase = 'https://script.google.com/macros/s/AKfycby7eTIRoMxWYTy5WtFLp7icYgdHKdaUc2q_zika0Mp6butrdfuqSpS6RTCvx9Nm8SDx/exec';
+  const scriptBase = 'https://script.google.com/macros/s/AKfycbxmHLZiUQ6f1Uvkxk1zLvo7xUyHTVMDI7CwR6BCWPovwU84deI8jtUe0PJF30X3Uzd_/exec';
   const secret = 'meni2025!';
 
   async function fetchMemes() {
@@ -203,35 +203,33 @@
   }
 
   async function likeMeme(memeId, btn) {
-    const likedKey = `liked_${memeId}`;
-    if (localStorage.getItem(likedKey)) return;
+  const likeCount = btn.nextElementSibling;
+  if (btn.classList.contains("liked")) return;
 
-    const likeCount = btn.nextElementSibling;
-    const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like`;
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, {
-      method: "POST"
-    });
+  const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like&voterId=${telegramId}`;
+  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, {
+    method: "POST"
+  });
 
-    if (!res.ok) {
-      console.error("Failed to like meme:", res.statusText);
-      return;
-    }
-
-    const result = await res.text();
-    if (result === "Updated") {
-      btn.classList.add("liked");
-      likeCount.textContent = parseInt(likeCount.textContent) + 1;
-      localStorage.setItem(likedKey, "true");
-    } else {
-      alert("Something went wrong while liking the meme.");
-    }
+  if (!res.ok) {
+    console.error("Failed to like meme:", res.statusText);
+    return;
   }
+
+  const result = await res.text();
+  if (result === "Updated") {
+    btn.classList.add("liked");
+    likeCount.textContent = parseInt(likeCount.textContent) + 1;
+  } else if (result === "Already liked") {
+    alert("You already liked this meme.");
+  }
+}
 
   async function voteMeme(memeId, btn) {
     const voteCount = btn.nextElementSibling;
     if (btn.classList.contains("voted")) return;
 
-    const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&telegramId=${telegramId}`;
+    const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&voterId=${telegramId}`;
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, {
       method: "POST"
     });
