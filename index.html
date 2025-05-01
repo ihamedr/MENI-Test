@@ -155,7 +155,7 @@
     <button class="active" onclick="location.href='index.html'">Explore</button>
     <button onclick="location.href='Tournament.html'">Tournament</button>
   </div>
-   <script>
+  <script>
   const tg = window.Telegram.WebApp;
   tg.expand();
   const telegramUser = tg.initDataUnsafe.user || {};
@@ -163,7 +163,7 @@
   const telegramUsername = telegramUser.username || 'unknown';
 
   const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
-  const scriptBase = 'https://script.google.com/macros/s/AKfycbxqngZt-k_1lQc-G0okKxFCfFJ0EI1zvgv1zN3HqfKm8Mrn4VZVG6mUUZREkcwrMvgt/exec';
+  const scriptBase = 'https://script.google.com/macros/s/AKfycby7eTIRoMxWYTy5WtFLp7icYgdHKdaUc2q_zika0Mp6butrdfuqSpS6RTCvx9Nm8SDx/exec';
   const secret = 'meni2025!';
 
   async function fetchMemes() {
@@ -183,13 +183,16 @@
       const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
       const hasVoted = voters.includes(String(telegramId));
 
+      const likedKey = liked_${meme.id};
+      const hasLiked = localStorage.getItem(likedKey);
+
       const card = document.createElement("div");
       card.className = "meme-card";
       card.innerHTML = `
         <img src="${meme.url}" alt="${meme.title || ''}" />
         <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
         <div class="like-section">
-          <button class="like-btn ${meme.likes > 0 ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
+          <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
           <span class="like-count">${meme.likes || 0}</span>
           <button class="vote-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
           <span class="vote-count">${meme.votes || 0}</span>
@@ -200,9 +203,10 @@
   }
 
   async function likeMeme(memeId, btn) {
-    const likeCount = btn.nextElementSibling;
-    if (btn.classList.contains("liked")) return;
+    const likedKey = `liked_${memeId}`;
+    if (localStorage.getItem(likedKey)) return;
 
+    const likeCount = btn.nextElementSibling;
     const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like`;
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, {
       method: "POST"
@@ -217,6 +221,7 @@
     if (result === "Updated") {
       btn.classList.add("liked");
       likeCount.textContent = parseInt(likeCount.textContent) + 1;
+      localStorage.setItem(likedKey, "true");
     } else {
       alert("Something went wrong while liking the meme.");
     }
