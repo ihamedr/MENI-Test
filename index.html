@@ -163,10 +163,16 @@
   const telegramUsername = telegramUser.username || 'unknown';
 
   const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
-  const scriptBase = 'https://script.google.com/macros/s/AKfycbxmHLZiUQ6f1Uvkxk1zLvo7xUyHTVMDI7CwR6BCWPovwU84deI8jtUe0PJF30X3Uzd_/exec';
+  const scriptBase = 'https://script.google.com/macros/s/AKfycbxdHMQJtT812sHgcYyA4HCufZGPowI0F1Bs_TCmSEJKjNZW3LfNuMhn3IhlLgKKEVjU/exec';
   const secret = 'meni2025!';
 
-  async function fetchMemes() {
+  const tg = window.Telegram.WebApp;
+
+if (!tg.initData || tg.initData === "") {
+  alert("This feature only works inside Telegram");
+  throw new Error("Not inside Telegram WebApp");
+}
+	  async function fetchMemes() {
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
     if (!res.ok) {
       console.error("Failed to fetch memes:", res.statusText);
@@ -178,28 +184,28 @@
     gallery.innerHTML = "";
 
     memes.forEach(meme => {
-      if (!meme.id || !meme.url) return;
+  if (!meme.id || !meme.url) return;
 
-      const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-      const hasVoted = voters.includes(String(telegramId));
+  const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
+  const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
 
-      const likedKey = `liked_${meme.id}`;
-      const hasLiked = localStorage.getItem(likedKey);
+  const hasVoted = voters.includes(String(telegramId));
+  const hasLiked = likers.includes(String(telegramId));
 
-      const card = document.createElement("div");
-      card.className = "meme-card";
-      card.innerHTML = `
-        <img src="${meme.url}" alt="${meme.title || ''}" />
-        <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
-        <div class="like-section">
-          <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
-          <span class="like-count">${meme.likes || 0}</span>
-          <button class="vote-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
-          <span class="vote-count">${meme.votes || 0}</span>
-        </div>
-      `;
-      gallery.appendChild(card);
-    });
+  const card = document.createElement("div");
+  card.className = "meme-card";
+  card.innerHTML = `
+    <img src="${meme.url}" alt="${meme.title || ''}" />
+    <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
+    <div class="like-section">
+      <button class="like-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">♥</button>
+      <span class="like-count">${meme.likes || 0}</span>
+      <button class="vote-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">♥</button>
+      <span class="vote-count">${meme.votes || 0}</span>
+    </div>
+  `;
+  gallery.appendChild(card);
+});
   }
 
   async function likeMeme(memeId, btn) {
