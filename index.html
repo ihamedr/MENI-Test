@@ -166,12 +166,6 @@
   const scriptBase = 'https://script.google.com/macros/s/AKfycbxdHMQJtT812sHgcYyA4HCufZGPowI0F1Bs_TCmSEJKjNZW3LfNuMhn3IhlLgKKEVjU/exec';
   const secret = 'meni2025!';
 
-  const tg = window.Telegram.WebApp;
-
-if (!tg.initData || tg.initData === "") {
-  alert("This feature only works inside Telegram");
-  throw new Error("Not inside Telegram WebApp");
-}
 	  async function fetchMemes() {
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
     if (!res.ok) {
