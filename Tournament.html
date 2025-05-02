@@ -139,47 +139,100 @@
     <button onclick="location.href='index.html'">Explore</button>
     <button class="active">Tournament</button>
   </div>
+<script>
+  const joinBtn = document.getElementById('joinBtn');
+  const toast = document.getElementById('toast');
+  const checkMembershipUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
+  const userScriptUrl = "https://script.google.com/macros/s/AKfycbyBeM3mtMWnpMC2f3U3lNVYWhMicVNLDGBYrVKAKw0_xBOdn45NIDgFh-dK6IV4As1m/exec"; // URL اسکریپت مربوط به ذخیره آیدی
 
-  <script>
-    const joinBtn = document.getElementById('joinBtn');
-    joinBtn.addEventListener('click', checkChannelJoin);
+  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 2000);
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2000);
+  }
+
+  async function saveTelegramId(userId) {
+    try {
+      await fetch(userScriptUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ telegram_id: userId })
+      });
+    } catch (err) {
+      console.error("Error saving telegram_id:", err);
     }
+  }
 
-    function checkChannelJoin() {
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-      if (!tgUser || !tgUser.id) {
-        showToast("User data not available");
-        return;
+  async function checkIfUserSaved(userId) {
+    joinBtn.disabled = true;
+    joinBtn.textContent = "Checking...";
+    try {
+      const res = await fetch(`${userScriptUrl}?check_user=${userId}`);
+      const data = await res.json();
+      if (data.exists) {
+        joinBtn.textContent = "Upload";
+        joinBtn.disabled = false;
+        joinBtn.onclick = () => window.location.href = "join.html";
+      } else {
+        joinBtn.textContent = "Join";
+        joinBtn.disabled = false;
+        joinBtn.onclick = checkChannelJoin;
       }
-
-      const userId = tgUser.id;
-      const checkUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
-
-      fetch(`${checkUrl}?user_id=${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "joined") {
-            window.location.href = "join.html"; // صفحه مخصوص جوین
-          } else {
-            showToast("You need to join channel first");
-            setTimeout(() => {
-              window.location.href = "https://t.me/meni_dao"; // آدرس چنلت
-            }, 2000);
-          }
-        })
-        .catch(err => {
-          console.error("Fetch error:", err);
-          showToast("Error checking channel status");
-        });
+    } catch (err) {
+      console.error("Check user error:", err);
+      showToast("Connection error");
+      joinBtn.textContent = "Join";
+      joinBtn.disabled = false;
+      joinBtn.onclick = checkChannelJoin;
     }
-  </script>
+  }
+
+  async function checkChannelJoin() {
+    if (!tgUser || !tgUser.id) {
+      showToast("User data not available");
+      return;
+    }
+    joinBtn.disabled = true;
+    joinBtn.textContent = "Checking...";
+    const userId = tgUser.id;
+
+    try {
+      const res = await fetch(`${checkMembershipUrl}?user_id=${userId}`);
+      const data = await res.json();
+      if (data.status === "joined") {
+        // ذخیره‌ی telegram_id همین‌جا
+        await saveTelegramId(userId);
+        joinBtn.textContent = "Upload";
+        joinBtn.disabled = false;
+        joinBtn.onclick = () => window.location.href = "join.html";
+      } else {
+        showToast("You need to join channel first");
+        setTimeout(() => {
+          window.location.href = "https://t.me/meni_dao";
+        }, 2000);
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+      showToast("Error checking channel status");
+      joinBtn.textContent = "Join";
+      joinBtn.disabled = false;
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (tgUser && tgUser.id) {
+      checkIfUserSaved(tgUser.id);
+    } else {
+      showToast("Telegram user not found");
+    }
+  });
+</script>
+ 
 </body>
 </html>
