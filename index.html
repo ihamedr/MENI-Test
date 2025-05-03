@@ -225,67 +225,52 @@
       gallery.appendChild(card);
     });
   }
-async function likeMeme(memeId, btn) {
-  const likeCount = btn.nextElementSibling;
-  if (btn.classList.contains("liked")) return;
 
-  const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like&voterId=${telegramId}`;
-  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}, { method: "POST" }`);
+  async function likeMeme(memeId, btn) {
+    const likeCount = btn.nextElementSibling;
+    if (btn.classList.contains("liked")) return;
 
-  if (!res.ok) {
-    console.error("Failed to like meme:", res.statusText);
-    showMessage("Couldn’t like this meme. Try again in a bit.");
-    return;
+    const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like&voterId=${telegramId}`;
+    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
+
+    if (!res.ok) {
+      console.error("Failed to like meme:", res.statusText);
+      return;
+    }
+
+    const result = await res.text();
+    if (result === "Updated") {
+      btn.classList.add("liked");
+      likeCount.textContent = parseInt(likeCount.textContent) + 1;
+    } else if (result === "Already liked") {
+      alert("You already liked this meme.");
+    }
   }
 
-  const result = await res.text();
-  if (result === "Updated") {
-    btn.classList.add("liked");
-    likeCount.textContent = parseInt(likeCount.textContent) + 1;
-    showMessage("Meme liked!");
-  } else if (result === "Already liked") {
-    showMessage("You've already shown love to this one.");
+  async function voteMeme(memeId, btn) {
+    const voteCount = btn.nextElementSibling;
+    if (btn.classList.contains("voted")) return;
+
+    const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&voterId=${telegramId}`;
+    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
+
+    if (!res.ok) {
+      console.error("Failed to vote on meme:", res.statusText);
+      return;
+    }
+
+    const result = await res.text();
+    if (result === "Updated") {
+      btn.classList.add("voted");
+      voteCount.textContent = parseInt(voteCount.textContent) + 1;
+    } else {
+      alert("You have already voted or something went wrong.");
+    }
   }
-}
-
-async function voteMeme(memeId, btn) {
-  const voteCount = btn.nextElementSibling;
-  if (btn.classList.contains("voted")) return;
-
-  const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&voterId=${telegramId}`;
-  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}, { method: "POST" }`);
-
-  if (!res.ok) {
-    console.error("Failed to vote on meme:", res.statusText);
-    showMessage("Voting didn’t work. Please try again.");
-    return;
-  }
-
-  const result = await res.text();
-  if (result === "Updated") {
-    btn.classList.add("voted");
-    voteCount.textContent = parseInt(voteCount.textContent) + 1;
-    showMessage("Your vote has been counted!");
-  } else {
-    showMessage("Already voted or something went wrong.");
-  }
-}
-
-// پیام موقت در بالای صفحه
-function showMessage(text) {
-  const messageDiv = document.getElementById("message");
-  messageDiv.textContent = text;
-  messageDiv.style.display = "block";
-  setTimeout(() => {
-    messageDiv.style.display = "none";
-  }, 3000);
-}
-  
 
   window.onload = () => {
     checkUserBeforeLoading();
   };
-	  
 </script>
 </body>
 </html>
