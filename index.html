@@ -134,6 +134,26 @@
     .nav-bar button:hover {
       color: #ff9900;
     }
+	  .toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2b2b2b;
+  color: #ff9900;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  border: 1px solid #ff9900;
+  font-size: 0.8rem;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
+  animation: fadeout 2.5s forwards;
+}
+@keyframes fadeout {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
   </style>
 </head>
 <body>
@@ -147,7 +167,7 @@
       <button>POPULAR</button>
     </div>
   </header>
-
+<div class="toast" id="toast"></div>
   <!-- پیام هشدار -->
   <div id="message" style="display: none; text-align: center; color: #ff9900; margin-top: 2rem; font-size: 1rem;"></div>
 
@@ -172,6 +192,13 @@
 
   const secret = 'meni2025!';
 
+	  function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
   async function checkUserBeforeLoading() {
     const userCheckUrl = `${userCheckScript}?telegram_id=${telegramId}`;
     try {
@@ -242,8 +269,9 @@
     if (result === "Updated") {
       btn.classList.add("liked");
       likeCount.textContent = parseInt(likeCount.textContent) + 1;
+		showToast("You liked this meme");
     } else if (result === "Already liked") {
-      alert("You already liked this meme.");
+      showToast("You already liked this meme.");
     }
   }
 
@@ -263,11 +291,11 @@
     if (result === "Updated") {
       btn.classList.add("voted");
       voteCount.textContent = parseInt(voteCount.textContent) + 1;
+		showToast("Your vote has been successfully submitted");
     } else {
-      alert("You have already voted or something went wrong.");
+      showToast("You have already voted");
     }
   }
-
   window.onload = () => {
     checkUserBeforeLoading();
   };
