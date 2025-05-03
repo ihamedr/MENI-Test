@@ -244,18 +244,24 @@
     <button class="active" onclick="location.href='index.html'">Explore</button>
     <button onclick="location.href='Tournament.html'">Tournament</button>
   </div>
-<!-- Meme Modal -->
-<div class="meme-modal hidden" id="memeModal">
+<!-- Modal -->
+<div id="memeModal" class="meme-modal hidden">
   <div class="meme-modal-content">
-    <img id="modalImage" src="" alt="">
+    <img id="modalImage" class="modal-image" src="" />
     <div class="meta">
-      <div class="icons">
-        <img src="like1.png" width="20">
-        <img src="vote1.png" width="20">
+      <div class="like-section">
+        <div class="like-vote-group">
+          <img id="modalLikeIcon" src="like1.png" width="20" />
+          <span id="modalLikeCount">0</span>
+        </div>
+        <div class="like-vote-group">
+          <img id="modalVoteIcon" src="vote1.png" width="20" />
+          <span id="modalVoteCount">0</span>
+        </div>
       </div>
       <div class="user-id" id="modalUserId"></div>
     </div>
-    <button id="closeModalBtn">Back</button>
+    <button class="close-btn" onclick="closeModal()">×</button>
   </div>
 </div>
   <script>
@@ -406,23 +412,77 @@ async function voteMeme(memeId, btn) {
     showToast("You have already voted");
   }
 }
-  const memeModal = document.getElementById('memeModal');
-  const modalImage = document.getElementById('modalImage');
-  const modalUserId = document.getElementById('modalUserId');
-  const closeModalBtn = document.getElementById('closeModalBtn');
+	  const modalImage = document.getElementById("modalImage");
+const modalUserId = document.getElementById("modalUserId");
+const memeModal = document.getElementById("memeModal");
 
-  function openModal(imageUrl, userId) {
-    modalImage.src = imageUrl;
-    modalUserId.textContent = userId;
-    memeModal.classList.remove('hidden');
-    document.body.classList.add('modal-open');
+function openModal(imageUrl, userId) {
+  modalImage.src = imageUrl;
+  modalUserId.textContent = userId;
+  const meme = Array.from(document.querySelectorAll(".meme-card img"))
+                    .find(img => img.src === imageUrl)?.closest(".meme-card");
+
+  if (meme) {
+    const likeCount = meme.querySelector(".like-count")?.textContent || "0";
+    const voteCount = meme.querySelector(".vote-count")?.textContent || "0";
+    const liked = meme.querySelector(".icon-btn.liked");
+    const voted = meme.querySelector(".icon-btn.voted");
+
+    document.getElementById("modalLikeIcon").src = liked ? "like2.png" : "like1.png";
+    document.getElementById("modalVoteIcon").src = voted ? "vote2.png" : "vote1.png";
+    document.getElementById("modalLikeCount").textContent = likeCount;
+    document.getElementById("modalVoteCount").textContent = voteCount;
   }
 
-  closeModalBtn.addEventListener('click', () => {
-    memeModal.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-  });
+  memeModal.classList.remove("hidden");
+}
 
+function closeModal() {
+  memeModal.classList.add("hidden");
+}
+
+function likeMeme(id, btn) {
+  const liked = btn.classList.toggle("liked");
+  const icon = btn.querySelector("img");
+  const count = btn.nextElementSibling;
+  icon.src = liked ? "like2.png" : "like1.png";
+  count.textContent = parseInt(count.textContent) + (liked ? 1 : -1);
+  // sendLikeToServer(id, liked); // Optional
+}
+
+function voteMeme(id, btn) {
+  const voted = btn.classList.toggle("voted");
+  const icon = btn.querySelector("img");
+  const count = btn.nextElementSibling;
+  icon.src = voted ? "vote2.png" : "vote1.png";
+  count.textContent = parseInt(count.textContent) + (voted ? 1 : -1);
+  // sendVoteToServer(id, voted); // Optional
+}
+
+function renderMemeCard(meme) {
+  const hasLiked = false;
+  const hasVoted = false;
+
+  return `
+    <div class="meme-card">
+      <img src="${meme.image}" onclick="openModal('${meme.image}', '${meme.userId}')" />
+      <div class="like-section">
+        <div class="like-vote-group">
+          <button class="icon-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
+            <img src="${hasLiked ? 'like2.png' : 'like1.png'}" />
+          </button>
+          <span class="like-count">${meme.likes || 0}</span>
+        </div>
+        <div class="like-vote-group">
+          <button class="icon-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">
+            <img src="${hasVoted ? 'vote2.png' : 'vote1.png'}" />
+          </button>
+          <span class="vote-count">${meme.votes || 0}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
     window.onload = () => {
       checkUserBeforeLoading();
     };
