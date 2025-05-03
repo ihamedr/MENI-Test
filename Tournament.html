@@ -156,18 +156,22 @@
   }
 
   async function saveTelegramId(userId) {
-    try {
-      await fetch(userScriptUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ telegram_id: userId })
-      });
-    } catch (err) {
-      console.error("Error saving telegram_id:", err);
-    }
+  try {
+    const res = await fetch(userScriptUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ telegram_id: userId.toString() })  // تبدیل به رشته
+    });
+
+    const text = await res.text(); // برای دیباگ پاسخ سرور رو بگیر
+    showToast("Saved: " + text);   // نمایش پاسخ روی صفحه
+  } catch (err) {
+    showToast("POST Error: " + err.message);
+    console.error("Error saving telegram_id:", err);
   }
+}
 
   async function checkIfUserSaved(userId) {
     joinBtn.disabled = true;
