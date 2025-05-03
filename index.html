@@ -168,7 +168,7 @@
 
   const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
   const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
-  const userCheckScript = 'https://script.google.com/macros/s/AKfycbwT13pKfvxbAZrwfhBsflZauu4kJxZpgd2eDjwob_hORfYEILRmb6iXUNRlz6hm3oFYcw/exec'; // آدرس شیت telegram_id
+  const userCheckScript = 'https://script.google.com/macros/s/AKfycbxDa40P1gwb8wbSfIn5avE1iXhP9AfIRFFXan9e92x_SbBHVEVT9QXtaKCFmSE6VOqCzQ/exec'; // آدرس شیت telegram_id
 
   const secret = 'meni2025!';
 
@@ -180,12 +180,12 @@
       if (data.exists) {
         fetchMemes();
       } else {
-        document.getElementById("message").textContent = "You must join a tournament before accessing the content.";
+        document.getElementById("message").textContent = "You must join a tournament first";
         document.getElementById("message").style.display = "block";
       }
     } catch (err) {
       console.error("User check error:", err);
-      document.getElementById("message").textContent = "Error checking user status.";
+      document.getElementById("message").textContent = "Error checking user status";
       document.getElementById("message").style.display = "block";
     }
   }
