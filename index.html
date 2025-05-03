@@ -135,20 +135,20 @@
       color: #ff9900;
     }
 	  .toast {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #2b2b2b;
-  color: #ff9900;
-  padding: 0.6rem 1.2rem;
-  border-radius: 12px;
-  border: 1px solid #ff9900;
-  font-size: 0.8rem;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
-  animation: fadeout 2.5s forwards;
-}
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ff9900;
+      color: #1f1f1f;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-family: 'Space Grotesk', sans-serif;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 999;
+    }
 @keyframes fadeout {
   0% { opacity: 1; }
   80% { opacity: 1; }
@@ -185,20 +185,21 @@
   const telegramUser = tg.initDataUnsafe.user || {};
   const telegramId = telegramUser.id;
   const telegramUsername = telegramUser.username || 'unknown';
-
+const toast = document.getElementById('toast');
+	  
   const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
   const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
   const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec'; // آدرس شیت telegram_id
 
   const secret = 'meni2025!';
 
-	  function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2500);
-}
+	  function showToast(msg) {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2000);
+  }
   async function checkUserBeforeLoading() {
     const userCheckUrl = `${userCheckScript}?telegram_id=${telegramId}`;
     try {
