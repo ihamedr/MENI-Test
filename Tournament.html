@@ -143,7 +143,7 @@
   const joinBtn = document.getElementById('joinBtn');
   const toast = document.getElementById('toast');
   const checkMembershipUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
-  const userScriptUrl = "https://script.google.com/macros/s/AKfycbx4bPyplf2JMq1b9ThhpQ2O0siCkG_TEvkGUEk6VElJ0PGwwMAtsHs4C-cUBDMhgBL9vg/exec"; // URL اسکریپت مربوط به ذخیره آیدی
+  const userScriptUrl = "https://script.google.com/macros/s/AKfycbxrc1yrA4rxwe1BJq80psLxwDZIyqAnR6lNDwXB9rRNXOjsf0tA8lrR87evWKDoQ91IEQ/exec";
 
   const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
 
@@ -156,22 +156,12 @@
   }
 
   async function saveTelegramId(userId) {
-  try {
-    const res = await fetch(userScriptUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ telegram_id: userId.toString() })  // تبدیل به رشته
-    });
-
-    const text = await res.text(); // برای دیباگ پاسخ سرور رو بگیر
-    showToast("Saved: " + text);   // نمایش پاسخ روی صفحه
-  } catch (err) {
-    showToast("POST Error: " + err.message);
-    console.error("Error saving telegram_id:", err);
+    try {
+      await fetch(`${userScriptUrl}?store_user_id=${userId}`);
+    } catch (err) {
+      console.error("Error saving telegram_id:", err);
+    }
   }
-}
 
   async function checkIfUserSaved(userId) {
     joinBtn.disabled = true;
@@ -197,44 +187,41 @@
     }
   }
 
- async function checkChannelJoin() {
-  if (!tgUser || !tgUser.id) {
-    showToast("User data not available");
-    return;
-  }
-  joinBtn.disabled = true;
-  joinBtn.textContent = "Checking...";
-  const userId = tgUser.id;
+  async function checkChannelJoin() {
+    if (!tgUser || !tgUser.id) {
+      showToast("User data not available");
+      return;
+    }
+    joinBtn.disabled = true;
+    joinBtn.textContent = "Checking...";
+    const userId = tgUser.id;
 
-  try {
-    const res = await fetch(`${checkMembershipUrl}?user_id=${userId}`);
-    const data = await res.json();
-    if (data.status === "joined") {
-      await saveTelegramId(userId);
-      joinBtn.textContent = "Upload";
-      joinBtn.disabled = false;
-      joinBtn.onclick = () => window.location.href = "join.html";
-    } else {
-      showToast("You need to join channel first");
-      
-      // ریست کردن دکمه قبل از redirect
+    try {
+      const res = await fetch(`${checkMembershipUrl}?user_id=${userId}`);
+      const data = await res.json();
+      if (data.status === "joined") {
+        await saveTelegramId(userId);
+        joinBtn.textContent = "Upload";
+        joinBtn.disabled = false;
+        joinBtn.onclick = () => window.location.href = "join.html";
+      } else {
+        showToast("You need to join channel first");
+        joinBtn.textContent = "Join";
+        joinBtn.disabled = false;
+        joinBtn.onclick = checkChannelJoin;
+        setTimeout(() => {
+          window.location.href = "https://t.me/meni_dao";
+        }, 2000);
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+      showToast("Error checking channel status");
       joinBtn.textContent = "Join";
       joinBtn.disabled = false;
       joinBtn.onclick = checkChannelJoin;
-
-      // هدایت به کانال
-      setTimeout(() => {
-        window.location.href = "https://t.me/meni_dao";
-      }, 2000);
     }
-  } catch (err) {
-    console.error("Fetch error:", err);
-    showToast("Error checking channel status");
-    joinBtn.textContent = "Join";
-    joinBtn.disabled = false;
-    joinBtn.onclick = checkChannelJoin;
   }
-}
+
   document.addEventListener("DOMContentLoaded", () => {
     if (tgUser && tgUser.id) {
       checkIfUserSaved(tgUser.id);
