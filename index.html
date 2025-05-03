@@ -178,35 +178,44 @@
     <button class="active" onclick="location.href='index.html'">Explore</button>
     <button onclick="location.href='Tournament.html'">Tournament</button>
   </div>
-
-  <script>
+<script>
   const tg = window.Telegram.WebApp;
   tg.expand();
   const telegramUser = tg.initDataUnsafe.user || {};
   const telegramId = telegramUser.id;
   const telegramUsername = telegramUser.username || 'unknown';
-const toast = document.getElementById('toast');
-	  
+  const toast = document.getElementById('toast');
+
   const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
   const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
-  const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec'; // آدرس شیت telegram_id
-
+  const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec';
   const secret = 'meni2025!';
 
-	  function showToast(msg) {
+  function showToast(msg) {
     toast.textContent = msg;
     toast.style.display = 'block';
     setTimeout(() => {
       toast.style.display = 'none';
     }, 2000);
   }
+
+  function showToastLoading(msg = 'Please wait...') {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+  }
+
+  function hideToast() {
+    toast.style.display = 'none';
+  }
+
   async function checkUserBeforeLoading() {
+    showToastLoading();
     const userCheckUrl = `${userCheckScript}?telegram_id=${telegramId}`;
     try {
       const res = await fetch(userCheckUrl);
       const data = await res.json();
       if (data.exists) {
-        fetchMemes();
+        await fetchMemes();
       } else {
         document.getElementById("message").textContent = "You must join a tournament first";
         document.getElementById("message").style.display = "block";
@@ -215,13 +224,17 @@ const toast = document.getElementById('toast');
       console.error("User check error:", err);
       document.getElementById("message").textContent = "Error checking user status";
       document.getElementById("message").style.display = "block";
+    } finally {
+      hideToast();
     }
   }
 
   async function fetchMemes() {
+    showToastLoading();
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
     if (!res.ok) {
       console.error("Failed to fetch memes:", res.statusText);
+      hideToast();
       return;
     }
 
@@ -252,15 +265,18 @@ const toast = document.getElementById('toast');
       `;
       gallery.appendChild(card);
     });
+    hideToast();
   }
 
   async function likeMeme(memeId, btn) {
     const likeCount = btn.nextElementSibling;
     if (btn.classList.contains("liked")) return;
 
+    showToastLoading();
     const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like&voterId=${telegramId}`;
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
 
+    hideToast();
     if (!res.ok) {
       console.error("Failed to like meme:", res.statusText);
       return;
@@ -270,7 +286,7 @@ const toast = document.getElementById('toast');
     if (result === "Updated") {
       btn.classList.add("liked");
       likeCount.textContent = parseInt(likeCount.textContent) + 1;
-		showToast("You liked this meme");
+      showToast("You liked this meme");
     } else if (result === "Already liked") {
       showToast("You already liked this meme.");
     }
@@ -280,9 +296,11 @@ const toast = document.getElementById('toast');
     const voteCount = btn.nextElementSibling;
     if (btn.classList.contains("voted")) return;
 
+    showToastLoading();
     const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&voterId=${telegramId}`;
     const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
 
+    hideToast();
     if (!res.ok) {
       console.error("Failed to vote on meme:", res.statusText);
       return;
@@ -292,14 +310,16 @@ const toast = document.getElementById('toast');
     if (result === "Updated") {
       btn.classList.add("voted");
       voteCount.textContent = parseInt(voteCount.textContent) + 1;
-		showToast("Your vote has been successfully submitted");
+      showToast("Your vote has been successfully submitted");
     } else {
       showToast("You have already voted");
     }
   }
+
   window.onload = () => {
     checkUserBeforeLoading();
   };
 </script>
+  
 </body>
 </html>
