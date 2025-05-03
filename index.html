@@ -158,6 +158,69 @@
       display: none;
       z-index: 999;
     }
+  body.modal-open {
+    overflow: hidden;
+  }
+
+  .meme-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    transition: opacity 0.3s ease;
+  }
+
+  .meme-modal.hidden {
+    display: none;
+  }
+
+  .meme-modal-content {
+    background: #2b2b2b;
+    padding: 1rem;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 90%;
+    box-shadow: 0 0 30px rgba(255, 153, 0, 0.4);
+    animation: zoomIn 0.3s ease;
+  }
+
+  .meme-modal-content img {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .meta {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ff9900;
+  }
+
+  .icons img {
+    margin-right: 8px;
+  }
+
+  #closeModalBtn {
+    margin-top: 1rem;
+    background: #ff9900;
+    color: #1f1f1f;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  @keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
   </style>
 </head>
 <body>
@@ -181,7 +244,20 @@
     <button class="active" onclick="location.href='index.html'">Explore</button>
     <button onclick="location.href='Tournament.html'">Tournament</button>
   </div>
-
+<!-- Meme Modal -->
+<div class="meme-modal hidden" id="memeModal">
+  <div class="meme-modal-content">
+    <img id="modalImage" src="" alt="">
+    <div class="meta">
+      <div class="icons">
+        <img src="like1.png" width="20">
+        <img src="vote1.png" width="20">
+      </div>
+      <div class="user-id" id="modalUserId"></div>
+    </div>
+    <button id="closeModalBtn">Back</button>
+  </div>
+</div>
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
@@ -258,7 +334,7 @@
         const card = document.createElement("div");
         card.className = "meme-card";
        card.innerHTML = `
-  <img src="${meme.url}" alt="${meme.title || ''}" />
+  <img src="${meme.url}" alt="${meme.title || ''}" onclick="openModal('${meme.url}', '@${meme.telegramUsername || 'unknown'}')" style="cursor:pointer;" />
   <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
   <div class="like-section">
     <button class="icon-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
@@ -330,6 +406,22 @@ async function voteMeme(memeId, btn) {
     showToast("You have already voted");
   }
 }
+  const memeModal = document.getElementById('memeModal');
+  const modalImage = document.getElementById('modalImage');
+  const modalUserId = document.getElementById('modalUserId');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  function openModal(imageUrl, userId) {
+    modalImage.src = imageUrl;
+    modalUserId.textContent = userId;
+    memeModal.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+  }
+
+  closeModalBtn.addEventListener('click', () => {
+    memeModal.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+  });
 
     window.onload = () => {
       checkUserBeforeLoading();
