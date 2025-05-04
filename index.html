@@ -214,21 +214,18 @@
     cursor: pointer;
   }
 
-  #closeModalBtn {
-    margin-top: 1rem;
-    background: #ff9900;
-    color: #1f1f1f;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif;
-  }
-
   @keyframes zoomIn {
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
+	  @keyframes zoomOut {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.8); opacity: 0; }
+}
+
+.meme-modal-content.hide-anim {
+  animation: zoomOut 0.2s ease forwards;
+}
   </style>
 </head>
 <body>
@@ -269,7 +266,6 @@
       </div>
       <div class="user-id" id="modalUserId"></div>
     </div>
-    <button id="closeModalBtn">Back</button>
   </div>
 </div>
 	
@@ -421,116 +417,126 @@ async function voteMeme(memeId, btn) {
     showToast("You have already voted");
   }
 }
-  const memeModal = document.getElementById('memeModal');
-  const modalImage = document.getElementById('modalImage');
-  const modalUserId = document.getElementById('modalUserId');
-  const modalLikeBtn = document.getElementById('modalLikeBtn');
-  const modalVoteBtn = document.getElementById('modalVoteBtn');
-  const modalLikeCount = document.getElementById('modalLikeCount');
-  const modalVoteCount = document.getElementById('modalVoteCount');
-  const closeModalBtn = document.getElementById('closeModalBtn');
+ const memeModal = document.getElementById('memeModal');
+const modalImage = document.getElementById('modalImage');
+const modalUserId = document.getElementById('modalUserId');
+const modalLikeBtn = document.getElementById('modalLikeBtn');
+const modalVoteBtn = document.getElementById('modalVoteBtn');
+const modalLikeCount = document.getElementById('modalLikeCount');
+const modalVoteCount = document.getElementById('modalVoteCount');
 
-  let currentMeme = null;
+let currentMeme = null;
 
-  function openModal(imageUrl, userId) {
-    const meme = allMemes.find(m => m.url === imageUrl);
-    if (!meme) return;
-
-    currentMeme = meme;
-    modalImage.src = imageUrl;
-    modalUserId.textContent = userId;
-
-    const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
-    const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-
-    const hasLiked = likers.includes(String(telegramId));
-    const hasVoted = voters.includes(String(telegramId));
-
-    modalLikeBtn.className = "icon-btn" + (hasLiked ? " liked" : "");
-    modalLikeBtn.querySelector('img').src = hasLiked ? 'like2.png' : 'like1.png';
-    modalLikeCount.textContent = meme.likes || 0;
-
-    modalVoteBtn.className = "icon-btn" + (hasVoted ? " voted" : "");
-    modalVoteBtn.querySelector('img').src = hasVoted ? 'vote2.png' : 'vote1.png';
-    modalVoteCount.textContent = meme.votes || 0;
-
-    memeModal.classList.remove('hidden');
-    document.body.classList.add('modal-open');
-  }
-
-  modalLikeBtn.onclick = async () => {
-    if (!currentMeme || modalLikeBtn.classList.contains("liked")) return;
-
-    showToastLoading();
-    const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=like&voterId=${telegramId}`;
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-    hideToast();
-
-    if (res.ok && await res.text() === "Updated") {
-      modalLikeBtn.classList.add("liked", "pulse");
-      modalLikeBtn.querySelector('img').src = "like2.png";
-      modalLikeCount.textContent = parseInt(modalLikeCount.textContent) + 1;
-      showToast("You liked this meme");
-      setTimeout(() => modalLikeBtn.classList.remove("pulse"), 300);
-    } else {
-      showToast("You already liked this meme");
-    }
-  };
-
-  modalVoteBtn.onclick = async () => {
-    if (!currentMeme || modalVoteBtn.classList.contains("voted")) return;
-
-    showToastLoading();
-    const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=vote&voterId=${telegramId}`;
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-    hideToast();
-
-    if (res.ok && await res.text() === "Updated") {
-      modalVoteBtn.classList.add("voted", "pulse");
-      modalVoteBtn.querySelector('img').src = "vote2.png";
-      modalVoteCount.textContent = parseInt(modalVoteCount.textContent) + 1;
-      showToast("Your vote has been successfully submitted");
-      setTimeout(() => modalVoteBtn.classList.remove("pulse"), 300);
-    } else {
-      showToast("You have already voted");
-    }
-  };
-
-  closeModalBtn.addEventListener('click', () => {
+// تابع بستن مودال با انیمیشن
+function closeModal() {
+  const content = document.querySelector('.meme-modal-content');
+  content.classList.add('hide-anim');
+  setTimeout(() => {
     memeModal.classList.add('hidden');
     document.body.classList.remove('modal-open');
+    content.classList.remove('hide-anim');
     currentMeme = null;
-  });
+  }, 200);
+}
 
-  // ذخیره لیست کل میم‌ها برای استفاده در modal
-  let allMemes = [];
+// کلیک روی پس‌زمینه برای بستن
+memeModal.addEventListener('click', (e) => {
+  if (e.target === memeModal) closeModal();
+});
 
-  async function fetchMemes() {
-    showToastLoading();
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
-    if (!res.ok) {
-      console.error("Failed to fetch memes:", res.statusText);
-      hideToast();
-      return;
-    }
+function openModal(imageUrl, userId) {
+  const meme = allMemes.find(m => m.url === imageUrl);
+  if (!meme) return;
 
-    const memes = await res.json();
-    allMemes = memes; // ذخیره برای استفاده در modal
-    const gallery = document.getElementById("gallery");
-    gallery.innerHTML = "";
+  currentMeme = meme;
+  modalImage.src = imageUrl;
+  modalUserId.textContent = userId;
 
-    memes.forEach(meme => {
-      if (!meme.id || !meme.url) return;
+  const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
+  const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
 
-      const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-      const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
+  const hasLiked = likers.includes(String(telegramId));
+  const hasVoted = voters.includes(String(telegramId));
 
-      const hasVoted = voters.includes(String(telegramId));
-      const hasLiked = likers.includes(String(telegramId));
+  modalLikeBtn.className = "icon-btn" + (hasLiked ? " liked" : "");
+  modalLikeBtn.querySelector('img').src = hasLiked ? 'like2.png' : 'like1.png';
+  modalLikeCount.textContent = meme.likes || 0;
 
-      const card = document.createElement("div");
-      card.className = "meme-card";
-      card.innerHTML = `
+  modalVoteBtn.className = "icon-btn" + (hasVoted ? " voted" : "");
+  modalVoteBtn.querySelector('img').src = hasVoted ? 'vote2.png' : 'vote1.png';
+  modalVoteCount.textContent = meme.votes || 0;
+
+  memeModal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+}
+
+modalLikeBtn.onclick = async () => {
+  if (!currentMeme || modalLikeBtn.classList.contains("liked")) return;
+
+  showToastLoading();
+  const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=like&voterId=${telegramId}`;
+  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
+  hideToast();
+
+  if (res.ok && await res.text() === "Updated") {
+    modalLikeBtn.classList.add("liked", "pulse");
+    modalLikeBtn.querySelector('img').src = "like2.png";
+    modalLikeCount.textContent = parseInt(modalLikeCount.textContent) + 1;
+    showToast("You liked this meme");
+    setTimeout(() => modalLikeBtn.classList.remove("pulse"), 300);
+  } else {
+    showToast("You already liked this meme");
+  }
+};
+
+modalVoteBtn.onclick = async () => {
+  if (!currentMeme || modalVoteBtn.classList.contains("voted")) return;
+
+  showToastLoading();
+  const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=vote&voterId=${telegramId}`;
+  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
+  hideToast();
+
+  if (res.ok && await res.text() === "Updated") {
+    modalVoteBtn.classList.add("voted", "pulse");
+    modalVoteBtn.querySelector('img').src = "vote2.png";
+    modalVoteCount.textContent = parseInt(modalVoteCount.textContent) + 1;
+    showToast("Your vote has been successfully submitted");
+    setTimeout(() => modalVoteBtn.classList.remove("pulse"), 300);
+  } else {
+    showToast("You have already voted");
+  }
+};
+
+// ذخیره لیست کل میم‌ها برای استفاده در modal
+let allMemes = [];
+
+async function fetchMemes() {
+  showToastLoading();
+  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
+  if (!res.ok) {
+    console.error("Failed to fetch memes:", res.statusText);
+    hideToast();
+    return;
+  }
+
+  const memes = await res.json();
+  allMemes = memes;
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+
+  memes.forEach(meme => {
+    if (!meme.id || !meme.url) return;
+
+    const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
+    const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
+
+    const hasVoted = voters.includes(String(telegramId));
+    const hasLiked = likers.includes(String(telegramId));
+
+    const card = document.createElement("div");
+    card.className = "meme-card";
+    card.innerHTML = `
   <img src="${meme.url}" alt="${meme.title || ''}" onclick="openModal('${meme.url}', '@${meme.telegramUsername || 'unknown'}')" style="cursor:pointer;" />
   <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
   <div class="like-section">
@@ -544,10 +550,11 @@ async function voteMeme(memeId, btn) {
     <span class="vote-count">${meme.votes || 0}</span>
   </div>
 `;
-      gallery.appendChild(card);
-    });
-    hideToast();
-  }
+    gallery.appendChild(card);
+  });
+
+  hideToast();
+}
 
     window.onload = () => {
       checkUserBeforeLoading();
