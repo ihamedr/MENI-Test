@@ -205,26 +205,7 @@
   .icons img {
     margin-right: 8px;
   }
-.modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 1rem;
-}
 
-.modal-actions .action {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.modal-actions .action img {
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
   #closeModalBtn {
     margin-top: 1rem;
     background: #ff9900;
@@ -370,41 +351,35 @@
       });
       hideToast();
     }
-async function likeMeme(memeId, btn, isModal = false) {
-  const countSpan = btn.nextElementSibling;
-  const img = btn;
+async function likeMeme(memeId, btn) {
+  const likeCount = btn.nextElementSibling;
+  const img = btn.querySelector('img');
   if (btn.classList.contains("liked")) return;
 
   showToastLoading();
-
   const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like&voterId=${telegramId}`;
   const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
 
   hideToast();
-
-  if (!res.ok) return;
+  if (!res.ok) {
+    console.error("Failed to like meme:", res.statusText);
+    return;
+  }
 
   const result = await res.text();
   if (result === "Updated") {
+    btn.classList.add("liked", "pulse");
     img.src = "like2.png";
-    btn.classList.add("liked");
-    countSpan.textContent = parseInt(countSpan.textContent) + 1;
+    likeCount.textContent = parseInt(likeCount.textContent) + 1;
     showToast("You liked this meme");
 
-    // sync in main gallery
-    if (isModal) {
-      const mainImg = document.querySelector(.meme-card img[src="${modalImage.src}"]);
-      const mainBtn = mainImg?.parentElement?.querySelector(".icon-btn img[src='like1.png']");
-      if (mainBtn) {
-        mainBtn.src = "like2.png";
-        const mainCount = mainBtn.parentElement.nextElementSibling;
-        mainCount.textContent = parseInt(mainCount.textContent) + 1;
-      }
-    }
+    setTimeout(() => btn.classList.remove("pulse"), 300);
+  } else if (result === "Already liked") {
+    showToast("You already liked this meme.");
   }
 }
 
-async function voteMeme(memeId, btn, isModal = false) {
+async function voteMeme(memeId, btn) {
   const voteCount = btn.nextElementSibling;
   const img = btn.querySelector('img');
   if (btn.classList.contains("voted")) return;
@@ -412,8 +387,8 @@ async function voteMeme(memeId, btn, isModal = false) {
   showToastLoading();
   const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&voterId=${telegramId}`;
   const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-  
-hideToast();
+
+  hideToast();
   if (!res.ok) {
     console.error("Failed to vote on meme:", res.statusText);
     return;
@@ -429,16 +404,6 @@ hideToast();
     setTimeout(() => btn.classList.remove("pulse"), 300);
   } else {
     showToast("You have already voted");
- 
-// sync in main gallery
-    if (isModal) {
-      const mainImg = document.querySelector(.meme-card img[src="${modalImage.src}"]);
-      const mainBtn = mainImg?.parentElement?.querySelector(".icon-btn img[src='vote1.png']");
-      if (mainBtn) {
-        mainBtn.src = "vote2.png";
-        const mainCount = mainBtn.parentElement.nextElementSibling;
-        mainCount.textContent = parseInt(mainCount.textContent) + 1;
-      }
   }
 }
   const memeModal = document.getElementById('memeModal');
@@ -448,17 +413,10 @@ hideToast();
 
   function openModal(imageUrl, userId) {
     modalImage.src = imageUrl;
-modalUserId.textContent = '@' + userId;
-modalActions.innerHTML = `
-  <div class="action">
-    <img src="${isLiked ? 'like2.png' : 'like1.png'}" onclick="likeMeme('${memeId}', this, true)">
-    <span class="like-count">${likeCount}</span>
-  </div>
-  <div class="action">
-    <img src="${isVoted ? 'vote2.png' : 'vote1.png'}" onclick="voteMeme('${memeId}', this, true)">
-    <span class="vote-count">${voteCount}</span>
-  </div>
-`;
+    modalUserId.textContent = userId;
+    memeModal.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+  }
 
   closeModalBtn.addEventListener('click', () => {
     memeModal.classList.add('hidden');
