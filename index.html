@@ -156,7 +156,7 @@
       font-family: 'Space Grotesk', sans-serif;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
       display: none;
-      z-index: 999;
+      z-index: 10001;
     }
   body.modal-open {
     overflow: hidden;
@@ -204,6 +204,7 @@
 
   .icons img {
     margin-right: 8px;
+	  margin-top: 8px;
   }
 
   #closeModalBtn {
@@ -381,7 +382,7 @@ async function likeMeme(memeId, btn) {
 
     setTimeout(() => btn.classList.remove("pulse"), 300);
   } else if (result === "Already liked") {
-    showToast("You already liked this meme.");
+    showToast("You already liked this meme");
   }
 }
 
@@ -464,7 +465,7 @@ async function voteMeme(memeId, btn) {
       showToast("You liked this meme");
       setTimeout(() => modalLikeBtn.classList.remove("pulse"), 300);
     } else {
-      showToast("Already liked or failed");
+      showToast("You already liked this meme");
     }
   };
 
@@ -480,10 +481,10 @@ async function voteMeme(memeId, btn) {
       modalVoteBtn.classList.add("voted", "pulse");
       modalVoteBtn.querySelector('img').src = "vote2.png";
       modalVoteCount.textContent = parseInt(modalVoteCount.textContent) + 1;
-      showToast("You voted");
+      showToast("Your vote has been successfully submitted");
       setTimeout(() => modalVoteBtn.classList.remove("pulse"), 300);
     } else {
-      showToast("Already voted or failed");
+      showToast("You have already voted");
     }
   };
 
