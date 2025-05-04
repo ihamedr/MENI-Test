@@ -213,22 +213,53 @@
     padding: 0;
     cursor: pointer;
   }
-
-  #closeModalBtn {
-    margin-top: 1rem;
-    background: #ff9900;
-    color: #1f1f1f;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif;
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
-
-  @keyframes zoomIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal.animate-in #modalImage {
+  animation: modalFadeIn 0.3s ease forwards;
+}
+
+.modal.animate-out #modalImage {
+  animation: modalFadeOut 0.3s ease forwards;
+}
+  
   </style>
 </head>
 <body>
@@ -495,11 +526,28 @@ async function voteMeme(memeId, btn) {
     }
   };
 
-  closeModalBtn.addEventListener('click', () => {
-    memeModal.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-    currentMeme = null;
-  });
+  // پنهان کردن دکمه قدیمی
+modalCloseBtn.style.display = "none";
+
+// کلیک بیرون از عکس = بستن modal
+memeModal.addEventListener("click", function (e) {
+  if (e.target === memeModal) {
+    memeModal.classList.remove("animate-in");
+    memeModal.classList.add("animate-out");
+
+    setTimeout(() => {
+      memeModal.style.display = "none";
+      memeModal.classList.remove("animate-out");
+    }, 300);
+  }
+});
+
+// هنگام باز کردن modal، کلاس انیمیشن رو اضافه کن
+function openModal(imageUrl) {
+  modalImage.src = imageUrl;
+  memeModal.style.display = "block";
+  memeModal.classList.add("animate-in");
+}
 
   // ذخیره لیست کل میم‌ها برای استفاده در modal
   let allMemes = [];
