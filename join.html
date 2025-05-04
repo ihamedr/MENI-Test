@@ -171,7 +171,7 @@ function checkIfUploaded() {
     console.error('Telegram user data not found.');
     return;
   }
-  
+
   fetch(`https://meni-server.onrender.com/check-upload/${tgUser.id}`)
     .then(res => res.json())
     .then(data => {
@@ -183,10 +183,22 @@ function checkIfUploaded() {
         uploadBtn.style.color = "#aaa";
         uploadArea.style.backgroundColor = "#3a3a3a";
         uploadArea.style.cursor = "default";
+        uploadArea.style.pointerEvents = "none";
+        uploadArea.style.opacity = 0.6;
+      } else {
+        // اگر هنوز آپلود نکرده اجازه بده
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = "Upload";
+        uploadArea.style.pointerEvents = "auto";
+        uploadArea.style.opacity = 1;
       }
     })
     .catch(err => {
       console.error("Check upload error:", err);
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = "Upload";
+      uploadArea.style.pointerEvents = "auto";
+      uploadArea.style.opacity = 1;
     });
 }
 
@@ -194,7 +206,7 @@ uploadArea.addEventListener('click', () => {
   if (!uploadBtn.disabled) {
     fileInput.click();
   } else {
-    showToast("You have already uploaded your meme.");
+    showToast("You have already uploaded your meme");
   }
 });
 
@@ -241,10 +253,6 @@ function uploadMeme() {
   }
 
   const memeTitle = document.getElementById('memeTitle').value.trim();
-  if (!memeTitle) {
-    showToast('Please enter a title.');
-    return;
-  }
 
   const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
   if (!tgUser) {
@@ -319,7 +327,16 @@ function uploadMeme() {
 }
 
 // اجرای چک اولیه وقتی صفحه لود شد
-document.addEventListener('DOMContentLoaded', checkIfUploaded);
+document.addEventListener('DOMContentLoaded', () => {
+  // قفل اولیه هنگام لود
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = "Checking...";
+  uploadArea.style.pointerEvents = "none";
+  uploadArea.style.opacity = 0.6;
+
+  checkIfUploaded();
+});
+
   </script>
 </body>
 </html>
