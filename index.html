@@ -543,136 +543,14 @@ async function voteMeme(memeId, btn) {
     <span class="vote-count">${meme.votes || 0}</span>
   </div>
 `;
-         const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-    hideToast();
-
-    if (!res.ok) {
-      console.error("Failed to like meme (modal):", res.statusText);
-      return;
-    }
-
-    const result = await res.text();
-    if (result === "Updated") {
-      modalLikeBtn.classList.add("liked", "pulse");
-      modalLikeBtn.querySelector('img').src = "like2.png";
-      modalLikeCount.textContent = parseInt(modalLikeCount.textContent) + 1;
-      showToast("You liked this meme");
-
-      // sync with gallery
-      syncGalleryCounts(currentMeme.id, 'like');
-
-      setTimeout(() => modalLikeBtn.classList.remove("pulse"), 300);
-    } else if (result === "Already liked") {
-      showToast("You already liked this meme");
-    }
-  };
-
-  modalVoteBtn.onclick = async () => {
-    if (!currentMeme || modalVoteBtn.classList.contains("voted")) return;
-
-    showToastLoading();
-    const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=vote&voterId=${telegramId}`;
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-    hideToast();
-
-    if (!res.ok) {
-      console.error("Failed to vote meme (modal):", res.statusText);
-      return;
-    }
-
-    const result = await res.text();
-    if (result === "Updated") {
-      modalVoteBtn.classList.add("voted", "pulse");
-      modalVoteBtn.querySelector('img').src = "vote2.png";
-      modalVoteCount.textContent = parseInt(modalVoteCount.textContent) + 1;
-      showToast("Your vote has been successfully submitted");
-
-      // sync with gallery
-      syncGalleryCounts(currentMeme.id, 'vote');
-
-      setTimeout(() => modalVoteBtn.classList.remove("pulse"), 300);
-    } else {
-      showToast("You have already voted");
-    }
-  };
-
-  closeModalBtn.onclick = () => {
-    memeModal.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-  };
-
-  function syncGalleryCounts(memeId, action) {
-    const cards = document.querySelectorAll('.meme-card');
-    cards.forEach(card => {
-      const img = card.querySelector('img');
-      if (img && currentMeme && img.src === currentMeme.url) {
-        const likeBtn = card.querySelector('button.icon-btn:nth-of-type(1)');
-        const likeCount = card.querySelector('.like-count');
-        const voteBtn = card.querySelector('button.icon-btn:nth-of-type(2)');
-        const voteCount = card.querySelector('.vote-count');
-
-        if (action === 'like' && !likeBtn.classList.contains("liked")) {
-          likeBtn.classList.add("liked");
-          likeBtn.querySelector('img').src = 'like2.png';
-          likeCount.textContent = parseInt(likeCount.textContent) + 1;
-        }
-
-        if (action === 'vote' && !voteBtn.classList.contains("voted")) {
-          voteBtn.classList.add("voted");
-          voteBtn.querySelector('img').src = 'vote2.png';
-          voteCount.textContent = parseInt(voteCount.textContent) + 1;
-        }
-      }
-    });
-  }
-
-  // Start process
-  let allMemes = [];
-  fetchMemes = async () => {
-    showToastLoading();
-    const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
-    if (!res.ok) {
-      console.error("Failed to fetch memes:", res.statusText);
-      hideToast();
-      return;
-    }
-
-    const memes = await res.json();
-    allMemes = memes; // Save all for modal usage
-    const gallery = document.getElementById("gallery");
-    gallery.innerHTML = "";
-
-    memes.forEach(meme => {
-      if (!meme.id || !meme.url) return;
-
-      const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-      const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
-
-      const hasVoted = voters.includes(String(telegramId));
-      const hasLiked = likers.includes(String(telegramId));
-
-      const card = document.createElement("div");
-      card.className = "meme-card";
-      card.innerHTML = `
-        <img src="${meme.url}" alt="${meme.title || ''}" onclick="openModal('${meme.url}', '@${meme.telegramUsername || 'unknown'}')" style="cursor:pointer;" />
-        <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
-        <div class="like-section">
-          <button class="icon-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
-            <img src="${hasLiked ? 'like2.png' : 'like1.png'}" alt="like" />
-          </button>
-          <span class="like-count">${meme.likes || 0}</span>
-          <button class="icon-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">
-            <img src="${hasVoted ? 'vote2.png' : 'vote1.png'}" alt="vote" />
-          </button>
-          <span class="vote-count">${meme.votes || 0}</span>
-        </div>
-      `;
       gallery.appendChild(card);
     });
     hideToast();
-  };
+  }
 
-  checkUserBeforeLoading();
+    window.onload = () => {
+      checkUserBeforeLoading();
+    };
   </script>
 </body>
 </html>
