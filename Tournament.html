@@ -147,6 +147,8 @@
 
   const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
 
+  let triggeredByClick = false;
+
   function showToast(msg) {
     toast.textContent = msg;
     toast.style.display = 'block';
@@ -188,6 +190,7 @@
   }
 
   async function checkChannelJoin() {
+    triggeredByClick = true;
     if (!tgUser || !tgUser.id) {
       showToast("User data not available");
       return;
@@ -204,6 +207,10 @@
         joinBtn.textContent = "Upload";
         joinBtn.disabled = false;
         joinBtn.onclick = () => window.location.href = "join.html";
+        if (triggeredByClick) {
+          showToast("You have successfully joined the tournament");
+          triggeredByClick = false;
+        }
       } else {
         showToast("You need to join channel first");
         joinBtn.textContent = "Join";
