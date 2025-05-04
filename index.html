@@ -579,31 +579,17 @@ async function fetchMemes() {
 
   hideToast();
 }
+let startX = 0;
 
-	  function animateImageTransition(callback, direction) {
-  const animOut = direction === "left" ? "slideLeftOut" : "slideRightOut";
-  const animIn = direction === "left" ? "slideLeftIn" : "slideRightIn";
+// لیسنر برای شروع لمس
+const modalContent = document.querySelector('.meme-modal-content'); // بهتر از modalImage
 
-  modalImage.classList.add("modal-img-animate");
-  modalImage.style.animationName = animOut;
-
-  modalImage.addEventListener("animationend", function handler() {
-    modalImage.removeEventListener("animationend", handler);
-    callback();
-    modalImage.style.animationName = animIn;
-    modalImage.addEventListener("animationend", () => {
-      modalImage.classList.remove("modal-img-animate");
-      modalImage.style.animationName = "";
-    }, { once: true });
-  }, { once: true });
-}
-	  let startX = 0;
-
-modalImage.addEventListener("touchstart", (e) => {
+modalContent.addEventListener("touchstart", (e) => {
   startX = e.touches[0].clientX;
 });
 
-modalImage.addEventListener("touchend", (e) => {
+// لیسنر برای پایان لمس
+modalContent.addEventListener("touchend", (e) => {
   const endX = e.changedTouches[0].clientX;
   const diffX = startX - endX;
 
@@ -615,6 +601,54 @@ modalImage.addEventListener("touchend", (e) => {
     }
   }
 });
+
+// تابع انیمیشن تصویر با جهت
+function animateImageTransition(callback, direction) {
+  const animOut = direction === "left" ? "slideLeftOut" : "slideRightOut";
+  const animIn = direction === "left" ? "slideLeftIn" : "slideRightIn";
+
+  modalImage.classList.add("modal-img-animate");
+  modalImage.style.animationName = animOut;
+
+  modalImage.addEventListener("animationend", function handler() {
+    modalImage.removeEventListener("animationend", handler);
+    callback(); // باز کردن میم بعدی
+    modalImage.style.animationName = animIn;
+    modalImage.addEventListener("animationend", () => {
+      modalImage.classList.remove("modal-img-animate");
+      modalImage.style.animationName = "";
+    }, { once: true });
+  }, { once: true });
+}
+
+// رفتن به میم بعدی
+function showNextMeme() {
+  if (!currentMeme) return;
+  const currentIndex = allMemes.findIndex(m => m.id === currentMeme.id);
+  if (currentIndex === -1) return;
+
+  const nextIndex = (currentIndex + 1) % allMemes.length;
+  const next = allMemes[nextIndex];
+
+  animateImageTransition(() => {
+    openModal(next.url, '@' + (next.telegramUsername || 'unknown'));
+  }, "left");
+}
+
+// رفتن به میم قبلی
+function showPreviousMeme() {
+  if (!currentMeme) return;
+  const currentIndex = allMemes.findIndex(m => m.id === currentMeme.id);
+  if (currentIndex === -1) return;
+
+  const prevIndex = (currentIndex - 1 + allMemes.length) % allMemes.length;
+  const prev = allMemes[prevIndex];
+
+  animateImageTransition(() => {
+    openModal(prev.url, '@' + (prev.telegramUsername || 'unknown'));
+  }, "right");
+}
+	  
     window.onload = () => {
       checkUserBeforeLoading();
     };
