@@ -648,20 +648,7 @@ function showPreviousMeme() {
     openModal(prev.url, '@' + (prev.telegramUsername || 'unknown'));
   }, "right");
 }
-	  let startY = 0;
-let refreshing = false;
-
-window.addEventListener('touchstart', (e) => {
-  startY = e.touches[0].clientY;
-});
-
-window.addEventListener('touchmove', (e) => {
-  const currentY = e.touches[0].clientY;
-  if (window.scrollY === 0 && currentY - startY > 100 && !refreshing) {
-    refreshing = true;
-    location.reload(); // رفرش دستی
-  }
-});
+	  
 	  
     window.onload = () => {
       checkUserBeforeLoading();
