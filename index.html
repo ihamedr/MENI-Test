@@ -226,6 +226,30 @@
 .meme-modal-content.hide-anim {
   animation: zoomOut 0.2s ease forwards;
 }
+	  @keyframes slideLeftOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+
+@keyframes slideRightOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes slideLeftIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRightIn {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.modal-img-animate {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
   </style>
 </head>
 <body>
@@ -555,7 +579,41 @@ async function fetchMemes() {
 
   hideToast();
 }
+let startX = 0;
 
+modalImage.addEventListener("touchstart", (e) => {
+  startX = e.touches[0].clientX;
+});
+
+modalImage.addEventListener("touchend", (e) => {
+  const endX = e.changedTouches[0].clientX;
+  const diffX = startX - endX;
+
+  if (Math.abs(diffX) > 50) {
+    if (diffX > 0) {
+      showNextMeme(); // swipe left
+    } else {
+      showPreviousMeme(); // swipe right
+    }
+  }
+});
+	  function animateImageTransition(callback, direction) {
+  const animOut = direction === "left" ? "slideLeftOut" : "slideRightOut";
+  const animIn = direction === "left" ? "slideLeftIn" : "slideRightIn";
+
+  modalImage.classList.add("modal-img-animate");
+  modalImage.style.animationName = animOut;
+
+  modalImage.addEventListener("animationend", function handler() {
+    modalImage.removeEventListener("animationend", handler);
+    callback();
+    modalImage.style.animationName = animIn;
+    modalImage.addEventListener("animationend", () => {
+      modalImage.classList.remove("modal-img-animate");
+      modalImage.style.animationName = "";
+    }, { once: true });
+  }, { once: true });
+}
     window.onload = () => {
       checkUserBeforeLoading();
     };
