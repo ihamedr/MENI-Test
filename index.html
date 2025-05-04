@@ -214,21 +214,18 @@
     cursor: pointer;
   }
 
-  #closeModalBtn {
-    margin-top: 1rem;
-    background: #ff9900;
-    color: #1f1f1f;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif;
-  }
-
   @keyframes zoomIn {
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
   }
+	  .meme-modal {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+
+.meme-modal.fade-out {
+  opacity: 0;
+}
   </style>
 </head>
 <body>
@@ -427,7 +424,6 @@ async function voteMeme(memeId, btn) {
   const modalVoteBtn = document.getElementById('modalVoteBtn');
   const modalLikeCount = document.getElementById('modalLikeCount');
   const modalVoteCount = document.getElementById('modalVoteCount');
-  const closeModalBtn = document.getElementById('closeModalBtn');
 
   let currentMeme = null;
 
@@ -495,11 +491,6 @@ async function voteMeme(memeId, btn) {
     }
   };
 
-  closeModalBtn.addEventListener('click', () => {
-    memeModal.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-    currentMeme = null;
-  });
 
   // ذخیره لیست کل میم‌ها برای استفاده در modal
   let allMemes = [];
@@ -543,6 +534,27 @@ async function voteMeme(memeId, btn) {
     <span class="vote-count">${meme.votes || 0}</span>
   </div>
 `;
+		document.addEventListener("DOMContentLoaded", 
+function () {
+  const memeModal = document.getElementById('modal');
+  const modalImage = document.querySelector('.modal-content');
+
+  if (modal) {
+    modal.addEventListener('click', function (event) {
+      if (!modalContent.contains(event.target)) {
+        closeModalSmoothly();
+      }
+    });
+  }
+
+  function closeModalSmoothly() {
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.classList.remove('fade-out');
+    }, 300);
+  }
+});
       gallery.appendChild(card);
     });
     hideToast();
