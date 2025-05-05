@@ -350,8 +350,9 @@
   }, 2500);
 }
 
-function showToastLoading(msg = 'Please wait...') {
-  toast.textContent = msg;
+function showToastLoading(msg) {
+  const finalMsg = msg && msg.trim() ? msg : "Please wait...";
+  toast.textContent = finalMsg;
   toast.classList.add('show');
 }
 
@@ -360,7 +361,7 @@ function hideToast() {
 }
 
     async function checkUserBeforeLoading() {
-      showToastLoading();
+      showToastLoading("Checking your tournament status...");
       const userCheckUrl = `${userCheckScript}?telegram_id=${telegramId}`;
       try {
         const res = await fetch(userCheckUrl);
@@ -381,7 +382,7 @@ function hideToast() {
     }
 
     async function fetchMemes() {
-      showToastLoading();
+      showToastLoading("Loading memes...");
       const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
       if (!res.ok) {
         console.error("Failed to fetch memes:", res.statusText);
@@ -427,7 +428,7 @@ async function likeMeme(memeId, btn) {
   const img = btn.querySelector('img');
   if (btn.classList.contains("liked")) return;
 
-  showToastLoading();
+  showToastLoading("Sending like...");
   const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like&voterId=${telegramId}`;
   const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
 
@@ -455,7 +456,7 @@ async function voteMeme(memeId, btn) {
   const img = btn.querySelector('img');
   if (btn.classList.contains("voted")) return;
 
-  showToastLoading();
+  showToastLoading("Submitting your vote...");
   const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&voterId=${telegramId}`;
   const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
 
@@ -533,7 +534,7 @@ function openModal(imageUrl, userId) {
 modalLikeBtn.onclick = async () => {
   if (!currentMeme || modalLikeBtn.classList.contains("liked")) return;
 
-  showToastLoading();
+  showToastLoading("Sending like...");
   const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=like&voterId=${telegramId}`;
   const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
   hideToast();
@@ -552,7 +553,7 @@ modalLikeBtn.onclick = async () => {
 modalVoteBtn.onclick = async () => {
   if (!currentMeme || modalVoteBtn.classList.contains("voted")) return;
 
-  showToastLoading();
+  showToastLoading("Submitting your vote...");
   const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=vote&voterId=${telegramId}`;
   const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
   hideToast();
@@ -572,7 +573,7 @@ modalVoteBtn.onclick = async () => {
 let allMemes = [];
 
 async function fetchMemes() {
-  showToastLoading();
+  showToastLoading("Loading memes...");
   const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
   if (!res.ok) {
     console.error("Failed to fetch memes:", res.statusText);
