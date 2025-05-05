@@ -336,6 +336,7 @@
     const secret = 'meni2025!';
 
     function showToast(msg) {
+		if (!msg) return;
   toast.textContent = msg;
   toast.classList.add('show');
 
