@@ -77,23 +77,45 @@
   position: fixed;
   top: 20px;
   left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  background: linear-gradient(135deg, #ff9900, #ffaa33);
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ff9900, #ffbb55);
   color: #1f1f1f;
-  padding: 0.75rem 1.2rem;
-  border-radius: 14px;
-  font-size: 0.9rem;
+  padding: 0.9rem 1.5rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
   font-family: 'Space Grotesk', sans-serif;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-  display: none;
-  z-index: 999;
+  box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
   opacity: 0;
-  transition: all 0.4s ease;
+  pointer-events: none;
+  z-index: 999;
+  animation: toastFadeOut 0.4s ease forwards;
 }
+
 .toast.show {
-  display: block;
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  animation: toastFadeIn 0.4s ease forwards;
+  pointer-events: auto;
+}
+
+@keyframes toastFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes toastFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
 }
     .nav-bar {
       position: fixed;
@@ -159,12 +181,10 @@
   function showToast(msg) {
   toast.textContent = msg;
   toast.classList.add('show');
+
   setTimeout(() => {
     toast.classList.remove('show');
-    setTimeout(() => {
-      toast.style.display = 'none';
-    }, 400); // تا پایان ترنزیشن مخفی نکنه
-  }, 2000);
+  }, 2500); // بعد از نمایش، مخفی شه
 }
 
   async function saveTelegramId(userId) {
