@@ -560,7 +560,7 @@ modalLikeBtn.onclick = async () => {
     showToast("You already liked this meme");
   }
 	// آپدیت در allMemes و currentFilteredMemes
-    [allMemes, currentFilteredMemes].forEach(arr => {
+    [currentFilteredMemes].forEach(arr => {
       const meme = arr.find(m => m.id === currentMeme.id);
       if (meme) {
         meme.likes = parseInt(meme.likes || 0) + 1;
@@ -590,7 +590,7 @@ modalVoteBtn.onclick = async () => {
     showToast("You have already voted");
   }
 	// آپدیت در allMemes و currentFilteredMemes
-    [allMemes, currentFilteredMemes].forEach(arr => {
+    [currentFilteredMemes].forEach(arr => {
       const meme = arr.find(m => m.id === currentMeme.id);
       if (meme) {
         meme.votes = parseInt(meme.votes || 0) + 1;
