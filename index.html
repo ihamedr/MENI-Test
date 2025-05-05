@@ -28,25 +28,34 @@
       border-bottom: 2px solid #ff9900;
     }
     .logo-container img { height: 100px; }
-    .categories {
-      margin-top: 0.2rem;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-    }
-    .categories button {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.75rem;
-      padding: 0.4rem 1rem;
-      border: none;
-      border-radius: 12px;
-      background-color: #ff9900;
-      color: #1f1f1f;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .categories button:hover { background-color: #ffa733; }
+    #filters {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
 
+.filter-btn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #ff9900;
+  color: #1f1f1f;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border 0.3s;
+}
+
+.filter-btn:hover {
+  background-color: #ffa733;
+}
+
+.filter-btn.active {
+  background-color: #1f1f1f; /* دکمه فعال تیره‌تر می‌شود */
+  color: #ff9900;             /* رنگ متن دکمه انتخابی نارنجی می‌شود */
+  border: 2px solid #ff9900;  /* نوار نارنجی دور دکمه فعال اضافه می‌شود */
+}
     .gallery {
       column-count: 2;
       column-gap: 1rem;
@@ -289,11 +298,11 @@
     <div class="logo-container">
       <img src="logo.png" alt="MENI Logo" />
     </div>
-    <div class="categories">
-      <button>NEW</button>
-      <button>TREND</button>
-      <button>POPULAR</button>
-    </div>
+    <div id="filters">
+  <button class="filter-btn active" data-type="new">NEW</button>
+  <button class="filter-btn" data-type="popular">POPULAR</button>
+  <button class="filter-btn" data-type="trend">TREND</button>
+</div>
   </header>
 
   <div class="toast" id="toast"></div>
@@ -421,6 +430,7 @@ function hideToast() {
         gallery.appendChild(card);
       });
       hideToast();
+	applyFilter("new"); // پیش‌فرض نمایش جدیدترین‌ها	
     }
 async function likeMeme(memeId, btn) {
   const likeCount = btn.nextElementSibling;
@@ -614,6 +624,7 @@ async function fetchMemes() {
   });
 
   hideToast();
+	applyFilter("new"); // پیش‌فرض نمایش جدیدترین‌ها
 }
 let startX = 0;
 
@@ -684,7 +695,66 @@ function showPreviousMeme() {
     openModal(prev.url, '@' + (prev.telegramUsername || 'unknown'));
   }, "right");
 }
-	  
+	 document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const type = btn.dataset.type;
+    applyFilter(type);
+  });
+});
+
+function applyFilter(type) {
+  let sorted = [...allMemes];
+
+  if (type === "new") {
+    sorted.sort((a, b) => {
+      const da = new Date(a.createdAt || a.timestamp || 0);
+      const db = new Date(b.createdAt || b.timestamp || 0);
+      return db - da;
+    });
+  } else if (type === "popular") {
+    sorted.sort((a, b) => (parseInt(b.likes || 0)) - (parseInt(a.likes || 0)));
+  } else if (type === "trend") {
+    sorted.sort((a, b) => (parseInt(b.votes || 0)) - (parseInt(a.votes || 0)));
+  }
+
+  renderMemes(sorted);
+}
+
+function renderMemes(memes) {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
+
+  memes.forEach(meme => {
+    if (!meme.id || !meme.url) return;
+
+    const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
+    const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
+
+    const hasVoted = voters.includes(String(telegramId));
+    const hasLiked = likers.includes(String(telegramId));
+
+    const card = document.createElement("div");
+    card.className = "meme-card";
+    card.innerHTML = `
+      <img src="${meme.url}" alt="${meme.title || ''}" onclick="openModal('${meme.url}', '@${meme.telegramUsername || 'unknown'}')" style="cursor:pointer;" />
+      <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
+      <div class="like-section">
+        <button class="icon-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
+          <img src="${hasLiked ? 'like2.png' : 'like1.png'}" alt="like" />
+        </button>
+        <span class="like-count">${meme.likes || 0}</span>
+        <button class="icon-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">
+          <img src="${hasVoted ? 'vote2.png' : 'vote1.png'}" alt="vote" />
+        </button>
+        <span class="vote-count">${meme.votes || 0}</span>
+      </div>
+    `;
+    gallery.appendChild(card);
+  });
+} 
 	  
     window.onload = () => {
       checkUserBeforeLoading();
