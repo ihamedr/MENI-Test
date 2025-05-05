@@ -180,14 +180,19 @@
 
   let triggeredByClick = false;
 
-  function showToast(msg) {
-	  if (!msg) return;
+  let toastVisible = false;
+
+function showToast(msg) {
+  if (!msg || toastVisible) return;
+  toastVisible = true;
+
   toast.textContent = msg;
   toast.classList.add('show');
 
   setTimeout(() => {
     toast.classList.remove('show');
-  }, 2500); // بعد از نمایش، مخفی شه
+    toastVisible = false;
+  }, 2500);
 }
 
   async function saveTelegramId(userId) {
