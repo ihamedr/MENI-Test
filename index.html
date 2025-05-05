@@ -516,6 +516,32 @@ memeModal.addEventListener('click', (e) => {
   if (e.target === memeModal) closeModal();
 });
 
+function openModal(imageUrl, userId) {
+  const meme = allMemes.find(m => m.url === imageUrl);
+  if (!meme) return;
+
+  currentMeme = meme;
+  modalImage.src = imageUrl;
+  modalUserId.textContent = userId;
+
+  const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
+  const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
+
+  const hasLiked = likers.includes(String(telegramId));
+  const hasVoted = voters.includes(String(telegramId));
+
+  modalLikeBtn.className = "icon-btn" + (hasLiked ? " liked" : "");
+  modalLikeBtn.querySelector('img').src = hasLiked ? 'like2.png' : 'like1.png';
+  modalLikeCount.textContent = meme.likes || 0;
+
+  modalVoteBtn.className = "icon-btn" + (hasVoted ? " voted" : "");
+  modalVoteBtn.querySelector('img').src = hasVoted ? 'vote2.png' : 'vote1.png';
+  modalVoteCount.textContent = meme.votes || 0;
+
+  memeModal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+}
+
 modalLikeBtn.onclick = async () => {
   if (!currentMeme || modalLikeBtn.classList.contains("liked")) return;
 
@@ -529,22 +555,21 @@ modalLikeBtn.onclick = async () => {
     modalLikeBtn.querySelector('img').src = "like2.png";
     modalLikeCount.textContent = parseInt(modalLikeCount.textContent) + 1;
     showToast("You liked this meme");
-    
-    // آپدیت در allMemes و currentFilteredMemes
+    setTimeout(() => modalLikeBtn.classList.remove("pulse"), 300);
+  } else {
+    showToast("You already liked this meme");
+  }
+	// آپدیت در allMemes و currentFilteredMemes
     [allMemes, currentFilteredMemes].forEach(arr => {
       const meme = arr.find(m => m.id === currentMeme.id);
       if (meme) {
         meme.likes = parseInt(meme.likes || 0) + 1;
-        meme.likers = (meme.likers || "") + ,`${telegramId}`;
+        meme.likers = (meme.likers || "") + `,${telegramId}`;
       }
     });
 
     renderMemes(currentFilteredMemes);  // به‌روز کردن گالری
 
-    setTimeout(() => modalLikeBtn.classList.remove("pulse"), 300);
-  } else {
-    showToast("You already liked this meme");
-  }
 };
 
 modalVoteBtn.onclick = async () => {
@@ -560,23 +585,22 @@ modalVoteBtn.onclick = async () => {
     modalVoteBtn.querySelector('img').src = "vote2.png";
     modalVoteCount.textContent = parseInt(modalVoteCount.textContent) + 1;
     showToast("Your vote has been successfully submitted");
-    
-    // آپدیت در allMemes و currentFilteredMemes
-    [allMemes, currentFilteredMemes].forEach(arr => {
-      const meme = arr.find(m => m.id === currentMeme.id);
-      if (meme) {
-        meme.votes = parseInt(meme.votes || 0) + 1;
-        meme.voters = (meme.voters || "") + ,`${telegramId}`;
-      }
-    });
-
-    renderMemes(currentFilteredMemes);  // به‌روز کردن گالری
-
     setTimeout(() => modalVoteBtn.classList.remove("pulse"), 300);
   } else {
     showToast("You have already voted");
   }
+	// آپدیت در allMemes و currentFilteredMemes
+    [allMemes, currentFilteredMemes].forEach(arr => {
+      const meme = arr.find(m => m.id === currentMeme.id);
+      if (meme) {
+        meme.votes = parseInt(meme.votes || 0) + 1;
+        meme.voters = (meme.voters || "") + `,${telegramId}`;
+      }
+    });
+
+    renderMemes(currentFilteredMemes);  // به‌روز کردن گالری
 };
+
 // ذخیره لیست کل میم‌ها برای استفاده در modal
 let allMemes = [];
 
