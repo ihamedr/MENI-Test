@@ -285,7 +285,7 @@
       }
     } catch (err) {
       console.error("Fetch error:", err);
-      showToast("Error checking channel status" true);
+      showToast("Error checking channel status");
       joinBtn.textContent = "Join";
       joinBtn.disabled = false;
       joinBtn.onclick = checkChannelJoin;
