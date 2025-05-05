@@ -85,12 +85,16 @@
   font-size: 0.95rem;
   font-family: 'Space Grotesk', sans-serif;
   box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
-  opacity: 0;
+  opacity: 90%;
   pointer-events: none;
   z-index: 999;
   animation: toastFadeOut 0.4s ease forwards;
 }
-
+.toast {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-20px) scale(0.95);
+}
 .toast.show {
   animation: toastFadeIn 0.4s ease forwards;
   pointer-events: auto;
@@ -148,9 +152,7 @@
 </head>
 <body>
   <div class="toast" id="toast"></div>
-
   <h2>Active Tournaments</h2>
-
   <div class="tournament-card">
     <div class="tournament-info">
       <img src="tournament-profile.jpg" alt="Tournament">
