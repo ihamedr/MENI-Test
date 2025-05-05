@@ -255,7 +255,7 @@
   async function checkChannelJoin() {
     triggeredByClick = true;
     if (!tgUser || !tgUser.id) {
-      showToast("User data not available", true);
+      showToast("User data not available");
       return;
     }
     joinBtn.disabled = true;
@@ -275,7 +275,7 @@
           triggeredByClick = false;
         }
       } else {
-        showToast("You need to join channel first", true);
+        showToast("You need to join channel first");
         joinBtn.textContent = "Join";
         joinBtn.disabled = false;
         joinBtn.onclick = checkChannelJoin;
@@ -296,7 +296,7 @@
     if (tgUser && tgUser.id) {
       checkIfUserSaved(tgUser.id);
     } else {
-      showToast("Telegram user not found" true);
+      showToast("Telegram user not found");
     }
   });
 </script>
