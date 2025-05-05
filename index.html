@@ -147,7 +147,7 @@
   position: fixed;
   top: 20px;
   left: 50%;
-  transform: translateX(-50%) translateY(-20px) scale(0.95);
+  transform: translateX(-50%);
   background: linear-gradient(135deg, #ff9900, #ffbb55);
   color: #1f1f1f;
   padding: 0.9rem 1.5rem;
@@ -159,15 +159,14 @@
   z-index: 10001;
   opacity: 0;
 }
-
+.toast {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-20px) scale(0.95);
+}
 .toast.show {
   animation: toastFadeIn 0.4s ease forwards;
   pointer-events: auto;
-}
-
-.toast.hide {
-  animation: toastFadeOut 0.4s ease forwards;
-  pointer-events: none;
 }
 
 @keyframes toastFadeIn {
@@ -190,7 +189,7 @@
     opacity: 0;
     transform: translateX(-50%) translateY(-20px) scale(0.95);
   }
-}
+}  
     }
   body.modal-open {
     overflow: hidden;
@@ -340,31 +339,24 @@
     const secret = 'meni2025!';
 
     function showToast(msg) {
-  const toast = document.querySelector('.toast');
-  if (!msg || !toast) return;
-
+		if (!msg) return;
   toast.textContent = msg;
-  toast.classList.remove('hide');
   toast.classList.add('show');
 
+  // پاک کردن کلاس برای انیمیشن خروج بعد از مدتی
   setTimeout(() => {
     toast.classList.remove('show');
-    toast.classList.add('hide');
   }, 2500);
 }
 
 function showToastLoading(msg) {
-  if (!msg || !toast) return;
-	const finalMsg = msg && msg.trim() ? msg : "Please wait...";
+  const finalMsg = msg && msg.trim() ? msg : "Please wait...";
   toast.textContent = finalMsg;
-  toast.classList.add('hide');
-	toast.classList.add('show');
+  toast.classList.add('show');
 }
 
 function hideToast() {
- if (!msg || !toast) return;
-	toast.classList.remove('show');
-	toast.classList.add('hide');
+  toast.classList.remove('show');
 }
 
     async function checkUserBeforeLoading() {
