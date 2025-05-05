@@ -592,6 +592,7 @@ async function fetchMemes() {
 
   const memes = await res.json();
   allMemes = memes;
+	renderMemes(memes);
   const gallery = document.getElementById("gallery");
   gallery.innerHTML = "";
 
