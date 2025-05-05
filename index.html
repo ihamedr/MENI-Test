@@ -336,21 +336,23 @@
     const secret = 'meni2025!';
 
     function showToast(msg) {
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 2000);
-    }
+  toast.textContent = msg;
+  toast.classList.add('show');
 
-    function showToastLoading(msg = 'Please wait...') {
-      toast.textContent = msg;
-      toast.style.display = 'block';
-    }
+  // پاک کردن کلاس برای انیمیشن خروج بعد از مدتی
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
+}
 
-    function hideToast() {
-      toast.style.display = 'none';
-    }
+function showToastLoading(msg = 'Please wait...') {
+  toast.textContent = msg;
+  toast.classList.add('show');
+}
+
+function hideToast() {
+  toast.classList.remove('show');
+}
 
     async function checkUserBeforeLoading() {
       showToastLoading();
