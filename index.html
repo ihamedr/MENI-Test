@@ -336,13 +336,13 @@
     const secret = 'meni2025!';
 
     function showToast(msg) {
-  toast.textContent = msg;
-  toast.classList.add('show');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2000);
+    }
 
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 2500); // بعد از نمایش، مخفی شه
-}
     function showToastLoading(msg = 'Please wait...') {
       toast.textContent = msg;
       toast.style.display = 'block';
