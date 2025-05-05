@@ -706,7 +706,7 @@ function showPreviousMeme() {
 });
 
 function applyFilter(type) {
-  let sorted = [...allMemes];
+  let sorted = [...allMemes].reverse();
 
   if (type === "new") {
     sorted.sort((a, b) => {
