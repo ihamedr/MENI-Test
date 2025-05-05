@@ -347,7 +347,9 @@
     const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec';
     const secret = 'meni2025!';
 
-    function showToast(msg) {
+    let currentFilteredMemes = [];
+	  
+	  function showToast(msg) {
 		if (!msg) return;
   toast.textContent = msg;
   toast.classList.add('show');
@@ -671,11 +673,11 @@ function animateImageTransition(callback, direction) {
 // رفتن به میم بعدی
 function showNextMeme() {
   if (!currentMeme) return;
-  const currentIndex = allMemes.findIndex(m => m.id === currentMeme.id);
+  const currentIndex = currentFilteredMemes.findIndex(m => m.id === currentMeme.id);
   if (currentIndex === -1) return;
 
-  const nextIndex = (currentIndex + 1) % allMemes.length;
-  const next = allMemes[nextIndex];
+  const nextIndex = (currentIndex + 1) % currentFilteredMemes.length;
+  const next = currentFilteredMemes[nextIndex];
 
   animateImageTransition(() => {
     openModal(next.url, '@' + (next.telegramUsername || 'unknown'));
@@ -685,11 +687,11 @@ function showNextMeme() {
 // رفتن به میم قبلی
 function showPreviousMeme() {
   if (!currentMeme) return;
-  const currentIndex = allMemes.findIndex(m => m.id === currentMeme.id);
+  const currentIndex = currentFilteredMemes.findIndex(m => m.id === currentMeme.id);
   if (currentIndex === -1) return;
 
-  const prevIndex = (currentIndex - 1 + allMemes.length) % allMemes.length;
-  const prev = allMemes[prevIndex];
+  const prevIndex = (currentIndex - 1 + currentFilteredMemes.length) % currentFilteredMemes.length;
+  const prev = currentFilteredMemes[prevIndex];
 
   animateImageTransition(() => {
     openModal(prev.url, '@' + (prev.telegramUsername || 'unknown'));
@@ -719,7 +721,7 @@ function applyFilter(type) {
   } else if (type === "trend") {
     sorted.sort((a, b) => (parseInt(b.votes || 0)) - (parseInt(a.votes || 0)));
   }
-
+currentFilteredMemes = sorted;
   renderMemes(sorted);
 }
 
