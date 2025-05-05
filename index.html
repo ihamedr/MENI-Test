@@ -535,7 +535,7 @@ modalLikeBtn.onclick = async () => {
       const meme = arr.find(m => m.id === currentMeme.id);
       if (meme) {
         meme.likes = parseInt(meme.likes || 0) + 1;
-        meme.likers = (meme.likers || "") + ,${telegramId};
+        meme.likers = (meme.likers || "") + ,`${telegramId}`;
       }
     });
 
@@ -566,7 +566,7 @@ modalVoteBtn.onclick = async () => {
       const meme = arr.find(m => m.id === currentMeme.id);
       if (meme) {
         meme.votes = parseInt(meme.votes || 0) + 1;
-        meme.voters = (meme.voters || "") + ,${telegramId};
+        meme.voters = (meme.voters || "") + ,`${telegramId}`;
       }
     });
 
