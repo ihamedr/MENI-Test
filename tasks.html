@@ -212,7 +212,7 @@
     const coinBalanceEl = document.getElementById('coin-balance');
     const toast = document.getElementById("toast");
 
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwnAT894ER4PEulQiUZoHBdc_1njCuBjRPy0RuNU1CIfo6C9gnnTcJ9vK0FPfzAL57YmQ/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxQjJk771VLrmiwyQpTOx9ECPqSC_LjEv06l6HfdwcFqXgH5b5BVoF4tQZbLalTnvVa-A/exec";
     const joinCheckUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
     const voterCheckUrl = "https://script.google.com/macros/s/AKfycbzqgUNUHlGBr9QhtruMIuicFiW27u6ZyBSNmvwLT9TRZLDD4ltX8B9tfzFVx4tUKYTx/exec";
 
@@ -237,57 +237,71 @@
         console.error("Error fetching balance:", err);
       }
     }
+async function checkUserTasks() {
+  joinBtn.textContent = "Checking...";
+  voteBtn.textContent = "Checking...";
+  joinBtn.disabled = true;
+  voteBtn.disabled = true;
 
-    async function checkUserTasks() {
-      joinBtn.textContent = "Checking...";
-      voteBtn.textContent = "Checking...";
+  try {
+    const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+    const data = await res.json();
+    const task1 = parseFloat(data.task1) || 0;
+    const task2 = parseFloat(data.task2) || 0;
+
+    // تسک اول (عضویت در کانال)
+    if (task1 >= 0.5) {
+      joinBtn.textContent = "Claimed";
       joinBtn.disabled = true;
-      voteBtn.disabled = true;
-
-      try {
-        const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
-        const data = await res.json();
-        const balance = parseFloat(data.balance) || 0;
-
-        if (balance >= 0.5) {
-          joinBtn.textContent = "Claimed";
+      joinBtn.classList.add("claimed");
+    } else {
+      joinBtn.textContent = "Join";
+      joinBtn.disabled = false;
+      joinBtn.onclick = () => {
+        window.open("https://t.me/meni_dao", "_blank");
+        joinBtn.textContent = "Check";
+        joinBtn.onclick = async () => {
+          joinBtn.textContent = "Checking...";
           joinBtn.disabled = true;
-          joinBtn.classList.add("claimed");
-        } else {
-          joinBtn.textContent = "Join";
-          joinBtn.disabled = false;
-          joinBtn.onclick = () => {
-            window.open("https://t.me/meni_dao", "_blank");
-            joinBtn.textContent = "Check";
-            joinBtn.onclick = async () => {
-              joinBtn.textContent = "Checking...";
-              joinBtn.disabled = true;
-              try {
-                const checkRes = await fetch(`${joinCheckUrl}?user_id=${userId}`);
-                const checkData = await checkRes.json();
-                if (checkData.status === "joined") {
-                  await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=1`);
-                  joinBtn.textContent = "Claimed";
-                  joinBtn.classList.add("claimed");
-                  updateBalance();
-                } else {
-                  showToast("You need to join the channel first");
-                  joinBtn.textContent = "Join";
-                  joinBtn.disabled = false;
-                }
-              } catch (err) {
-                console.error("Join check failed:", err);
-                showToast("Check failed");
-                joinBtn.textContent = "Join";
-                joinBtn.disabled = false;
-              }
-            };
-          };
-        }
-      } catch (err) {
-        console.error("Task check error:", err);
-      }
+          try {
+            const checkRes = await fetch(`${joinCheckUrl}?user_id=${userId}`);
+            const checkData = await checkRes.json();
+            if (checkData.status === "joined") {
+              await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=1`);
+              joinBtn.textContent = "Claimed";
+              joinBtn.classList.add("claimed");
+              updateBalance();
+            } else {
+              showToast("You need to join the channel first");
+              joinBtn.textContent = "Join";
+              joinBtn.disabled = false;
+            }
+          } catch (err) {
+            console.error("Join check failed:", err);
+            showToast("Check failed");
+            joinBtn.textContent = "Join";
+            joinBtn.disabled = false;
+          }
+        };
+      };
     }
+
+    // تسک دوم (رأی دادن)
+    if (task2 >= 0.5) {
+      voteBtn.textContent = "Claimed";
+      voteBtn.disabled = true;
+      voteBtn.classList.add("claimed");
+    } else {
+      voteBtn.textContent = "Vote";
+      voteBtn.disabled = false;
+      voteBtn.onclick = voteTaskStart;
+    }
+  } catch (err) {
+    console.error("Task check error:", err);
+    showToast("Error checking tasks");
+  }
+}
+    
 
     async function checkVoteStatus() {
       voteBtn.disabled = true;
