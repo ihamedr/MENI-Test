@@ -388,7 +388,11 @@
 </div>
 	
   <script>
-    const tg = window.Telegram.WebApp;
+   window.onload = function() {
+      Telegram.WebApp.expand();  // گسترش مینی‌اپ به حالت بزرگتر
+      Telegram.WebApp.requestFullscreen();  // فعال‌سازی حالت تمام‌صفحه
+    };
+	  const tg = window.Telegram.WebApp;
     tg.expand();
     const telegramUser = tg.initDataUnsafe.user || {};
     const telegramId = telegramUser.id;
