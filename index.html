@@ -27,12 +27,27 @@
       background-color: #2b2b2b;
       border-bottom: 2px solid #ff9900;
     }
-    .logo-container img { height: 100px; }
-    #filters {
-  margin-top: 0.2rem;
+	  .top-bar {
+		 display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 900px;
+  position: relative;
+}
+	  .logo-container { 
+	  position: absolute;;
+		left: 50%;
+		transform: translatex(-50%);
+	  }
+	  .logo-container img { height: 100px; }
+	  
+		#filters {
+  margin-top: 0.5rem;
   display: flex;
   justify-content: center;
   gap: 1rem;
+			flex-wrap: wrap;
 }
 
 .filter-btn {
@@ -305,6 +320,7 @@
       align-items: center;
       width: fit-content;
       box-shadow: 0 0 10px rgba(255,153,0,0.1);
+		  algin-self: flex-start !important;
     }
     .coin-card img {
       width: 28px;
@@ -321,21 +337,23 @@
 </head>
 <body>
   <header>
-    <div class="logo-container">
-      <img src="logo.png" alt="MENI Logo" />
-    </div>
-   <div class="coin-card">
+   <div class="top-bar">
+	  <div class="coin-card">
     <img src="coin.png" alt="Coin" />
     <span id="coin-balance">0</span>
-  </div>
-	  <div id="filters">
+  </div> 
+	  <div class="logo-container">
+      <img src="logo.png" alt="MENI Logo" />
+		  <div class="spacer"></div>
+     </div> 
+	   </div>
+<div id="filters">
   <button class="filter-btn active" data-type="new">NEW</button>
   <button class="filter-btn" data-type="popular">POPULAR</button>
   <button class="filter-btn" data-type="trend">TREND</button>
 </div>
-  </header>
-
-  <div class="toast" id="toast"></div>
+	 </header> 
+<div class="toast" id="toast"></div>
   <div id="message" style="display: none; text-align: center; color: #ff9900; margin-top: 2rem; font-size: 1rem;"></div>
   <main class="gallery" id="gallery"></main>
 
