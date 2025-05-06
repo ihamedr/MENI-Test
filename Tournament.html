@@ -20,6 +20,7 @@
       color: #ff9900;
       margin-bottom: 1.5rem;
       font-size: 1.3rem;
+		padding-top: calc(env(safe-area-inset-top) + 30px);
     }
     .tournament-card {
       background-color: #2b2b2b;
@@ -85,7 +86,7 @@
   font-size: 0.95rem;
   font-family: 'Space Grotesk', sans-serif;
   box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
-  opacity: 90%;
+  opacity: 0;
   pointer-events: none;
   z-index: 999;
 }
@@ -183,18 +184,30 @@
   let toastVisible = false;
 
 function showToast(msg) {
-  if (!msg || toastVisible) return;
-  toastVisible = true;
-
+  if (!msg) return;
   toast.textContent = msg;
+  toast.classList.remove('hide');
   toast.classList.add('show');
 
+  // بعد از 2.5 ثانیه شروع به خروج کن
   setTimeout(() => {
     toast.classList.remove('show');
-    toastVisible = false;
+    toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+    
+    // بعد از انیمیشن خروج، ریست کنیم
+    setTimeout(() => {
+      toast.style.animation = '';
+    }, 400);
   }, 2500);
 }
 
+function hideToast() {
+  toast.classList.remove('show');
+  toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+  setTimeout(() => {
+    toast.style.animation = '';
+  }, 400);
+}
   async function saveTelegramId(userId) {
     try {
       await fetch(`${userScriptUrl}?store_user_id=${userId}`);
