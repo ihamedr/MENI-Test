@@ -291,6 +291,32 @@
   animation-duration: 0.3s;
   animation-fill-mode: both;
 }
+	  body, .container {
+		  text-align: left;
+		  display: block !important;
+	  }
+	  .coin-card {
+      background-color: #2b2b2b;
+      border-radius: 16px;
+      border: 2px solid #444;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      box-shadow: 0 0 10px rgba(255,153,0,0.1);
+    }
+    .coin-card img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      margin-right: 0.5rem;
+    }
+    .coin-card span {
+      font-size: 1rem;
+      color: #f5f5f5;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -298,7 +324,11 @@
     <div class="logo-container">
       <img src="logo.png" alt="MENI Logo" />
     </div>
-    <div id="filters">
+   <div class="coin-card">
+    <img src="coin.png" alt="Coin" />
+    <span id="coin-balance">0</span>
+  </div>
+	  <div id="filters">
   <button class="filter-btn active" data-type="new">NEW</button>
   <button class="filter-btn" data-type="popular">POPULAR</button>
   <button class="filter-btn" data-type="trend">TREND</button>
@@ -351,24 +381,35 @@
     let currentFilteredMemes = [];
 	  
 	  function showToast(msg) {
-		if (!msg) return;
+  if (!msg) return;
   toast.textContent = msg;
+  toast.classList.remove('hide');
   toast.classList.add('show');
 
-  // پاک کردن کلاس برای انیمیشن خروج بعد از مدتی
+  // بعد از 2.5 ثانیه شروع به خروج کن
   setTimeout(() => {
     toast.classList.remove('show');
+    toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+    
+    // بعد از انیمیشن خروج، ریست کنیم
+    setTimeout(() => {
+      toast.style.animation = '';
+    }, 400);
   }, 2500);
+}
+
+function hideToast() {
+  toast.classList.remove('show');
+  toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+  setTimeout(() => {
+    toast.style.animation = '';
+  }, 400);
 }
 
 function showToastLoading(msg) {
   const finalMsg = msg && msg.trim() ? msg : "Please wait...";
   toast.textContent = finalMsg;
   toast.classList.add('show');
-}
-
-function hideToast() {
-  toast.classList.remove('show');
 }
 
     async function checkUserBeforeLoading() {
