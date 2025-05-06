@@ -291,6 +291,10 @@
   animation-duration: 0.3s;
   animation-fill-mode: both;
 }
+	  body, .container {
+		  text-align: left;
+		  display: block !important;
+	  }
 	  .coin-card {
       background-color: #2b2b2b;
       border-radius: 16px;
@@ -301,8 +305,6 @@
       align-items: center;
       width: fit-content;
       box-shadow: 0 0 10px rgba(255,153,0,0.1);
-		  algin-self: flex-start !important;
-		  margin-left: 1rem !important;
     }
     .coin-card img {
       width: 28px;
@@ -322,7 +324,7 @@
     <div class="logo-container">
       <img src="logo.png" alt="MENI Logo" />
     </div>
-	  <div class="coin-card">
+   <div class="coin-card">
     <img src="coin.png" alt="Coin" />
     <span id="coin-balance">0</span>
   </div>
@@ -332,6 +334,7 @@
   <button class="filter-btn" data-type="trend">TREND</button>
 </div>
   </header>
+
   <div class="toast" id="toast"></div>
   <div id="message" style="display: none; text-align: center; color: #ff9900; margin-top: 2rem; font-size: 1rem;"></div>
   <main class="gallery" id="gallery"></main>
