@@ -241,54 +241,68 @@
   }
 
   async function checkJoinTask() {
-    joinBtn.textContent = "Checking...";
-    joinBtn.disabled = true;
+  joinBtn.textContent = "Checking...";
+  joinBtn.disabled = true;
 
-    try {
-      const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
-      const data = await res.json();
-      const task1UserId = data.task1_user_id;
+  try {
+    const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+    const data = await res.json();
+    const task1UserId = data.task1_user_id;
 
-      if (task1UserId == userId.toString()) {
-        joinBtn.textContent = "Claimed";
-        joinBtn.disabled = true;
-        joinBtn.classList.add("claimed");
-      } else {
-        joinBtn.textContent = "Join";
-        joinBtn.disabled = false;
-        joinBtn.onclick = () => {
-          window.open("https://t.me/meni_dao", "_blank");
-          joinBtn.textContent = "Check";
-          joinBtn.onclick = async () => {
-            joinBtn.textContent = "Checking...";
-            joinBtn.disabled = true;
-            try {
-              const checkRes = await fetch(`${joinCheckUrl}?user_id=${userId}`);
-              const checkData = await checkRes.json();
-              if (checkData.status === "joined") {
-                await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=1`);
-                joinBtn.textContent = "Claimed";
-                joinBtn.classList.add("claimed");
-                updateBalance();
-              } else {
-                showToast("You need to join the channel first");
-                joinBtn.textContent = "Join";
-                joinBtn.disabled = false;
-              }
-            } catch (err) {
-              console.error("Join check failed:", err);
-              showToast("Check failed");
+    if (task1UserId == userId.toString()) {
+      joinBtn.textContent = "Claimed";
+      joinBtn.disabled = true;
+      joinBtn.classList.add("claimed");
+    } else {
+      joinBtn.textContent = "Join";
+      joinBtn.disabled = false;
+      joinBtn.onclick = () => {
+        window.open("https://t.me/meni_dao", "_blank");
+        joinBtn.textContent = "Check";
+        joinBtn.onclick = async () => {
+          joinBtn.textContent = "Checking...";
+          joinBtn.disabled = true;
+          try {
+            const checkRes = await fetch(`${joinCheckUrl}?user_id=${userId}`);
+            const checkData = await checkRes.json();
+            if (checkData.status === "joined") {
+              joinBtn.textContent = "Claim";
+              joinBtn.disabled = false;
+              joinBtn.onclick = async () => {
+                joinBtn.disabled = true;
+                joinBtn.textContent = "Claiming...";
+                try {
+                  await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=1`);
+                  joinBtn.textContent = "Claimed";
+                  joinBtn.classList.add("claimed");
+                  updateBalance();
+                } catch (err) {
+                  showToast("Error claiming task");
+                  joinBtn.textContent = "Claim";
+                  joinBtn.disabled = false;
+                }
+              };
+            } else {
+              showToast("You need to join the channel first");
               joinBtn.textContent = "Join";
               joinBtn.disabled = false;
+              joinBtn.onclick = checkJoinTask;
             }
-          };
+          } catch (err) {
+            console.error("Join check failed:", err);
+            showToast("Check failed");
+            joinBtn.textContent = "Join";
+            joinBtn.disabled = false;
+            joinBtn.onclick = checkJoinTask;
+          }
         };
-      }
-    } catch (err) {
-      console.error("Join task check error:", err);
-      showToast("Error checking join task");
+      };
     }
+  } catch (err) {
+    console.error("Join task check error:", err);
+    showToast("Error checking join task");
   }
+}
 
   async function checkVoteTask() {
     voteBtn.textContent = "Checking...";
