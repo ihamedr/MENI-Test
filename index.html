@@ -412,7 +412,27 @@ function showToastLoading(msg) {
   toast.classList.add('show');
 }
 
-    async function checkUserBeforeLoading() {
+    const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+const userId = tgUser?.id;
+const coinBalanceEl = document.getElementById('coin-balance');
+const scriptUrl = "https://script.google.com/macros/s/AKfycbx5fiMinm44VRSb-tHOLj0u2MBol0gswI9tF8GIjjDwA4job9wcqe5IPDKYeu77aHYzKA/exec";
+
+async function updateBalance() {
+  try {
+    const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+    const data = await res.json();
+    coinBalanceEl.textContent = data.balance?.toFixed(1) || "0";
+  } catch (err) {
+    console.error("Error fetching balance:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (userId) {
+    updateBalance();
+  }
+});
+	  async function checkUserBeforeLoading() {
       showToastLoading("Checking your tournament status...");
       const userCheckUrl = `${userCheckScript}?telegram_id=${telegramId}`;
       try {
