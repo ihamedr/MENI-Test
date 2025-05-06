@@ -326,19 +326,19 @@
           voteBtn.textContent = "Claim";
           voteBtn.disabled = false;
           voteBtn.onclick = async () => {
-            voteBtn.disabled = true;
-            voteBtn.textContent = "Claiming...";
-            try {
-              await fetch(`${scriptUrl}?save_task=${userId}&task_number=2`);
-              voteBtn.textContent = "Claimed";
-              voteBtn.classList.add("claimed");
-              updateBalance();
-            } catch (err) {
-              showToast("Error claiming task");
-              voteBtn.textContent = "Claim";
-              voteBtn.disabled = false;
-            }
-          };
+  voteBtn.disabled = true;
+  voteBtn.textContent = "Claiming...";
+  try {
+    await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=2`);
+    voteBtn.textContent = "Claimed";
+    voteBtn.classList.add("claimed");
+    updateBalance();
+  } catch (err) {
+    showToast("Error claiming task");
+    voteBtn.textContent = "Claim";
+    voteBtn.disabled = false;
+  }
+};
         } else {
           showToast("You need to vote first");
           voteBtn.textContent = "Vote";
