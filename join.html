@@ -111,7 +111,29 @@
       align-items: center;
       justify-content: center;
     }
-    .remove-btn:hover { background-color: #ffa733; }
+    .coin-card {
+      background-color: #2b2b2b;
+      border-radius: 16px;
+      border: 2px solid #444;
+      padding: 0.4rem 0.9rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      box-shadow: 0 0 10px rgba(255,153,0,0.1);
+    }
+    .coin-card img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      margin-right: 0.5rem;
+    }
+    .coin-card span {
+      font-size: 1rem;
+      color: #f5f5f5;
+      font-weight: 500;
+    }
+	  .remove-btn:hover { background-color: #ffa733; }
     .form-group {
       width: 100%;
       max-width: 350px;
@@ -146,7 +168,10 @@
   <div class="toast" id="toast"></div>
 
   <h2>Upload Your Meme</h2>
-
+<div class="coin-card">
+    <img src="coin.png" alt="Coin" />
+    <span id="coin-balance">0</span>
+  </div>
   <label class="upload-area" id="uploadArea">
     <button id="removeBtn" class="remove-btn">&times;</button>
     <div class="plus" id="uploadText">+</div>
@@ -197,7 +222,26 @@ function hideToast() {
     toast.style.animation = '';
   }, 400);
 }
+const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+const userId = tgUser?.id;
+const coinBalanceEl = document.getElementById('coin-balance');
+const scriptUrl = "https://script.google.com/macros/s/AKfycbx5fiMinm44VRSb-tHOLj0u2MBol0gswI9tF8GIjjDwA4job9wcqe5IPDKYeu77aHYzKA/exec";
 
+async function updateBalance() {
+  try {
+    const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+    const data = await res.json();
+    coinBalanceEl.textContent = data.balance?.toFixed(1) || "0";
+  } catch (err) {
+    console.error("Error fetching balance:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (userId) {
+    updateBalance();
+  }
+});
 // ابتدا چک کنیم که آیا کاربر قبلا میم آپلود کرده یا نه
 function checkIfUploaded() {
   const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
