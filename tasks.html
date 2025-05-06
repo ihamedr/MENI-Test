@@ -91,6 +91,13 @@
     .join-btn:hover {
       background-color: #ffa733;
     }
+	   .join-btn:disabled,
+    .join-btn.claimed {
+      background-color: #555;
+      color: #aaa;
+      cursor: default;
+    }
+
     .nav-bar {
       position: fixed;
       bottom: 1rem;
@@ -118,6 +125,53 @@
     .nav-bar button:hover {
       color: #ff9900;
     }
+	  .toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ff9900, #ffbb55);
+  color: #1f1f1f;
+  padding: 0.9rem 1.5rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-family: 'Space Grotesk', sans-serif;
+  box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
+  opacity: 90%;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-20px) scale(0.95);
+}
+.toast.show {
+  animation: toastFadeIn 0.4s ease forwards;
+  pointer-events: auto;
+}
+
+@keyframes toastFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes toastFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
+}
   </style>
 </head>
 <body>
@@ -127,9 +181,9 @@
 <!-- Coin Balance Card -->
   <div class="coin-card">
     <img src="coin.png" alt="Coin" />
-    <span>0</span>
+   <span id="coin-balance"></span>
   </div>
-
+<div class="toast" id="toast"></div>
   <!-- Task 1: Join Community -->
   <div class="tournament-card">
     <div class="tournament-info">
@@ -139,7 +193,7 @@
         <div class="prize">Reward: <strong>0.5 MENI Coin</strong></div>
       </div>
     </div>
-    <button class="join-btn" id="join-task-btn">Join</button>
+    <button class="join-btn" id="joinBtn">Join</button>
   </div>
 
   <!-- Task 2: Vote for a meme -->
@@ -151,7 +205,7 @@
         <div class="prize">Reward: <strong>0.5 MENI Coin</strong></div>
       </div>
     </div>
-    <button class="join-btn">Vote</button>
+    <button class="join-btn" id="voteBtn">Vote</button>
   </div>
 
   <!-- Navigation Bar -->
@@ -162,57 +216,184 @@
     <button class="active">Tasks</button>
   </div>
 <script>
-  const tg = window.Telegram.WebApp;
-  const joinBtn = document.getElementById('join-task-btn');
-  let currentState = 'join'; // join → check → claim
+  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+  const userId = tgUser?.id;
 
-  joinBtn.addEventListener('click', async () => {
-    if (currentState === 'join') {
-      // انتقال به کانال تلگرام
-      window.open('https://t.me/MENI_DAO', '_blank');
-      joinBtn.textContent = 'Check';
-      currentState = 'check';
-    } 
-    else if (currentState === 'check') {
-      // قفل کردن دکمه
-      joinBtn.disabled = true;
-      joinBtn.textContent = 'Checking...';
-      joinBtn.style.backgroundColor = '#555';
-      
-      // فرض: بررسی عضویت با درخواست به سرور یا GAS
-      try {
-        const telegramId = tg.initDataUnsafe.user?.id;
-        const response = await fetch('https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec?user_id=' + telegramId);
-        const data = await response.json();
+  const joinBtn = document.getElementById('joinBtn');
+  const voteBtn = document.getElementById('voteBtn');
+  const coinBalanceEl = document.getElementById('coin-balance');
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbxtMA-my5N0jM43kRn8wfcAZavw1ztHr4ZpXzMlEwhPpm7CNTyTsqiXGfGlr2sZU9XUyA/exec"; // لینک اسکریپتت رو بذار
 
-        if (data.isMember) {
-          joinBtn.disabled = false;
-          joinBtn.textContent = 'Claim';
-          joinBtn.style.backgroundColor = '#ff9900';
-          currentState = 'claim';
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2500);
+  }
 
-          showPopup('You’ve joined the channel! Now claim your reward');
-        } else {
-          joinBtn.disabled = false;
-          joinBtn.textContent = 'Join';
-          joinBtn.style.backgroundColor = '#ff9900';
-          currentState = 'join';
+  async function updateBalance() {
+    try {
+      const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+      const data = await res.json();
+      coinBalanceEl.textContent = data.balance?.toFixed(1) || "0";
+    } catch (err) {
+      console.error("Error fetching balance:", err);
+    }
+  }
 
-          showPopup('You must join the channel first to continue.');
-        }
-      } catch (err) {
+  async function checkUserTasks() {
+    joinBtn.textContent = "Checking...";
+    voteBtn.textContent = "Checking...";
+    joinBtn.disabled = true;
+    voteBtn.disabled = true;
+
+    try {
+      const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+      const data = await res.json();
+      const balance = parseFloat(data.balance) || 0;
+
+      // بررسی Claimed بودن تسک‌ها با توجه به آیدی
+      const joinClaimed = balance >= 0.5;
+      const voteClaimed = balance >= 1;
+
+      if (joinClaimed) {
+        joinBtn.textContent = "Claimed";
+        joinBtn.disabled = true;
+        joinBtn.classList.add("claimed");
+      } else {
+        joinBtn.textContent = "Join";
         joinBtn.disabled = false;
-        joinBtn.textContent = 'Join';
-        joinBtn.style.backgroundColor = '#ff9900';
-        currentState = 'join';
-        showPopup('Error checking membership. Please try again');
+        joinBtn.onclick = () => {
+          // کاربر منتقل بشه به کانال
+          window.open("https://t.me/meni_dao", "_blank");
+          joinBtn.textContent = "Check";
+          joinBtn.onclick = async () => {
+            joinBtn.textContent = "Checking...";
+            joinBtn.disabled = true;
+
+            try {
+              const checkRes = await fetch(`https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec?user_id=${userId}`);
+              const checkData = await checkRes.json();
+
+              if (checkData.status === "joined") {
+                await fetch(`${scriptUrl}?save_task=1&user_id=${userId}`&task_number=1);
+                joinBtn.textContent = "Claimed";
+                joinBtn.classList.add("claimed");
+                updateBalance();
+              } else {
+                showToast("You need to join the channel first");
+                joinBtn.textContent = "Join";
+                joinBtn.disabled = false;
+              }
+            } catch (err) {
+              console.error("Join check failed:", err);
+              showToast("Check failed");
+              joinBtn.textContent = "Join";
+              joinBtn.disabled = false;
+            }
+          };
+        };
       }
+const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+const checkUserUrl = "https://script.google.com/macros/s/AKfycbxtMA-my5N0jM43kRn8wfcAZavw1ztHr4ZpXzMlEwhPpm7CNTyTsqiXGfGlr2sZU9XUyA/exec";
+const voterCheckUrl = "https://script.google.com/macros/s/AKfycbzqgUNUHlGBr9QhtruMIuicFiW27u6ZyBSNmvwLT9TRZLDD4ltX8B9tfzFVx4tUKYTx/exec";
+const toast = document.getElementById("toast");
+const voteBtn = document.getElementById("voteBtn");
+
+let toastVisible = false;
+
+function showToast(msg) {
+  if (!msg || toastVisible) return;
+  toastVisible = true;
+  toast.textContent = msg;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    toastVisible = false;
+  }, 2500);
+}
+
+async function checkVoteStatus(userId) {
+  voteBtn.disabled = true;
+  voteBtn.textContent = "Checking...";
+  try {
+    const res = await fetch(`${checkUserUrl}?check_vote_task=${userId}`);
+    const data = await res.json();
+    if (data.claimed) {
+      voteBtn.textContent = "Claimed";
+      voteBtn.classList.add("claimed");
+    } else {
+      voteBtn.textContent = "Vote";
+      voteBtn.disabled = false;
+      voteBtn.onclick = voteTaskStart;
+    }
+  } catch (err) {
+    console.error("Error checking vote task:", err);
+    voteBtn.textContent = "Vote";
+    voteBtn.disabled = false;
+    voteBtn.onclick = voteTaskStart;
+  }
+}
+
+async function voteTaskStart() {
+  voteBtn.textContent = "Check";
+  voteBtn.onclick = checkVoterSheet;
+}
+
+async function checkVoterSheet() {
+  voteBtn.disabled = true;
+  voteBtn.textContent = "Checking...";
+  try {
+    const res = await fetch(`${voterCheckUrl}?user_id=${tgUser.id}`);
+    const data = await res.json();
+    if (data.voted) {
+      voteBtn.textContent = "Claim";
+      voteBtn.disabled = false;
+      voteBtn.onclick = async () => {
+        voteBtn.disabled = true;
+        voteBtn.textContent = "Claiming...";
+        try {
+          await fetch(`${checkUserUrl}?claim_vote_task=${tgUser.id}`);
+          voteBtn.textContent = "Claimed";
+          voteBtn.classList.add("claimed");
+          updateCoinBalance();
+        } catch (err) {
+          showToast("Error claiming task");
+          voteBtn.textContent = "Claim";
+          voteBtn.disabled = false;
+        }
+      };
+    } else {
+      showToast("You need to vote first");
+      voteBtn.textContent = "Vote";
+      voteBtn.disabled = false;
+      voteBtn.onclick = voteTaskStart;
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 2000);
+    }
+  } catch (err) {
+    console.error("Voter check failed", err);
+    voteBtn.textContent = "Vote";
+    voteBtn.disabled = false;
+    voteBtn.onclick = voteTaskStart;
+    showToast("Check failed");
+  }
+}
+
+function updateCoinBalance() {
+  // تابعی برای آپدیت مجموع کوین‌ها، قبلاً تعریف شده
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (tgUser && tgUser.id) {
+    checkVoteStatus(tgUser.id);
+  }
+       else {
+      showToast("Telegram user not found");
     }
   });
-
-  function showPopup(message) {
-    tg.showPopup({ message });
-  }
 </script>
 	</body>
 </html>
