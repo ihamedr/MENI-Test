@@ -136,9 +136,9 @@
   font-size: 0.95rem;
   font-family: 'Space Grotesk', sans-serif;
   box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
-  opacity: 90%;
   pointer-events: none;
-  z-index: 999;
+  z-index: 10001;
+  opacity: 0;
 }
 .toast {
   opacity: 0;
@@ -170,7 +170,7 @@
     opacity: 0;
     transform: translateX(-50%) translateY(-20px) scale(0.95);
   }
-}
+}  
   </style>
 </head>
 <body>
@@ -204,182 +204,171 @@
     <button class="active">Tasks</button>
   </div>  
 	<script>
-    const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-    const userId = tgUser?.id;
+  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+  const userId = tgUser?.id;
 
-    const joinBtn = document.getElementById('joinBtn');
-    const voteBtn = document.getElementById('voteBtn');
-    const coinBalanceEl = document.getElementById('coin-balance');
-    const toast = document.getElementById("toast");
+  const joinBtn = document.getElementById('joinBtn');
+  const voteBtn = document.getElementById('voteBtn');
+  const coinBalanceEl = document.getElementById('coin-balance');
+  const toast = document.getElementById("toast");
 
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbxQjJk771VLrmiwyQpTOx9ECPqSC_LjEv06l6HfdwcFqXgH5b5BVoF4tQZbLalTnvVa-A/exec";
-    const joinCheckUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
-    const voterCheckUrl = "https://script.google.com/macros/s/AKfycbzqgUNUHlGBr9QhtruMIuicFiW27u6ZyBSNmvwLT9TRZLDD4ltX8B9tfzFVx4tUKYTx/exec";
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbx5fiMinm44VRSb-tHOLj0u2MBol0gswI9tF8GIjjDwA4job9wcqe5IPDKYeu77aHYzKA/exec";
+  const joinCheckUrl = "https://script.google.com/macros/s/AKfycbyHS9caluu5gU0r8issBk7dhZe6UAaAx2MWGq4MiDpPm1UJYIrs2BdXOhUpOJ1cbOO0/exec";
+  const voterCheckUrl = "https://script.google.com/macros/s/AKfycbzqgUNUHlGBr9QhtruMIuicFiW27u6ZyBSNmvwLT9TRZLDD4ltX8B9tfzFVx4tUKYTx/exec";
 
-    let toastVisible = false;
-    function showToast(msg) {
-      if (!msg || toastVisible) return;
-      toastVisible = true;
-      toast.textContent = msg;
-      toast.classList.add("show");
-      setTimeout(() => {
-        toast.classList.remove("show");
-        toastVisible = false;
-      }, 2500);
+  function showToast(msg) {
+		if (!msg) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+
+  // پاک کردن کلاس برای انیمیشن خروج بعد از مدتی
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
+}
+  function hideToast() {
+  toast.classList.remove('show');
+}
+
+  async function updateBalance() {
+    try {
+      const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+      const data = await res.json();
+      coinBalanceEl.textContent = data.balance?.toFixed(1) || "0";
+    } catch (err) {
+      console.error("Error fetching balance:", err);
     }
+  }
 
-    async function updateBalance() {
-      try {
-        const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
-        const data = await res.json();
-        coinBalanceEl.textContent = data.balance?.toFixed(1) || "0";
-      } catch (err) {
-        console.error("Error fetching balance:", err);
-      }
-    }
-async function checkUserTasks() {
-  joinBtn.textContent = "Checking...";
-  voteBtn.textContent = "Checking...";
-  joinBtn.disabled = true;
-  voteBtn.disabled = true;
+  async function checkJoinTask() {
+    joinBtn.textContent = "Checking...";
+    joinBtn.disabled = true;
 
-  try {
-    const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
-    const data = await res.json();
-    const task1 = parseFloat(data.task1) || 0;
-    const task2 = parseFloat(data.task2) || 0;
+    try {
+      const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+      const data = await res.json();
+      const task1UserId = data.task1_user_id;
 
-    // تسک اول (عضویت در کانال)
-    if (task1 >= 0.5) {
-      joinBtn.textContent = "Claimed";
-      joinBtn.disabled = true;
-      joinBtn.classList.add("claimed");
-    } else {
-      joinBtn.textContent = "Join";
-      joinBtn.disabled = false;
-      joinBtn.onclick = () => {
-        window.open("https://t.me/meni_dao", "_blank");
-        joinBtn.textContent = "Check";
-        joinBtn.onclick = async () => {
-          joinBtn.textContent = "Checking...";
-          joinBtn.disabled = true;
-          try {
-            const checkRes = await fetch(`${joinCheckUrl}?user_id=${userId}`);
-            const checkData = await checkRes.json();
-            if (checkData.status === "joined") {
-              await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=1`);
-              joinBtn.textContent = "Claimed";
-              joinBtn.classList.add("claimed");
-              updateBalance();
-            } else {
-              showToast("You need to join the channel first");
+      if (task1UserId == userId.toString()) {
+        joinBtn.textContent = "Claimed";
+        joinBtn.disabled = true;
+        joinBtn.classList.add("claimed");
+      } else {
+        joinBtn.textContent = "Join";
+        joinBtn.disabled = false;
+        joinBtn.onclick = () => {
+          window.open("https://t.me/meni_dao", "_blank");
+          joinBtn.textContent = "Check";
+          joinBtn.onclick = async () => {
+            joinBtn.textContent = "Checking...";
+            joinBtn.disabled = true;
+            try {
+              const checkRes = await fetch(`${joinCheckUrl}?user_id=${userId}`);
+              const checkData = await checkRes.json();
+              if (checkData.status === "joined") {
+                await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=1`);
+                joinBtn.textContent = "Claimed";
+                joinBtn.classList.add("claimed");
+                updateBalance();
+              } else {
+                showToast("You need to join the channel first");
+                joinBtn.textContent = "Join";
+                joinBtn.disabled = false;
+              }
+            } catch (err) {
+              console.error("Join check failed:", err);
+              showToast("Check failed");
               joinBtn.textContent = "Join";
               joinBtn.disabled = false;
             }
+          };
+        };
+      }
+    } catch (err) {
+      console.error("Join task check error:", err);
+      showToast("Error checking join task");
+    }
+  }
+
+  async function checkVoteTask() {
+    voteBtn.textContent = "Checking...";
+    voteBtn.disabled = true;
+
+    try {
+      const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
+      const data = await res.json();
+      const task2UserId = data.task2_user_id;
+
+      if (task2UserId == userId.toString()) {
+        voteBtn.textContent = "Claimed";
+        voteBtn.disabled = true;
+        voteBtn.classList.add("claimed");
+      } else {
+        voteBtn.textContent = "Vote";
+        voteBtn.disabled = false;
+        voteBtn.onclick = voteTaskStart;
+      }
+    } catch (err) {
+      console.error("Vote task check error:", err);
+      showToast("Error checking vote task");
+    }
+  }
+
+  function voteTaskStart() {
+    voteBtn.textContent = "Check";
+    voteBtn.onclick = checkVoterSheet;
+  }
+
+  async function checkVoterSheet() {
+    voteBtn.disabled = true;
+    voteBtn.textContent = "Checking...";
+    try {
+      const res = await fetch(`${voterCheckUrl}?user_id=${userId}`);
+      const data = await res.json();
+      if (data.voted) {
+        voteBtn.textContent = "Claim";
+        voteBtn.disabled = false;
+        voteBtn.onclick = async () => {
+          voteBtn.disabled = true;
+          voteBtn.textContent = "Claiming...";
+          try {
+            await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=2`);
+            voteBtn.textContent = "Claimed";
+            voteBtn.classList.add("claimed");
+            updateBalance();
           } catch (err) {
-            console.error("Join check failed:", err);
-            showToast("Check failed");
-            joinBtn.textContent = "Join";
-            joinBtn.disabled = false;
+            showToast("Error claiming task");
+            voteBtn.textContent = "Claim";
+            voteBtn.disabled = false;
           }
         };
-      };
-    }
-
-    // تسک دوم (رأی دادن)
-    if (task2 >= 0.5) {
-      voteBtn.textContent = "Claimed";
-      voteBtn.disabled = true;
-      voteBtn.classList.add("claimed");
-    } else {
+      } else {
+        showToast("You need to vote first");
+        voteBtn.textContent = "Vote";
+        voteBtn.disabled = false;
+        voteBtn.onclick = voteTaskStart;
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      }
+    } catch (err) {
+      console.error("Voter check failed", err);
       voteBtn.textContent = "Vote";
       voteBtn.disabled = false;
       voteBtn.onclick = voteTaskStart;
+      showToast("Check failed");
     }
-  } catch (err) {
-    console.error("Task check error:", err);
-    showToast("Error checking tasks");
   }
-}
-    
 
-    async function checkVoteStatus() {
-      voteBtn.disabled = true;
-      voteBtn.textContent = "Checking...";
-      try {
-        const res = await fetch(`${scriptUrl}?check_vote_task=${userId}`);
-        const data = await res.json();
-        if (data.claimed) {
-          voteBtn.textContent = "Claimed";
-          voteBtn.classList.add("claimed");
-        } else {
-          voteBtn.textContent = "Vote";
-          voteBtn.disabled = false;
-          voteBtn.onclick = voteTaskStart;
-        }
-      } catch (err) {
-        console.error("Error checking vote task:", err);
-        voteBtn.textContent = "Vote";
-        voteBtn.disabled = false;
-        voteBtn.onclick = voteTaskStart;
-      }
+  document.addEventListener("DOMContentLoaded", () => {
+    if (userId) {
+      updateBalance();
+      checkJoinTask();
+      checkVoteTask();
+    } else {
+      showToast("Telegram user not found");
     }
-
-    function voteTaskStart() {
-      voteBtn.textContent = "Check";
-      voteBtn.onclick = checkVoterSheet;
-    }
-
-    async function checkVoterSheet() {
-      voteBtn.disabled = true;
-      voteBtn.textContent = "Checking...";
-      try {
-        const res = await fetch(`${voterCheckUrl}?user_id=${userId}`);
-        const data = await res.json();
-        if (data.voted) {
-          voteBtn.textContent = "Claim";
-          voteBtn.disabled = false;
-          voteBtn.onclick = async () => {
-  voteBtn.disabled = true;
-  voteBtn.textContent = "Claiming...";
-  try {
-    await fetch(`${scriptUrl}?save_task=1&user_id=${userId}&task_number=2`);
-    voteBtn.textContent = "Claimed";
-    voteBtn.classList.add("claimed");
-    updateBalance();
-  } catch (err) {
-    showToast("Error claiming task");
-    voteBtn.textContent = "Claim";
-    voteBtn.disabled = false;
-  }
-};
-        } else {
-          showToast("You need to vote first");
-          voteBtn.textContent = "Vote";
-          voteBtn.disabled = false;
-          voteBtn.onclick = voteTaskStart;
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 2000);
-        }
-      } catch (err) {
-        console.error("Voter check failed", err);
-        voteBtn.textContent = "Vote";
-        voteBtn.disabled = false;
-        voteBtn.onclick = voteTaskStart;
-        showToast("Check failed");
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      if (userId) {
-        updateBalance();
-        checkUserTasks();
-        checkVoteStatus();
-      } else {
-        showToast("Telegram user not found");
-      }
-    });
-  </script>
+  });
+</script>
 	</body>
 </html>
