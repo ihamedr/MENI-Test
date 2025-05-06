@@ -202,7 +202,8 @@
     <button onclick="location.href='index.html'">Explore</button>
     <button onclick="location.href='Tournament.html'">Tournament</button>
     <button class="active">Tasks</button>
-  </div>  <script>
+  </div>  
+	<script>
     const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
     const userId = tgUser?.id;
 
@@ -328,7 +329,7 @@
             voteBtn.disabled = true;
             voteBtn.textContent = "Claiming...";
             try {
-              await fetch(`${scriptUrl}?claim_vote_task=${userId}`);
+              await fetch(`${scriptUrl}?save_task=${userId}&task_number=2`);
               voteBtn.textContent = "Claimed";
               voteBtn.classList.add("claimed");
               updateBalance();
@@ -365,5 +366,6 @@
         showToast("Telegram user not found");
       }
     });
-  </script></body>
+  </script>
+	</body>
 </html>
