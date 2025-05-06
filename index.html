@@ -301,11 +301,12 @@
       border: 2px solid #444;
       padding: 0.6rem 1rem;
       margin-bottom: 1.2rem;
+      display: flex;
       align-items: center;
       width: fit-content;
       box-shadow: 0 0 10px rgba(255,153,0,0.1);
-		  align-self: flex-start;
-		  margin-left: 1rem
+		  algin-self: flex-start !important;
+		  margin-left: 1rem !important;
     }
     .coin-card img {
       width: 28px;
@@ -325,17 +326,16 @@
     <div class="logo-container">
       <img src="logo.png" alt="MENI Logo" />
     </div>
-   <div class="coin-card">
-    <img src="coin.png" alt="Coin" />
-    <span id="coin-balance">0</span>
-  </div>
 	  <div id="filters">
   <button class="filter-btn active" data-type="new">NEW</button>
   <button class="filter-btn" data-type="popular">POPULAR</button>
   <button class="filter-btn" data-type="trend">TREND</button>
 </div>
   </header>
-
+ <div class="coin-card">
+    <img src="coin.png" alt="Coin" />
+    <span id="coin-balance">0</span>
+  </div>
   <div class="toast" id="toast"></div>
   <div id="message" style="display: none; text-align: center; color: #ff9900; margin-top: 2rem; font-size: 1rem;"></div>
   <main class="gallery" id="gallery"></main>
