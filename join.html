@@ -19,19 +19,52 @@
       min-height: 100vh;
     }
     .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #ff9900;
-      color: #1f1f1f;
-      padding: 0.8rem 1.5rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      display: none;
-      z-index: 999;
-    }
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ff9900, #ffbb55);
+  color: #1f1f1f;
+  padding: 0.9rem 1.5rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-family: 'Space Grotesk', sans-serif;
+  box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+.toast {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-20px) scale(0.95);
+}
+.toast.show {
+  animation: toastFadeIn 0.4s ease forwards;
+  pointer-events: auto;
+}
+
+@keyframes toastFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes toastFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
+}
     h2 {
       color: #ff9900;
       margin-bottom: 1.5rem;
@@ -110,7 +143,7 @@
 </head>
 <body>
 
-  <div id="toast" class="toast">Successfully joined the tournament!</div>
+  <div class="toast" id="toast"></div>
 
   <h2>Upload Your Meme</h2>
 
@@ -139,16 +172,30 @@ const toast = document.getElementById('toast');
 
 let alreadyUploaded = false;
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.style.display = 'block';
+function showToast(msg) {
+  if (!msg) return;
+  toast.textContent = msg;
+  toast.classList.remove('hide');
+  toast.classList.add('show');
+
+  // بعد از 2.5 ثانیه شروع به خروج کن
   setTimeout(() => {
-    toast.style.display = 'none';
-  }, 3000);
+    toast.classList.remove('show');
+    toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+    
+    // بعد از انیمیشن خروج، ریست کنیم
+    setTimeout(() => {
+      toast.style.animation = '';
+    }, 400);
+  }, 2500);
 }
 
-function goBack() {
-  window.location.href = 'Tournament.html';
+function hideToast() {
+  toast.classList.remove('show');
+  toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+  setTimeout(() => {
+    toast.style.animation = '';
+  }, 400);
 }
 
 // ابتدا چک کنیم که آیا کاربر قبلا میم آپلود کرده یا نه
