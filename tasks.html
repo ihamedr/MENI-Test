@@ -217,19 +217,30 @@
   const voterCheckUrl = "https://script.google.com/macros/s/AKfycbzqgUNUHlGBr9QhtruMIuicFiW27u6ZyBSNmvwLT9TRZLDD4ltX8B9tfzFVx4tUKYTx/exec";
 
   function showToast(msg) {
-		if (!msg) return;
+  if (!msg) return;
   toast.textContent = msg;
+  toast.classList.remove('hide');
   toast.classList.add('show');
 
-  // پاک کردن کلاس برای انیمیشن خروج بعد از مدتی
+  // بعد از 2.5 ثانیه شروع به خروج کن
   setTimeout(() => {
     toast.classList.remove('show');
+    toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+    
+    // بعد از انیمیشن خروج، ریست کنیم
+    setTimeout(() => {
+      toast.style.animation = '';
+    }, 400);
   }, 2500);
 }
-  function hideToast() {
-  toast.classList.remove('show');
-}
 
+function hideToast() {
+  toast.classList.remove('show');
+  toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+  setTimeout(() => {
+    toast.style.animation = '';
+  }, 400);
+}
   async function updateBalance() {
     try {
       const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
