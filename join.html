@@ -195,6 +195,7 @@ const removeBtn = document.getElementById('removeBtn');
 const uploadBtn = document.getElementById('uploadBtn');
 const toast = document.getElementById('toast');
 
+let alreadyUploaded = false;
 
 function showToast(msg) {
   if (!msg) return;
@@ -221,13 +222,10 @@ function hideToast() {
     toast.style.animation = '';
   }, 400);
 }
-	  function goBack() {
-  window.location.href = 'Tournament.html';
-}
-const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+	 const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
 const userId = tgUser?.id;
 const coinBalanceEl = document.getElementById('coin-balance');
-const scriptUrl = "https://script.google.com/macros/s/AKfycbydxsfoOTf3MyzuU7WwJKrRd1HYpN_3Vk8Y7xj23OhYYQCa3EqvH6saZHhF8NBTNDaEPQ/exec";
+const scriptUrl = "https://script.google.com/macros/s/AKfycbx5fiMinm44VRSb-tHOLj0u2MBol0gswI9tF8GIjjDwA4job9wcqe5IPDKYeu77aHYzKA/exec";
 
 async function updateBalance() {
   try {
@@ -243,10 +241,93 @@ document.addEventListener("DOMContentLoaded", () => {
   if (userId) {
     updateBalance();
   }
+}); 
+	  
+function goBack() {
+  window.location.href = 'Tournament.html';
+}
+// ابتدا چک کنیم که آیا کاربر قبلا میم آپلود کرده یا نه
+function checkIfUploaded() {
+  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+  if (!tgUser) {
+    console.error('Telegram user data not found.');
+    return;
+  }
+
+  fetch(`https://meni-server.onrender.com/check-upload/${tgUser.id}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.uploaded) {
+        alreadyUploaded = true;
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = "Already Uploaded";
+        uploadBtn.style.backgroundColor = "#444";
+        uploadBtn.style.color = "#aaa";
+        uploadArea.style.backgroundColor = "#3a3a3a";
+        uploadArea.style.cursor = "default";
+        uploadArea.style.pointerEvents = "none";
+        uploadArea.style.opacity = 0.6;
+      } else {
+        // اگر هنوز آپلود نکرده اجازه بده
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = "Upload";
+        uploadArea.style.pointerEvents = "auto";
+        uploadArea.style.opacity = 1;
+      }
+    })
+    .catch(err => {
+      console.error("Check upload error:", err);
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = "Upload";
+      uploadArea.style.pointerEvents = "auto";
+      uploadArea.style.opacity = 1;
+    });
+}
+
+uploadArea.addEventListener('click', () => {
+  if (!uploadBtn.disabled) {
+    fileInput.click();
+  } else {
+    showToast("You have already uploaded your meme");
+  }
 });
 
+fileInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImage.src = e.target.result;
+      previewImage.style.display = 'block';
+      uploadText.style.display = 'none';
+      uploadSubtext.style.display = 'none';
+      removeBtn.style.display = 'flex';
+
+      const img = new Image();
+      img.onload = function() {
+        uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+removeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  fileInput.value = '';
+  previewImage.style.display = 'none';
+  uploadText.style.display = 'block';
+  uploadSubtext.style.display = 'block';
+  removeBtn.style.display = 'none';
+  uploadArea.style.height = '300px';
+});
 
 function uploadMeme() {
+  if (alreadyUploaded) {
+    showToast("You have already uploaded your meme.");
+    return;
+  }
 
   if (!fileInput.files.length) {
     showToast('Please select your meme first.');
@@ -264,23 +345,6 @@ function uploadMeme() {
   const telegramId = tgUser.id; // آیدی عددی
   const uploadTime = new Date().toISOString();
 
-fetch(`${scriptUrl}?check_points=1&user_id=${telegramId}`)
-    .then(res => res.json())
-    .then(result => {
-      if (!result.allowed) {
-        showToast("Insufficient balance to upload");
-        return;
-      }
-
-      // از اینجا به بعد، آپلود شروع میشه
-      startUpload(); // این تابع رو پایین تعریف می‌کنیم
-    })
-    .catch(err => {
-      console.error("Error checking balance:", err);
-      showToast("Error checking balance.");
-    });
-
-function startUpload() {
   const file = fileInput.files[0];
   const formData = new FormData();
   formData.append('file', file);
@@ -325,29 +389,14 @@ function startUpload() {
       throw new Error(serverData.message || 'Server error');
     }
 
-    // کم کردن 1 کوین
-fetch(`${scriptUrl}?decrease_point=1&user_id=${telegramId}`)
-  .then(res => res.json())
-  .then(decreaseResult => {
-    if (decreaseResult.status === "success") {
-      showToast('Your meme was successfully uploaded!');
-      updateBalance(); // برای آپدیت عدد موجودی در UI
-    } else {
-      console.warn("Point not decreased:", decreaseResult.message);
-      showToast('Upload succeeded, but balance was not updated.');
-    }
-  })
-  .catch(err => {
-    console.error("Error decreasing point:", err);
-    showToast('Upload succeeded, but error updating balance.');
-  });
-
-uploadBtn.innerHTML = "Uploaded";
-uploadBtn.style.backgroundColor = "#444";
-uploadBtn.style.color = "#aaa";
-uploadArea.style.backgroundColor = "#3a3a3a";
-uploadArea.style.cursor = "default";
-removeBtn.style.display = "none";
+    showToast('Your meme was successfully uploaded!');
+    uploadBtn.innerHTML = "Uploaded";
+    uploadBtn.style.backgroundColor = "#444";
+    uploadBtn.style.color = "#aaa";
+    uploadArea.style.backgroundColor = "#3a3a3a";
+    uploadArea.style.cursor = "default";
+    removeBtn.style.display = "none";
+    alreadyUploaded = true;
   })
   .catch(err => {
     console.error("Upload Error:", err);
@@ -357,6 +406,16 @@ removeBtn.style.display = "none";
   });
 }
 
+// اجرای چک اولیه وقتی صفحه لود شد
+document.addEventListener('DOMContentLoaded', () => {
+  // قفل اولیه هنگام لود
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = "Checking...";
+  uploadArea.style.pointerEvents = "none";
+  uploadArea.style.opacity = 0.6;
+
+  checkIfUploaded();
+});
 
   </script>
 </body>
