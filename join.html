@@ -165,7 +165,7 @@
 </head>
 <body>
 
-  <div class="toast" id="toast"></div>
+  <div id="toast" class="toast"></div>
 
   <h2>Upload Your Meme</h2>
 <div class="coin-card">
@@ -228,7 +228,7 @@ function hideToast() {
 const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
 const userId = tgUser?.id;
 const coinBalanceEl = document.getElementById('coin-balance');
-const scriptUrl = "https://script.google.com/macros/s/AKfycbydxsfoOTf3MyzuU7WwJKrRd1HYpN_3Vk8Y7xj23OhYYQCa3EqvH6saZHhF8NBTNDaEPQ/exec";
+const scriptUrl = "https://script.google.com/macros/s/AKfycbxtDNtu8JHBEZQGC_ZPIO8Fn_oigAdkssAFQLk6bk_yqrWzFGFwOauB-F-BO7dToJK9Jg/exec";
 
 async function updateBalance() {
   try {
@@ -248,7 +248,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function uploadMeme() {
- if (!fileInput.files.length) {
+  if (alreadyUploaded) {
+    showToast("You have already uploaded your meme.");
+    return;
+  }
+
+  if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
   }
@@ -264,25 +269,7 @@ function uploadMeme() {
   const telegramId = tgUser.id; // آیدی عددی
   const uploadTime = new Date().toISOString();
 
-  // مرحله 1: چک کردن موجودی
-  try {
-    const balanceRes = await fetch(`${scriptUrl}?get_balance=1&user_id=${telegramId}`);
-    const balanceData = await balanceRes.json();
-    const currentPoints = balanceData.balance || 0;
-
-    if (currentPoints < 1) {
-      showToast("You don't have enough coin balance");
-      return;
-    }
-  } catch (err) {
-    console.error("Balance check failed:", err);
-    showToast("Could not check coin balance");
-    return;
-  }
-
-
-
-const file = fileInput.files[0];
+  const file = fileInput.files[0];
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', 'meni_upload');
@@ -319,24 +306,6 @@ const file = fileInput.files[0];
         uploadTime: uploadTime
       })
     });
-// مرحله 4: کم کردن 1 از points در Google Sheet
-    await fetch(`${scriptUrl}?decrease_point=1&user_id=${telegramId}`);
-    updateBalance();
-
-    showToast('Your meme was successfully uploaded!');
-    uploadBtn.innerHTML = "Uploaded";
-    uploadBtn.disabled = true;
-    uploadBtn.style.backgroundColor = "#444";
-    uploadBtn.style.color = "#aaa";
-    uploadArea.style.pointerEvents = "none";
-    uploadArea.style.opacity = 0.6;
-    removeBtn.style.display = "none";
-  } catch (err) {
-    console.error("Upload Error:", err);
-    showToast('Error: ' + (err.message || 'Unknown error'));
-    uploadBtn.disabled = false;
-    uploadBtn.innerHTML = "Upload";
-  }
   })
   .then(res => res.json())
   .then(serverData => {
@@ -359,8 +328,18 @@ const file = fileInput.files[0];
     uploadBtn.disabled = false;
     uploadBtn.innerHTML = "Upload";
   });
-await fetch(`${scriptUrl}?get_balance=1&user_id=${telegramId}`);
 }
+
+// اجرای چک اولیه وقتی صفحه لود شد
+document.addEventListener('DOMContentLoaded', () => {
+  // قفل اولیه هنگام لود
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = "Checking...";
+  uploadArea.style.pointerEvents = "none";
+  uploadArea.style.opacity = 0.6;
+
+  checkIfUploaded();
+});
 
   </script>
 </body>
