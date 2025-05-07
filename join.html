@@ -228,7 +228,7 @@ function hideToast() {
 const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
 const userId = tgUser?.id;
 const coinBalanceEl = document.getElementById('coin-balance');
-const scriptUrl = "https://script.google.com/macros/s/AKfycbxtDNtu8JHBEZQGC_ZPIO8Fn_oigAdkssAFQLk6bk_yqrWzFGFwOauB-F-BO7dToJK9Jg/exec";
+const scriptUrl = "https://script.google.com/macros/s/AKfycbydxsfoOTf3MyzuU7WwJKrRd1HYpN_3Vk8Y7xj23OhYYQCa3EqvH6saZHhF8NBTNDaEPQ/exec";
 
 async function updateBalance() {
   try {
@@ -245,90 +245,10 @@ document.addEventListener("DOMContentLoaded", () => {
     updateBalance();
   }
 });
-// ابتدا چک کنیم که آیا کاربر قبلا میم آپلود کرده یا نه
-function checkIfUploaded() {
-  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-  if (!tgUser) {
-    console.error('Telegram user data not found.');
-    return;
-  }
 
-  fetch(`https://meni-server.onrender.com/check-upload/${tgUser.id}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.uploaded) {
-        alreadyUploaded = true;
-        uploadBtn.disabled = true;
-        uploadBtn.innerHTML = "Already Uploaded";
-        uploadBtn.style.backgroundColor = "#444";
-        uploadBtn.style.color = "#aaa";
-        uploadArea.style.backgroundColor = "#3a3a3a";
-        uploadArea.style.cursor = "default";
-        uploadArea.style.pointerEvents = "none";
-        uploadArea.style.opacity = 0.6;
-      } else {
-        // اگر هنوز آپلود نکرده اجازه بده
-        uploadBtn.disabled = false;
-        uploadBtn.innerHTML = "Upload";
-        uploadArea.style.pointerEvents = "auto";
-        uploadArea.style.opacity = 1;
-      }
-    })
-    .catch(err => {
-      console.error("Check upload error:", err);
-      uploadBtn.disabled = false;
-      uploadBtn.innerHTML = "Upload";
-      uploadArea.style.pointerEvents = "auto";
-      uploadArea.style.opacity = 1;
-    });
-}
-
-uploadArea.addEventListener('click', () => {
-  if (!uploadBtn.disabled) {
-    fileInput.click();
-  } else {
-    showToast("You have already uploaded your meme");
-  }
-});
-
-fileInput.addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      previewImage.src = e.target.result;
-      previewImage.style.display = 'block';
-      uploadText.style.display = 'none';
-      uploadSubtext.style.display = 'none';
-      removeBtn.style.display = 'flex';
-
-      const img = new Image();
-      img.onload = function() {
-        uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-removeBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  fileInput.value = '';
-  previewImage.style.display = 'none';
-  uploadText.style.display = 'block';
-  uploadSubtext.style.display = 'block';
-  removeBtn.style.display = 'none';
-  uploadArea.style.height = '300px';
-});
 
 function uploadMeme() {
-  if (alreadyUploaded) {
-    showToast("You have already uploaded your meme.");
-    return;
-  }
-
-  if (!fileInput.files.length) {
+ if (!fileInput.files.length) {
     showToast('Please select your meme first.');
     return;
   }
@@ -344,7 +264,25 @@ function uploadMeme() {
   const telegramId = tgUser.id; // آیدی عددی
   const uploadTime = new Date().toISOString();
 
-  const file = fileInput.files[0];
+  // مرحله 1: چک کردن موجودی
+  try {
+    const balanceRes = await fetch(`${scriptUrl}?get_balance=1&user_id=${telegramId}`);
+    const balanceData = await balanceRes.json();
+    const currentPoints = balanceData.balance || 0;
+
+    if (currentPoints < 1) {
+      showToast("You don't have enough coin balance");
+      return;
+    }
+  } catch (err) {
+    console.error("Balance check failed:", err);
+    showToast("Could not check coin balance");
+    return;
+  }
+
+
+
+const file = fileInput.files[0];
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', 'meni_upload');
@@ -381,6 +319,24 @@ function uploadMeme() {
         uploadTime: uploadTime
       })
     });
+// مرحله 4: کم کردن 1 از points در Google Sheet
+    await fetch(`${scriptUrl}?decrease_point=1&user_id=${telegramId}`);
+    updateBalance();
+
+    showToast('Your meme was successfully uploaded!');
+    uploadBtn.innerHTML = "Uploaded";
+    uploadBtn.disabled = true;
+    uploadBtn.style.backgroundColor = "#444";
+    uploadBtn.style.color = "#aaa";
+    uploadArea.style.pointerEvents = "none";
+    uploadArea.style.opacity = 0.6;
+    removeBtn.style.display = "none";
+  } catch (err) {
+    console.error("Upload Error:", err);
+    showToast('Error: ' + (err.message || 'Unknown error'));
+    uploadBtn.disabled = false;
+    uploadBtn.innerHTML = "Upload";
+  }
   })
   .then(res => res.json())
   .then(serverData => {
@@ -403,18 +359,8 @@ function uploadMeme() {
     uploadBtn.disabled = false;
     uploadBtn.innerHTML = "Upload";
   });
+await fetch(`${scriptUrl}?get_balance=1&user_id=${telegramId}`);
 }
-
-// اجرای چک اولیه وقتی صفحه لود شد
-document.addEventListener('DOMContentLoaded', () => {
-  // قفل اولیه هنگام لود
-  uploadBtn.disabled = true;
-  uploadBtn.innerHTML = "Checking...";
-  uploadArea.style.pointerEvents = "none";
-  uploadArea.style.opacity = 0.6;
-
-  checkIfUploaded();
-});
 
   </script>
 </body>
