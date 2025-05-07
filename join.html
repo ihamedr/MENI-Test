@@ -161,6 +161,13 @@
     .back-btn:hover { background-color: #3a3a3a; }
     .upload-btn { background-color: #ff9900; color: #1f1f1f; }
     .upload-btn:hover { background-color: #ffa733; }
+	  #uploadCost {
+  color: #f5f5f5;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 8px;
+  font-family: 'Space Grotesk', sans-serif; 
+}
   </style>
 </head>
 <body>
@@ -184,7 +191,9 @@
     <button class="back-btn" onclick="goBack()">Back</button>
     <button id="uploadBtn" class="upload-btn" onclick="uploadMeme()">Upload</button>
   </div>
-
+<p class="uploadCost" id="uploadCost">
+  Upload cost: <strong>1 MENI Coin</strong>
+</p>
   <script>
    const fileInput = document.getElementById('fileInput');
 const uploadArea = document.getElementById('uploadArea');
@@ -195,7 +204,7 @@ const removeBtn = document.getElementById('removeBtn');
 const uploadBtn = document.getElementById('uploadBtn');
 const toast = document.getElementById('toast');
 
-let alreadyUploaded = false;
+
 
 function showToast(msg) {
   if (!msg) return;
@@ -225,7 +234,7 @@ function hideToast() {
 	 const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
 const userId = tgUser?.id;
 const coinBalanceEl = document.getElementById('coin-balance');
-const scriptUrl = "https://script.google.com/macros/s/AKfycbx5fiMinm44VRSb-tHOLj0u2MBol0gswI9tF8GIjjDwA4job9wcqe5IPDKYeu77aHYzKA/exec";
+const scriptUrl = "https://script.google.com/macros/s/AKfycbzBq8QLYHwqyiyoQbtRpVxSp1nLShIALg3EDldy_PEifR4daesvJtn4G64Jcl1zGJ_5VQ/exec";
 
 async function updateBalance() {
   try {
@@ -245,43 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	  
 function goBack() {
   window.location.href = 'Tournament.html';
-}
-// ابتدا چک کنیم که آیا کاربر قبلا میم آپلود کرده یا نه
-function checkIfUploaded() {
-  const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-  if (!tgUser) {
-    console.error('Telegram user data not found.');
-    return;
-  }
-
-  fetch(`https://meni-server.onrender.com/check-upload/${tgUser.id}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.uploaded) {
-        alreadyUploaded = true;
-        uploadBtn.disabled = true;
-        uploadBtn.innerHTML = "Already Uploaded";
-        uploadBtn.style.backgroundColor = "#444";
-        uploadBtn.style.color = "#aaa";
-        uploadArea.style.backgroundColor = "#3a3a3a";
-        uploadArea.style.cursor = "default";
-        uploadArea.style.pointerEvents = "none";
-        uploadArea.style.opacity = 0.6;
-      } else {
-        // اگر هنوز آپلود نکرده اجازه بده
-        uploadBtn.disabled = false;
-        uploadBtn.innerHTML = "Upload";
-        uploadArea.style.pointerEvents = "auto";
-        uploadArea.style.opacity = 1;
-      }
-    })
-    .catch(err => {
-      console.error("Check upload error:", err);
-      uploadBtn.disabled = false;
-      uploadBtn.innerHTML = "Upload";
-      uploadArea.style.pointerEvents = "auto";
-      uploadArea.style.opacity = 1;
-    });
 }
 
 uploadArea.addEventListener('click', () => {
@@ -323,98 +295,103 @@ removeBtn.addEventListener('click', (e) => {
   uploadArea.style.height = '300px';
 });
 
-function uploadMeme() {
-  if (alreadyUploaded) {
-    showToast("You have already uploaded your meme.");
-    return;
-  }
-
-  if (!fileInput.files.length) {
-    showToast('Please select your meme first.');
-    return;
-  }
-
-
+async function uploadMeme() {
   const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
   if (!tgUser) {
     showToast('Telegram data not found.');
     return;
   }
-
+  const telegramId = tgUser.id;
   const telegramUsername = tgUser.username || "unknown";
-  const telegramId = tgUser.id; // آیدی عددی
-  const uploadTime = new Date().toISOString();
 
-  const file = fileInput.files[0];
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', 'meni_upload');
+  // 1) چک بالانس قبل از آپلود
+  try {
+    const balanceRes = await fetch(`${scriptUrl}?get_balance=1&user_id=${telegramId}`);
+    const balanceData = await balanceRes.json();
+    const currentBalance = parseFloat(balanceData.balance) || 0;
+    if (currentBalance < 1) {
+      showToast("You don't have enough balance");
+      return;
+    }
+  } catch (err) {
+    console.error("Error checking balance:", err);
+    showToast("Could not verify your balance");
+    return;
+  }
 
-  // درست کردن context
-  const contextData = `telegramUsername=${telegramUsername}|telegramId=${telegramId}|likes=0|votes=0|uploadTime=${uploadTime}|voters=[]`;
-  formData.append('context', contextData);
-
+  // 2) شروع فرآیند آپلود
+  if (!fileInput.files.length) {
+    showToast('Please select your meme first');
+    return;
+  }
   showToast('Uploading your meme...');
   uploadBtn.disabled = true;
   uploadBtn.innerHTML = "Uploading...";
 
-  fetch('https://api.cloudinary.com/v1_1/doosolmoo/image/upload', {
-    method: 'POST',
-    body: formData
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (!data.secure_url) {
-      throw new Error("Upload failed");
-    }
+  const file = fileInput.files[0];
+  const uploadTime = new Date().toISOString();
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'meni_upload');
 
-    return fetch('https://meni-server.onrender.com/upload', {
+  const contextData = telegramUsername=`${telegramUsername}|telegramId=${telegramId}|likes=0|votes=0|uploadTime=${uploadTime}|voters=[]`;
+  formData.append('context', contextData);
+
+  try {
+    const cloudRes = await fetch('https://api.cloudinary.com/v1_1/doosolmoo/image/upload', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      body: formData
+    });
+    const cloudData = await cloudRes.json();
+    if (!cloudData.secure_url) throw new Error("Cloudinary upload failed");
+
+    // 3) ارسال به سرور خودت
+    const serverRes = await fetch('https://meni-server.onrender.com/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        memeUrl: data.secure_url,
-        telegramUsername: telegramUsername,
-        telegramId: telegramId,
+        memeUrl: cloudData.secure_url,
+        telegramUsername,
+        telegramId,
         likes: 0,
         votes: 0,
-        uploadTime: uploadTime
+        uploadTime
       })
     });
-  })
-  .then(res => res.json())
-  .then(serverData => {
-    if (!serverData.success) {
-      throw new Error(serverData.message || 'Server error');
+    const serverData = await serverRes.json();
+    if (!serverData.success) throw new Error(serverData.message || 'Server error');
+
+    // 4) کسر 1 امتیاز در گوگل اسکریپت
+    const deductRes = await fetch(`${scriptUrl}?use_points=1&user_id=${telegramId}`);
+    const deductData = await deductRes.json();
+    if (deductData.status !== "success") {
+      showToast("Upload succeeded but failed to deduct points");
+    } else {
+      showToast('Your meme was successfully uploaded!');
     }
 
-    showToast('Your meme was successfully uploaded!');
-    uploadBtn.innerHTML = "Uploaded";
-    uploadBtn.style.backgroundColor = "#444";
-    uploadBtn.style.color = "#aaa";
-    uploadArea.style.backgroundColor = "#3a3a3a";
-    uploadArea.style.cursor = "default";
-    removeBtn.style.display = "none";
-    alreadyUploaded = true;
-  })
-  .catch(err => {
+    // 5) به‌روزرسانی نمایش بالانس جدید
+    updateBalance();
+
+    // تغییر وضعیت دکمه و UI
+    uploadBtn.disabled = false;
+uploadBtn.innerHTML = "Upload";
+removeBtn.style.display = "none";
+fileInput.value = '';
+previewImage.style.display = 'none';
+uploadText.style.display = 'block';
+uploadSubtext.style.display = 'block';
+uploadArea.style.height = '300px';
+  }
+  catch (err) {
     console.error("Upload Error:", err);
     showToast('Error: ' + (err.message || 'Unknown error'));
     uploadBtn.disabled = false;
     uploadBtn.innerHTML = "Upload";
-  });
+  }
 }
-
 // اجرای چک اولیه وقتی صفحه لود شد
 document.addEventListener('DOMContentLoaded', () => {
-  // قفل اولیه هنگام لود
-  uploadBtn.disabled = true;
-  uploadBtn.innerHTML = "Checking...";
-  uploadArea.style.pointerEvents = "none";
-  uploadArea.style.opacity = 0.6;
-
-  checkIfUploaded();
 });
 
   </script>
