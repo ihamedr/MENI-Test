@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile - MENI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+	<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #1f1f1f;
+      font-family: 'Space Grotesk', sans-serif;
+      color: #f5f5f5;
+      padding: 1.5rem;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .profile-header img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ff9900;
+    }
+
+    .profile-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .username {
+      font-size: 1rem;
+      color: #ff9900;
+      line-height: 1.2;
+      margin-top: 0.5rem;
+		margin-bottom: 0.2rem;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 1.2rem;
+      font-size: 0.85rem;
+      color: #ff9900;
+      flex-wrap: wrap;
+    }
+
+    .profile-stats div strong {
+      display: block;
+      font-size: 0.9rem;
+      color: #f5f5f5;
+    }
+
+    .balance-box {
+      background-color: #2b2b2b;
+      border: 2px solid #444;
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #f5f5f5;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 0 12px rgba(255, 153, 0, 0.1);
+    }
+
+    .balance-box .label {
+      color: #ff9900;
+      margin-right: 0.5rem;
+    }
+.tc-connect-button {
+  font-size: 10px !important;
+  border-radius: 8px !important;
+	  }
+	  .wallet-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-right: 0.5rem;
+}
+  .accordion {
+  position: relative;
+  background-color: #2b2b2b;
+  color: #f5f5f5;
+  cursor: pointer;
+  padding: 1rem;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  transition: background-color 0.3s;
+  font-family: 'Space Grotesk', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion:hover {
+  background-color: #3a3a3a;
+}
+
+.accordion .arrow-img {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+}
+
+.accordion.open .arrow-img {
+  transform: rotate(-90deg); /* چرخش به پایین */
+}
+
+    .panel {
+      padding: 0 1rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background-color: #262626;
+      border-radius: 0 0 12px 12px;
+      margin-top: -1rem;
+      margin-bottom: 1rem;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .panel.open {
+      padding: 1rem;
+      max-height: 300px;
+    }
+	  #your-memes-section {
+  margin: 30px 0;
+  padding: 0 15px;
+}
+
+.your-memes-stats {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.your-memes-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.meme-card {
+  width: 160px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  padding: 10px;
+  text-align: center;
+}
+
+.meme-card img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.meme-title {
+  font-weight: bold;
+  margin: 8px 0 5px;
+  font-size: 13px;
+  color: #333;
+}
+
+.like-section {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.icon-btn.pulse {
+  animation: pulse 0.3s;
+}
+
+.icon-btn img {
+  width: 20px;
+}
+
+.like-count, .vote-count {
+  font-size: 13px;
+  color: #444;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+  </style>
+</head>
+<body>
+
+  <div class="profile-header">
+    <img src="profile.png" alt="Profile Picture">
+    <div class="profile-info">
+      <div class="username" id="username">@username</div>
+      <div class="profile-stats">
+        <div><strong>Memes</strong> <span id="total-memes">0</span></div>
+        <div><strong>Likes</strong> <span id="total-likes">0</span></div>
+        <div><strong>Votes</strong> <span id="total-votes">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="balance-box">
+    <span class="label">MENI Coin Balance</span>
+    <span id="coin-balance">0</span>
+  </div>
+
+  <!-- Your Memes Section -->
+  <button class="accordion">
+    Your Memes
+    <img class="arrow-img" src="arrow.png" alt="arrow" />
+  </button>
+  <div class="panel" id="panel1">
+    <div id="your-memes-stats" class="your-memes-stats"></div>
+    <div id="your-memes" class="your-memes-gallery"></div>
+  </div>
+
+  <!-- Your Tournaments Section -->
+  <button class="accordion">
+    Your Tournaments
+    <img class="arrow-img" src="arrow.png" alt="arrow" />
+  </button>
+  <div class="panel" id="panel2">
+    <p>Your tournaments data...</p>
+  </div>
+
+  <!-- Your Friends Section -->
+  <button class="accordion">
+    Your Friends
+    <img class="arrow-img" src="arrow.png" alt="arrow" />
+  </button>
+  <div class="panel" id="panel3">
+    <p>Your friends list...</p>
+  </div>
+
+  <div class="wallet-button" id="walletBtn"></div>
+
+ <script>
+
+	 window.addEventListener("DOMContentLoaded", () => {
+  const username = window.Telegram.WebApp.initDataUnsafe?.user?.username;
+  if (username) {
+    document.querySelector(".username").textContent = "@" + username;
+  }
+});
+	 
+	 let tonConnectUI;
+window.addEventListener("DOMContentLoaded", async () => {
+  const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+
+  // ==== تنظیمات اولیه ====
+  
+  const userCheckScript = "https://script.google.com/macros/s/AKfycbwI5AfBDzsfzBWJjlS0YriVeSCGErtR5qW1GB4ONbgJ0IwxzT_zAGxB1wPSB_hXMkId/exec"
+  const scriptBase = "https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec";
+  const secret     = "meni2025!";
+  // اگر از پراکسی استفاده می‌کنی، مقدار زیر را قرار بده، در غیر این‌صورت رشته خالی
+  const proxyUrl   = "https://meni-server-2.onrender.com/proxy";
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const tgData     = window.Telegram.WebApp.initDataUnsafe?.user || {};
+    const telegramId = tgData.id;
+    const username   = tgData.username;
+
+    // ۱. نمایش یوزرنیم واقعی
+    if (username) {
+      document.querySelector(".username").textContent = "@" + username;
+    }
+
+    // ۲. دریافت آواتار (Profile Image)
+    if (telegramId) {
+      try {
+        const resAvatar = await fetch(
+          `${userCheckScript}?telegram_id=${telegramId}`
+        );
+        const profileImage = await resAvatar.text();
+        document.querySelector(".profile-header img").src = `./${profileImage}`;
+      } catch (err) {
+        console.error("Avatar loading failed", err);
+      }
+    }
+
+    // ۳. راه‌اندازی TonConnect
+window.addEventListener("DOMContentLoaded", async () => {
+  const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+      buttonRootId: "walletBtn"
+    });
+
+    // اگر قبلاً کانکشن برقرار بوده
+    tonConnectUI.connectionRestored.then(() => {
+      if (tonConnectUI.connected) {
+        document.getElementById("walletBtn").style.display     = "none";
+        document.getElementById("walletIcon")?.style.display  = "flex";
+      }
+    });
+
+    // وقتی کیف پول جدید وصل شد، ذخیره در شیت
+    tonConnectUI.onStatusChange(async (walletInfo) => {
+      if (walletInfo?.account?.address && telegramId) {
+        const wallet = walletInfo.account.address;
+        try {
+          await fetch(
+            `${userCheckScript}?telegram_id=${telegramId}&wallet=${encodeURIComponent(wallet)}`
+          );
+          console.log("Wallet saved");
+        } catch (err) {
+          console.error("Wallet connection failed:", err);
+        }
+      }
+    });
+
+    // ۴. بارگذاری و نمایش میم‌های کاربر
+    if (telegramId) {
+      try {
+        // دریافت همه میم‌ها
+        const url = proxyUrl
+          ? `${proxyUrl}?url=${encodeURIComponent(scriptBase)}`
+          : scriptBase;
+        const resMemes = await fetch(url);
+        const allMemes  = await resMemes.json();
+
+        // رندر کردن فقط میم‌های همین کاربر
+        renderYourMemes(allMemes.filter(m => String(m.telegramId) === String(telegramId)));
+      } catch (err) {
+        console.error("Error loading memes:", err);
+      }
+    }
+
+    // ۵. فعال‌سازی آکاردئون‌ها
+    document.querySelectorAll(".accordion").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.classList.toggle("open");
+        btn.nextElementSibling.classList.toggle("open");
+      });
+    });
+  });
+
+  // تابع رندر Your Memes و به‌روزرسانی آمار
+  function renderYourMemes(memes) {
+    const yourMemesBox = document.getElementById("your-memes");
+    const statsBox     = document.getElementById("your-memes-stats");
+    const topMemes     = document.getElementById("total-memes");
+    const topLikes     = document.getElementById("total-likes");
+    const topVotes     = document.getElementById("total-votes");
+
+    yourMemesBox.innerHTML = "";
+    let totalLikes = 0, totalVotes = 0;
+
+    if (memes.length === 0) {
+      yourMemesBox.innerHTML = `<p>No memes uploaded yet.</p>`;
+    } else {
+      memes.forEach(m => {
+        const voters = (m.voters || "").toString().split(',').map(s => s.trim());
+        const likers = (m.likers || "").toString().split(',').map(s => s.trim());
+        const hasVoted = voters.includes(String(window.Telegram.WebApp.initDataUnsafe.user.id));
+        const hasLiked = likers.includes(String(window.Telegram.WebApp.initDataUnsafe.user.id));
+
+        totalLikes += Number(m.likes) || 0;
+        totalVotes += Number(m.votes) || 0;
+
+        const card = document.createElement("div");
+        card.className = "meme-card";
+        card.innerHTML = `
+          <img src="${m.url}" alt="${m.title || ''}"
+               onclick="openModal('${m.url}', '@${m.telegramUsername || ''}')"/>
+          <div class="meme-title">${m.title || '@you'}</div>
+          <div class="like-section">
+            <button class="icon-btn ${hasLiked ? 'liked' : ''}"
+                    onclick="likeMeme('${m.id}', this)">
+              <img src="${hasLiked ? 'like2.png' : 'like1.png'}" alt="like"/>
+            </button>
+            <span class="like-count">${m.likes || 0}</span>
+            <button class="icon-btn ${hasVoted ? 'voted' : ''}"
+                    onclick="voteMeme('${m.id}', this)">
+              <img src="${hasVoted ? 'vote2.png' : 'vote1.png'}" alt="vote"/>
+            </button>
+            <span class="vote-count">${m.votes || 0}</span>
+          </div>
+        `;
+        yourMemesBox.appendChild(card);
+      });
+    }
+
+    // به‌روزرسانی آمار
+    statsBox.innerHTML = `
+      <p>Total Memes: ${memes.length}</p>
+      <p>Total Likes: ${totalLikes}</p>
+      <p>Total Votes: ${totalVotes}</p>
+    `;
+    if (topMemes) topMemes.textContent = memes.length;
+    if (topLikes) topLikes.textContent = totalLikes;
+    if (topVotes) topVotes.textContent = totalVotes;
+  }
+
+// اکاردئون‌ها
+const accordions = document.querySelectorAll(".accordion");
+accordions.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const panel = btn.nextElementSibling;
+    btn.classList.toggle("open");
+    panel.classList.toggle("open");
+  });
+});
+</script>
+</body>
+</html>
