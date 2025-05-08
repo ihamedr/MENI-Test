@@ -94,6 +94,23 @@
   margin-top: 1rem;
   padding-right: 0.5rem;
 }
+	  .wallet-icon {
+      display: none;
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      align-items: center;
+      background-color: #ff9900;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      justify-content: center;
+    }
+    .wallet-icon img {
+      width: 22px;
+      height: 22px;
+    }
   .accordion {
   position: relative;
   background-color: #2b2b2b;
@@ -190,7 +207,10 @@
 <div class="panel" id="panel3">
   <p>Your friends list...</p>
 </div>
- <div class="wallet-button" id="walletBtn"></div>
+  <div class="wallet-button" id="walletBtn"></div>
+      <div class="wallet-icon" id="walletIcon">
+        <img src="wallet.png" alt="Wallet Icon">
+      </div>
   <script>
   let tonConnectUI;
 
@@ -201,9 +221,10 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   // بررسی وضعیت اتصال
-  tonConnectUI.connectionRestored.then(() => {
+ tonConnectUI.connectionRestored.then(() => {
     if (tonConnectUI.connected) {
       document.getElementById('walletBtn').style.display = 'none';
+      document.getElementById('walletIcon').style.display = 'flex';
     }
   });
 });
