@@ -48,22 +48,36 @@
       color: #ff9900;
       line-height: 1.2;
       margin-top: 0.5rem;
-		margin-bottom: 0.2rem;
+		margin-bottom: 0.4rem;
     }
 
-    .profile-stats {
-      display: flex;
-      gap: 1.2rem;
-      font-size: 0.85rem;
-      color: #ff9900;
-      flex-wrap: wrap;
-    }
+   .profile-stats {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.2rem;
+  font-size: 0.95rem;
+  color: #f5f5f5;
+  overflow-x: auto;
+}
 
-    .profile-stats div strong {
-      display: block;
-      font-size: 0.9rem;
-      color: #f5f5f5;
-    }
+.profile-stats div {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.profile-stats strong {
+  font-weight: 500;
+  color: #f5f5f5;
+}
+
+.profile-stats .stat-value {
+  color: #ff9900;
+  font-weight: 500;
+  font-size: clamp(0.75rem, 2.5vw, 1rem); /* کوچکتر میشه اگه جا کم باشه */
+}
 
     .balance-box {
       background-color: #2b2b2b;
@@ -156,9 +170,9 @@
       <div class="username">@username</div>
       <!-- در پروفایل -->
 <div class="profile-stats">
-  <div><strong>Memes</strong> <span id="stat-memes">0</span></div>
-  <div><strong>Likes</strong> <span id="stat-likes">0</span></div>
-  <div><strong>Votes</strong> <span id="stat-votes">0</span></div>
+  <div><strong>Memes:</strong> <span class="stat-value" id="stat-memes">0</span></div>
+  <div><strong>Likes:</strong> <span class="stat-value" id="stat-likes">0</span></div>
+  <div><strong>Votes:</strong> <span class="stat-value" id="stat-votes">0</span></div>
 </div>
     </div>
   </div>
@@ -280,7 +294,8 @@ window.addEventListener("DOMContentLoaded", async () => {
           <img src="${m.url}" alt="${m.title}" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:0.6rem; vertical-align:middle;">
           <span style="vertical-align:middle;">${m.title || "Untitled"}</span>
           <div style="font-size:0.8rem; color:#ff9900; margin-top:0.2rem; margin-left:68px;">
-            ❤ ${m.likes || 0} 🗳 ${m.votes || 0}
+            <img src="like2.png" alt="like" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.likes || 0}
+ <img src="vote2.png" alt="vote" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.votes || 0}
           </div>
         </li>
       `).join("");
