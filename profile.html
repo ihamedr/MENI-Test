@@ -328,8 +328,6 @@ window.addEventListener("DOMContentLoaded", async () => {
      listEl.innerHTML = myMemes.map(m => `
         <li class="meme-item" style="margin-bottom:0.8rem;">
           <img src="${m.url}" alt="${m.title}" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:0.6rem; vertical-align:middle;">
-          <span style="vertical-align:middle;">${m.title || "Untitled"}</span>
-          <div style="font-size:0.8rem; color:#ff9900; margin-top:0.2rem; margin-left:68px;">
             <img src="like2.png" alt="like" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.likes || 0}
 <img src="vote2.png" alt="vote" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.votes || 0}
           </div>
