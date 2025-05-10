@@ -160,6 +160,45 @@
       padding: 1rem;
       max-height: 300px;
     }
+	  #panel1 {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#memes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.meme-item {
+  text-align: center;
+}
+
+.meme-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #444;
+}
+
+.meme-stats {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #ff9900;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+}
+.meme-stats img {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
   </style>
 </head>
 <body>
@@ -289,16 +328,15 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (count === 0) {
       listEl.innerHTML = "<li>No memes uploaded yet.</li>";
     } else {
-      listEl.innerHTML = myMemes.map(m => `
-        <li class="meme-item" style="margin-bottom:0.8rem;">
-          <img src="${m.url}" alt="${m.title}" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:0.6rem; vertical-align:middle;">
-          <span style="vertical-align:middle;">${m.title || "Untitled"}</span>
-          <div style="font-size:0.8rem; color:#ff9900; margin-top:0.2rem; margin-left:68px;">
-            <img src="like2.png" alt="like" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.likes || 0}
- <img src="vote2.png" alt="vote" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.votes || 0}
-          </div>
-        </li>
-      `).join("");
+     listEl.innerHTML = myMemes.map(m => `
+  <li class="meme-item">
+    <img src="${m.url}" alt="meme">
+    <div class="meme-stats">
+      <img src="like2.png" alt="like icon" /> ${m.likes || 0}
+      <img src="vote2.png" alt="vote icon" /> ${m.votes || 0}
+    </div>
+  </li>
+`).join("");
     }
 
   } catch (err) {
