@@ -173,23 +173,6 @@
 .meme-item {
   text-align: center;
 }
-
-
-
-.meme-stats {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #ff9900;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  align-items: center;
-}
-.meme-stats img {
-  width: 16px;
-  height: 16px;
-  vertical-align: middle;
-}
   </style>
 </head>
 <body>
@@ -322,8 +305,8 @@ window.addEventListener("DOMContentLoaded", async () => {
      listEl.innerHTML = myMemes.map(m => `
         <li class="meme-item" style="margin-bottom:0.8rem;">
           <img src="${m.url}" alt="${m.title}" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:0.6rem; vertical-align:middle;">
-            <img src="like2.png" alt="like" style="width:20px; vertical-align:middle; margin-right:4px;"> ${m.likes || 0}
-<img src="vote2.png" alt="vote" style="width:20px; vertical-align:middle; margin-right:4px;"> ${m.votes || 0}
+            <img src="like2.png" alt="like" style="width:16px; vertical-align:middle; margin-right:4px;"> ${m.likes || 0}
+<img src="vote2.png" alt="vote" style="width:16px; vertical-align:middle; margin-right:4px;"> ${m.votes || 0}
           </div>
         </li>
       `).join("");
