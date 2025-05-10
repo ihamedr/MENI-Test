@@ -173,13 +173,7 @@
 .meme-item {
   text-align: center;
 }
-.meme-item img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 12px;
-  border: 2px solid #444;
-}
+
 
 
 .meme-stats {
@@ -327,6 +321,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     } else {
      listEl.innerHTML = myMemes.map(m => `
         <li class="meme-item" style="margin-bottom:0.8rem;">
+          <img src="${m.url}" alt="${m.title}" style="width:60px; height:60px; object-fit:cover; border-radius:8px; margin-right:0.6rem; vertical-align:middle;">
             <img src="like2.png" alt="like" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.likes || 0}
 <img src="vote2.png" alt="vote" style="width:14px; vertical-align:middle; margin-right:4px;"> ${m.votes || 0}
           </div>
