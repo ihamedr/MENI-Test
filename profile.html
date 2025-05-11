@@ -373,16 +373,17 @@ window.addEventListener("DOMContentLoaded", async () => {
     if (count === 0) {
       listEl.innerHTML = "<li>No memes uploaded yet.</li>";
     } else {
-     listEl.innerHTML = myMemes.map(m => `
-  <li class="meme-card">
-    <img class="meme-img" src="${m.url}" alt="${m.title}">
-    <div class="meme-stats">
-      <div><img src="like2.png" alt="like"> ${m.likes || 0}</div>
-      <div><img src="vote2.png" alt="vote"> ${m.votes || 0}</div>
+    listEl.innerHTML = myMemes.map(m => `
+  <li class="meme-item">
+    <div class="meme-card">
+      <img class="meme-img" src="${m.url}" alt="${m.title}">
+      <div class="meme-stats">
+        <div><img src="like2.png" alt="like"> ${m.likes || 0}</div>
+        <div><img src="vote2.png" alt="vote"> ${m.votes || 0}</div>
+      </div>
     </div>
   </li>
 `).join("");
-    }
 
   } catch (err) {
     console.error("Error loading memes:", err);
