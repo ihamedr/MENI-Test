@@ -222,7 +222,7 @@
       <div class="wallet-icon" id="walletIcon">
       </div>
   <script>
-  let tonConnectUI;
+ let tonConnectUI;
 
 window.addEventListener("DOMContentLoaded", () => {
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -230,14 +230,36 @@ window.addEventListener("DOMContentLoaded", () => {
     buttonRootId: "walletBtn"
   });
 
-  // بررسی وضعیت اتصال
- tonConnectUI.connectionRestored.then(() => {
+  tonConnectUI.connectionRestored.then(async () => {
     if (tonConnectUI.connected) {
       document.getElementById('walletBtn').style.display = 'flex';
+
+      const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+      const walletAddress = tonConnectUI.wallet?.account?.address;
+
+      if (telegramId && walletAddress) {
+        await saveWalletToSheet(telegramId, walletAddress);
+      }
     }
   });
 });
-	  
+
+async function saveWalletToSheet(telegramId, walletAddress) {
+  try {
+    await fetch("https://wallet-proxy.onrender.com/save-wallet", {
+      method: 'POST',
+      body: JSON.stringify({
+        telegramId,
+        walletAddress
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (err) {
+    console.error("Error saving wallet info:", err);
+  }
+}
 	  const accordions = document.querySelectorAll(".accordion");
 
 accordions.forEach((btn) => {
