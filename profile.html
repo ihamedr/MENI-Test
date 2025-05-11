@@ -162,6 +162,18 @@
 		overflow-y: auto;
     }
 	  
+
+#memes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.meme-item {
+  text-align: center;
+}
  #meme-list-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -229,7 +241,7 @@
   <img class="arrow-img" src="arrow.png" alt="arrow" />
 </button>
 <div class="panel" id="panel1">
-  <ul id="meme-list-wrapper"></ul>
+  <ul id="memes-list"></ul>
 </div>
 
 <button class="accordion">
