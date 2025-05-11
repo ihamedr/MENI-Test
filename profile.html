@@ -161,25 +161,13 @@
       max-height: 60vh;
 		overflow-y: auto;
     }
-	  
-
-#memes-list {
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1rem;
-  list-style: none;
-	 align-items: start;
-}
 	  #memes-list {
-  column-count: 2; /* تعداد ستون‌ها – می‌تونی بزاری 3 یا با media query داینامیکش کنی */
+  column-count: 2;
   column-gap: 1rem;
-  padding: 1rem;
+  padding: 0;
+  list-style: none;
 }
 
-.meme-item {
-  break-inside: avoid;
-  margin-bottom: 1rem;
-}
-	  
 @media (min-width: 768px) {
   #memes-list {
     column-count: 3;
@@ -191,9 +179,15 @@
     column-count: 4;
   }
 }
+
 .meme-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  display: inline-block;
+  width: 100%;
   text-align: center;
 }
+
 .meme-card {
   background-color: #2a2a2a;
   border-radius: 12px;
