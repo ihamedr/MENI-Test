@@ -170,7 +170,27 @@
   list-style: none;
   padding: 0;
 	 align-items: start;
+  column-count: 2; /* تعداد ستون‌ها – می‌تونی بزاری 3 یا با media query داینامیکش کنی */
+  column-gap: 1rem;
+  padding: 0;
 }
+
+.meme-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}
+	
+	  @media (min-width: 768px) {
+  #memes-list {
+    column-count: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  #memes-list {
+    column-count: 4;
+  }
+}  
 
 .meme-item {
   text-align: center;
