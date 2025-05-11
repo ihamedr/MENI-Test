@@ -88,13 +88,7 @@
     @media (min-width: 900px) {
       .gallery { column-count: 4; }
     }
-	  /* در فایل CSS: */
-.gallery--split {
-  display: flex !important;
-  gap: 1rem !important;
-  column-count: unset !important;
-}
-
+	  
 
     .meme-card {
       background-color: #292929;
@@ -500,20 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const memes = await res.json();
       const gallery = document.getElementById("gallery");
-      gallery.classList.add('gallery--split');
       gallery.innerHTML = "";
-
-      const col1 = document.createElement("div");
-      const col2 = document.createElement("div");
-      col1.className = "meme-column";
-      col2.className = "meme-column";
-      gallery.appendChild(col1);
-      gallery.appendChild(col2);
-
-      // ۲) حلقه برای ساخت کارت‌ها و تفکیک زوج/فرد
-      memes.forEach((meme, index) => {
-        if (!meme.id || !meme.url) return;
-
 
       memes.forEach(meme => {
         if (!meme.id || !meme.url) return;
@@ -540,14 +521,6 @@ document.addEventListener("DOMContentLoaded", () => {
     <span class="vote-count">${meme.votes || 0}</span>
   </div>
 `;
-
-if (index % 2 === 0) {
-          col1.appendChild(card);
-        } else {
-          col2.appendChild(card);
-        }
-      });
-
         gallery.appendChild(card);
       });
       hideToast();
@@ -866,20 +839,8 @@ currentFilteredMemes = sorted;
 }
 
 function renderMemes(memes) {
-  gallery.classList.add('gallery--split');
-      gallery.innerHTML = "";
-
-      const col1 = document.createElement("div");
-      const col2 = document.createElement("div");
-      col1.className = "meme-column";
-      col2.className = "meme-column";
-      gallery.appendChild(col1);
-      gallery.appendChild(col2);
-
-      // ۲) حلقه برای ساخت کارت‌ها و تفکیک زوج/فرد
-      memes.forEach((meme, index) => {
-        if (!meme.id || !meme.url) return;
-
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
 
   memes.forEach(meme => {
     if (!meme.id || !meme.url) return;
@@ -906,14 +867,6 @@ function renderMemes(memes) {
         <span class="vote-count">${meme.votes || 0}</span>
       </div>
     `;
-
-if (index % 2 === 0) {
-          col1.appendChild(card);
-        } else {
-          col2.appendChild(card);
-        }
-      });
-
     gallery.appendChild(card);
   });
 } 
