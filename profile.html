@@ -222,6 +222,22 @@
   vertical-align: middle;
   margin-right: 4px;
 }
+	#backButton {
+  background-color: #1c1c1c;
+  color: #ff9900;
+  border: 2px solid #ff9900;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-left: 0.6rem;
+  transition: all 0.2s ease;
+}
+
+#backButton:hover {
+  background-color: #2a2a2a;
+  box-shadow: 0 0 6px rgba(255, 153, 0, 0.5);
+}  
   </style>
 </head>
 <body>
@@ -270,6 +286,7 @@
   <div class="wallet-button" id="walletBtn"></div>
       <div class="wallet-icon" id="walletIcon">
       </div>
+	<button id="backButton" onclick="location.href='index.html'">Back to Explore</button>
   <script>
  let tonConnectUI;
 
