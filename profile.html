@@ -9,11 +9,17 @@
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+	  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
     body {
       background-color: #1f1f1f;
       font-family: 'Space Grotesk', sans-serif;
       color: #f5f5f5;
       padding: 1.5rem;
+	-webkit-touch-callout: none;
     }
  h2 {
       text-align: center;
@@ -228,7 +234,7 @@
   color: #ff9900;
   border: 2px solid #ff9900;
   border-radius: 20px;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 1.2rem;
   font-size: 0.9rem;
   cursor: pointer;
   margin-left: 0.6rem;
@@ -241,12 +247,19 @@
   background-color: #2a2a2a;
   box-shadow: 0 0 6px rgba(255, 153, 0, 0.5);
 }  
+	  button, a, div {
+  outline: none;
+}
+
+button:focus, a:focus, div:focus {
+  outline: none;
+}
   </style>
 </head>
 <body>
 <h2></h2>
   <div class="profile-header">
-    <img src="profile.png" alt="Profile Picture">
+    <img src="profile.png" alt="Profile Picture" draggable="false" oncontextmenu="return false;">
     <div class="profile-info">
       <div class="username">@username</div>
       <!-- در پروفایل -->
@@ -265,7 +278,7 @@
 
 <button class="accordion">
   Your Memes
-  <img class="arrow-img" src="arrow.png" alt="arrow" />
+  <img class="arrow-img" src="arrow.png" alt="arrow" draggable="false" oncontextmenu="return false;"/>
 </button>
 <div class="panel" id="panel1">
   <ul id="memes-list"></ul>
@@ -273,7 +286,7 @@
 
 <button class="accordion">
   Your Tournaments
-  <img class="arrow-img" src="arrow.png" alt="arrow" />
+  <img class="arrow-img" src="arrow.png" alt="arrow" draggable="false" oncontextmenu="return false;"/>
 </button>
 <div class="panel" id="panel2">
   <p>Your tournaments data...</p>
@@ -281,7 +294,7 @@
 
 <button class="accordion">
   Your Friends
-  <img class="arrow-img" src="arrow.png" alt="arrow" />
+  <img class="arrow-img" src="arrow.png" alt="arrow" draggable="false" oncontextmenu="return false;"/>
 </button>
 <div class="panel" id="panel3">
   <p>Your friends list...</p>
@@ -291,7 +304,10 @@
 		<div  id="walletBtn"></div>
 	</div>
   <script>
- let tonConnectUI;
+ document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('dragstart', event => event.preventDefault());
+	  
+	  let tonConnectUI;
 
 window.addEventListener("DOMContentLoaded", () => {
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -396,10 +412,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     listEl.innerHTML = myMemes.map(m => `
   <li class="meme-item">
     <div class="meme-card">
-      <img class="meme-img" src="${m.url}" alt="${m.title}">
+      <img class="meme-img" src="${m.url}" alt="${m.title}" draggable="false" oncontextmenu="return false;">
       <div class="meme-stats">
-        <div><img src="like2.png" alt="like"> ${m.likes || 0}</div>
-        <div><img src="vote2.png" alt="vote"> ${m.votes || 0}</div>
+        <div><img src="like2.png" alt="like"> ${m.likes || 0} draggable="false" oncontextmenu="return false;"</div>
+        <div><img src="vote2.png" alt="vote"> ${m.votes || 0} draggable="false" oncontextmenu="return false;"</div>
       </div>
     </div>
   </li>
