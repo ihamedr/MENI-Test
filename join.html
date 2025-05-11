@@ -205,6 +205,44 @@ const removeBtn = document.getElementById('removeBtn');
 const uploadBtn = document.getElementById('uploadBtn');
 const toast = document.getElementById('toast');
 
+uploadArea.addEventListener('click', () => {
+  if (!uploadBtn.disabled) {
+    fileInput.click();
+  } else {
+    showToast("You have already uploaded your meme");
+  }
+});
+
+fileInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImage.src = e.target.result;
+      previewImage.style.display = 'block';
+      uploadText.style.display = 'none';
+      uploadSubtext.style.display = 'none';
+      removeBtn.style.display = 'flex';
+
+      const img = new Image();
+      img.onload = function() {
+        uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+removeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  fileInput.value = '';
+  previewImage.style.display = 'none';
+  uploadText.style.display = 'block';
+  uploadSubtext.style.display = 'block';
+  removeBtn.style.display = 'none';
+  uploadArea.style.height = '300px';
+});
 
 
 function showToast(msg) {
@@ -256,45 +294,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function goBack() {
   window.location.href = 'Tournament.html';
 }
-
-uploadArea.addEventListener('click', () => {
-  if (!uploadBtn.disabled) {
-    fileInput.click();
-  } else {
-    showToast("You have already uploaded your meme");
-  }
-});
-
-fileInput.addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      previewImage.src = e.target.result;
-      previewImage.style.display = 'block';
-      uploadText.style.display = 'none';
-      uploadSubtext.style.display = 'none';
-      removeBtn.style.display = 'flex';
-
-      const img = new Image();
-      img.onload = function() {
-        uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-removeBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  fileInput.value = '';
-  previewImage.style.display = 'none';
-  uploadText.style.display = 'block';
-  uploadSubtext.style.display = 'block';
-  removeBtn.style.display = 'none';
-  uploadArea.style.height = '300px';
-});
 
 async function uploadMeme() {
   const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
