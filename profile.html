@@ -105,6 +105,7 @@
 	  .wallet-button {
   display: flex;
   justify-content: flex-end;
+  gap: 1rem;
   margin-top: 1rem;
   padding-right: 0.5rem;
 }
@@ -226,12 +227,13 @@
   background-color: #1c1c1c;
   color: #ff9900;
   border: 2px solid #ff9900;
-  border-radius: 10px;
-  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  padding: 0.6rem 1rem;
   font-size: 0.9rem;
   cursor: pointer;
   margin-left: 0.6rem;
   transition: all 0.2s ease;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 #backButton:hover {
@@ -283,10 +285,10 @@
 <div class="panel" id="panel3">
   <p>Your friends list...</p>
 </div>
-  <div class="wallet-button" id="walletBtn"></div>
-      <div class="wallet-icon" id="walletIcon">
-      </div>
+	<div class="wallet-button">
 	<button id="backButton" onclick="location.href='index.html'">Back to Explore</button>
+		<div  id="walletBtn"></div>
+	</div>
   <script>
  let tonConnectUI;
 
