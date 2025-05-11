@@ -7,7 +7,15 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
+    * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent; /* مخصوص موبایل برای حذف هایلایت */
+}
+	  body {
       background-color: #1f1f1f;
       font-family: 'Space Grotesk', sans-serif;
       color: #f5f5f5;
@@ -172,6 +180,13 @@
     transform: translateX(-50%) translateY(-20px) scale(0.95);
   }
 }  
+	  button, a, div {
+  outline: none;
+}
+
+button:focus, a:focus, div:focus {
+  outline: none;
+}
   </style>
 </head>
 <body>
