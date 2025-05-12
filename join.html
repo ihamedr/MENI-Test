@@ -91,6 +91,10 @@
       overflow: hidden;
       position: relative;
     }
+	  .upload-area.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
     .upload-area:hover { border-color: #ffa733; }
     .upload-area input { display: none; }
     .upload-area .plus { font-size: 2rem; color: #ff9900; margin-bottom: 0.5rem; }
@@ -159,8 +163,21 @@
     }
     .back-btn { background-color: #2b2b2b; color: #f5f5f5; border: 2px solid #444; }
     .back-btn:hover { background-color: #3a3a3a; }
-    .upload-btn { background-color: #ff9900; color: #1f1f1f; }
-    .upload-btn:hover { background-color: #ffa733; }
+	 .upload-btn {
+  background-color: #ff9900;
+  color: #1f1f1f;
+  transition: background-color 0.3s, color 0.3s;
+}
+.upload-btn:hover {
+  background-color: #ffa733;
+}
+
+.upload-btn.disabled {
+  background-color: #555 !important;
+  color: #aaa !important;
+  cursor: not-allowed !important;
+}
+	  
 	  #uploadCost {
   color: #f5f5f5;
   text-align: center;
@@ -192,7 +209,7 @@
 </p>
   <div class="button-group">
     <button class="back-btn" onclick="goBack()">Back</button>
-    <button id="uploadBtn" class="upload-btn" onclick="uploadMeme()">Upload</button>
+    <button id="uploadBtn" class="upload-btn disabled" disabled onclick="uploadMeme()">Upload</button>
   </div>
   <script>
    const fileInput = document.getElementById('fileInput');
@@ -205,11 +222,7 @@ const uploadBtn = document.getElementById('uploadBtn');
 const toast = document.getElementById('toast');
 
 uploadArea.addEventListener('click', () => {
-  if (!uploadBtn.disabled) {
     fileInput.click();
-  } else {
-    showToast("You have already uploaded your meme");
-  }
 });
 
 fileInput.addEventListener('change', (event) => {
@@ -222,7 +235,7 @@ fileInput.addEventListener('change', (event) => {
       uploadText.style.display = 'none';
       uploadSubtext.style.display = 'none';
       removeBtn.style.display = 'flex';
-
+      uploadBtn.disabled = false;
       const img = new Image();
       img.onload = function() {
         uploadArea.style.height = this.height * (uploadArea.offsetWidth / this.width) + 'px';
@@ -241,6 +254,7 @@ removeBtn.addEventListener('click', (e) => {
   uploadSubtext.style.display = 'block';
   removeBtn.style.display = 'none';
   uploadArea.style.height = '300px';
+	uploadBtn.disabled = true;
 });
 
 
@@ -326,6 +340,7 @@ async function uploadMeme() {
   showToast('Uploading your meme...');
   uploadBtn.disabled = true;
   uploadBtn.innerHTML = "Uploading...";
+  uploadArea.classList.add('disabled');
 
   const file = fileInput.files[0];
   const uploadTime = new Date().toISOString();
@@ -365,8 +380,10 @@ async function uploadMeme() {
     const deductData = await deductRes.json();
     if (deductData.status !== "success") {
       showToast("Upload succeeded but failed to deduct points");
+       uploadArea.classList.remove('disabled');
     } else {
       showToast('Your meme was successfully uploaded!');
+      uploadArea.classList.remove('disabled');
     }
 
     // 5) به‌روزرسانی نمایش بالانس جدید
@@ -391,6 +408,7 @@ uploadArea.style.height = '300px';
 }
 // اجرای چک اولیه وقتی صفحه لود شد
 document.addEventListener('DOMContentLoaded', () => {
+uploadBtn.disabled = true;
 });
 
   </script>
