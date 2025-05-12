@@ -393,6 +393,7 @@ uploadArea.style.height = '300px';
     showToast('Error: ' + (err.message || 'Unknown error'));
     uploadBtn.disabled = false;
     uploadBtn.innerHTML = "Upload";
+    uploadArea.classList.remove('disabled');
   }
 }
 // اجرای چک اولیه وقتی صفحه لود شد
