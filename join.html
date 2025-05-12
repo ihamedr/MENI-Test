@@ -210,6 +210,10 @@ const removeBtn = document.getElementById('removeBtn');
 const uploadBtn = document.getElementById('uploadBtn');
 const toast = document.getElementById('toast');
 
+  document.addEventListener("DOMContentLoaded", () => {
+	  uploadBtn.disabled = true;
+  });
+
 uploadArea.addEventListener('click', () => {
     fileInput.click();
 });
@@ -400,7 +404,6 @@ uploadArea.style.height = '300px';
 }
 // اجرای چک اولیه وقتی صفحه لود شد
 document.addEventListener('DOMContentLoaded', () => {
-uploadBtn.disabled = true;
 });
 
   </script>
