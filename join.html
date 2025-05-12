@@ -311,9 +311,11 @@ async function uploadMeme() {
     const balanceRes = await fetch(`${scriptUrl}?get_balance=1&user_id=${telegramId}`);
     const balanceData = await balanceRes.json();
     const currentBalance = parseFloat(balanceData.balance) || 0;
+    uploadBtn.disabled = true;
     if (currentBalance < 1) {
       showToast("You don't have enough balance");
       return;
+      uploadBtn.disabled = false;
     }
   } catch (err) {
     console.error("Error checking balance:", err);
