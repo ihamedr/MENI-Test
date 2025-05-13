@@ -407,33 +407,44 @@ button:focus, a:focus, div:focus {
 </div>
 	
   <script>
-  window.Telegram.WebApp.ready(() => {
-   const tg = window.Telegram.WebApp;
+  window.onload = () => {
+  const tg = window.Telegram.WebApp;
+
+  // صبر کن تا تلگرام کامل آماده بشه
+  Telegram.WebApp.ready();
+
+  // حالا اطلاعات کاربر و start_param رو بخون
   const user = tg.initDataUnsafe.user;
   const startParam = tg.initDataUnsafe.start_param;
+
+  console.log("User:", user);
+  console.log("Start Param:", startParam);
 
   const user_id = user?.id;
   const username = user?.username ? `@{$user.username}` : '';
   const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
 
-  if (!user_id) return;
+  if (!user_id) {
+    console.warn("User ID not found – likely opened outside a proper Telegram context.");
+    return;
+  }
 
   const form = new URLSearchParams();
   form.append("user_id", user_id);
   form.append("username", username);
   form.append("referrer_id", referrer_id);
 
-  fetch("https://wallet-proxy.onrender.com/save-referral", {
+  fetch("https://referral-meni.onrender.com/save-referral", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: form,
   })
-    .then(res => res.json())
+    .then(res => res.text()) // چون سمت سرورت فقط Text می‌ده
     .then(data => console.log("Response:", data))
     .catch(err => console.error("Error:", err));
-});
+};
 
 	 
 	  window.onload = function() {
