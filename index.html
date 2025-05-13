@@ -407,7 +407,27 @@ button:focus, a:focus, div:focus {
 </div>
 	
   <script>
-   window.onload = function() {
+   window.Telegram.WebApp.ready(() => {
+  const tg = window.Telegram.WebApp;
+  const user = tg.initDataUnsafe.user;
+  const startParam = tg.initDataUnsafe.start_param;
+
+  const user_id = user?.id;
+  const username = user?.username ? `@${user.username}` : '';
+  const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
+
+  console.log("User ID:", user_id);
+
+  const payload = { user_id, username, referrer_id };
+
+  fetch("https://wallet-proxy.onrender.com/save-referral", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" },
+  });
+});
+	 
+	  window.onload = function() {
       Telegram.WebApp.expand();  // گسترش مینی‌اپ به حالت بزرگتر
       Telegram.WebApp.requestFullscreen();  // فعال‌سازی حالت تمام‌صفحه
     };
@@ -425,6 +445,9 @@ button:focus, a:focus, div:focus {
 
     let currentFilteredMemes = [];
 	  
+	 
+	  
+	 
 	  function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
@@ -497,28 +520,6 @@ document.addEventListener("DOMContentLoaded", () => {
         hideToast();
       }
     }
-
- window.Telegram.WebApp.ready(() => {
-  const tg = window.Telegram.WebApp;
-  const user = tg.initDataUnsafe.user;
-  const startParam = tg.initDataUnsafe.start_param;
-
-  const user_id = user?.id;
-  const username = user?.username ? `@${user.username}` : '';
-  const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
-
-  console.log("User ID:", user_id);
-
-  const payload = { user_id, username, referrer_id };
-
-  fetch("https://wallet-proxy.onrender.com/save-referral", {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" },
-  });
-});
- 
-
 
 async function fetchMemes() {
       showToastLoading("Loading memes...");
