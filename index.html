@@ -498,7 +498,33 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    async function fetchMemes() {
+ window.onload = async () => {
+    const tg = window.Telegram.WebApp;
+    const user = tg.initDataUnsafe.user;
+    const startParam = tg.initDataUnsafe.start_param;
+
+    const user_id = user?.id;
+    const username = user?.username ? `@${user.username}` : '';
+    const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
+
+    // ارسال به Google Apps Script
+    const payload = {
+      user_id,
+      username,
+      referrer_id,
+    };
+
+    fetch("https://wallet-proxy.onrender.com", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
+
+async function fetchMemes() {
       showToastLoading("Loading memes...");
       const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
       if (!res.ok) {
