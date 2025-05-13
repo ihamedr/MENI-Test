@@ -514,15 +514,13 @@ document.addEventListener("DOMContentLoaded", () => {
       referrer_id,
     };
 
-    fetch("https://wallet-proxy.onrender.com", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  };
-
+    fetch("https://wallet-proxy.onrender.com/save-referral", {
+  method: "POST",
+  body: JSON.stringify(payload),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 async function fetchMemes() {
       showToastLoading("Loading memes...");
