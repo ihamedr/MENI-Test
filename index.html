@@ -407,7 +407,7 @@ button:focus, a:focus, div:focus {
 </div>
 	
   <script>
-   window.Telegram.WebApp.ready(() => {
+   window.onload = async () => {
   const tg = window.Telegram.WebApp;
   const user = tg.initDataUnsafe.user;
   const startParam = tg.initDataUnsafe.start_param;
@@ -416,18 +416,27 @@ button:focus, a:focus, div:focus {
   const username = user?.username ? `@${user.username}` : '';
   const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
 
-  console.log("User ID:", user_id);
+  if (!user_id) return;
 
-  const payload = { user_id, username, referrer_id };
+  const form = new URLSearchParams();
+  form.append("user_id", user_id);
+  form.append("username", username);
+  form.append("referrer_id", referrer_id);
 
   fetch("https://wallet-proxy.onrender.com/save-referral", {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" },
-  });
-});
-	 
-	  window.onload = function() {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: form,
+  })
+    .then(res => res.json())
+    .then(data => console.log("Response:", data))
+    .catch(err => console.error("Error:", err));
+};
+	  
+
+     window.onload = function() {
       Telegram.WebApp.expand();  // گسترش مینی‌اپ به حالت بزرگتر
       Telegram.WebApp.requestFullscreen();  // فعال‌سازی حالت تمام‌صفحه
     };
