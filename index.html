@@ -407,7 +407,7 @@ button:focus, a:focus, div:focus {
 </div>
 	
   <script>
-  window.onload = async () => {
+  window.Telegram.WebApp.ready(() => {
   const tg = window.Telegram.WebApp;
   const user = tg.initDataUnsafe.user;
   const startParam = tg.initDataUnsafe.start_param;
@@ -433,7 +433,7 @@ button:focus, a:focus, div:focus {
     .then(res => res.json())
     .then(data => console.log("Response:", data))
     .catch(err => console.error("Error:", err));
-}; 
+}); 
 
 	 
 	  window.onload = function() {
