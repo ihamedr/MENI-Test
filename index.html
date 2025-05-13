@@ -408,12 +408,12 @@ button:focus, a:focus, div:focus {
 	
   <script>
   window.Telegram.WebApp.ready(() => {
-  const tg = window.Telegram.WebApp;
+   const tg = window.Telegram.WebApp;
   const user = tg.initDataUnsafe.user;
   const startParam = tg.initDataUnsafe.start_param;
 
   const user_id = user?.id;
-  const username = user?.username ? `@${user.username}` : '';
+  const username = user?.username ? `@{$user.username}` : '';
   const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
 
   if (!user_id) return;
@@ -433,7 +433,7 @@ button:focus, a:focus, div:focus {
     .then(res => res.json())
     .then(data => console.log("Response:", data))
     .catch(err => console.error("Error:", err));
-}); 
+});
 
 	 
 	  window.onload = function() {
