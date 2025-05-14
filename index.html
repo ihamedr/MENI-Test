@@ -422,38 +422,7 @@ button:focus, a:focus, div:focus {
 
     let currentFilteredMemes = [];
 
-  // گرفتن آیدی دعوت‌کننده از لینک رفرال
-  const urlParams = new URLSearchParams(window.location.search);
-  const referrerId = urlParams.get('referrerId');
-
-  // ثبت ورود کاربر
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSttfqc0zQAm7WoVZQCTuKg7mgt1AE2ywTryHe7OgC9wjVjYg/exec";
-  fetch(`${GAS_URL}?telegramId=${telegramId}`)
-    .then(res => res.text())
-      .then(result => {
-        console.log(result);
-      })
-	  .catch(err => {
-      console.error(err);
-      showToast("Error connecting to the server");
-    });
-
-  // ثبت رفرال اگر referrerId وجود داشت
-  if (referrerId && telegramId) {
-    const GAS2_URL = "https://script.google.com/macros/s/AKfycbz8inSk721cUuXNWdvN6qbQj7vIal25Skf_rvYRJwAel249E1bcKGokPHYVj3nItbsI/exec";
-    fetch(`${GAS2_URL}?referrerId=${referrerId}&invitedId=${telegramId}&username=${telegramUsername}`)
-      .then(res => res.text())
-      .then(result => {
-        console.log(result);
-      })
-      .catch(err => {
-        console.error("Error:", err);
-      });
-  } else {
-    console.warn("Missing referrer ID or invited ID");
-  }
-};
-	 
+  
 	 
 	  function showToast(msg) {
   if (!msg) return;
@@ -507,6 +476,40 @@ document.addEventListener("DOMContentLoaded", () => {
     updateBalance();
   }
 });
+
+// گرفتن آیدی دعوت‌کننده از لینک رفرال
+  const urlParams = new URLSearchParams(window.location.search);
+  const referrerId = urlParams.get('referrerId');
+
+  // ثبت ورود کاربر
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSttfqc0zQAm7WoVZQCTuKg7mgt1AE2ywTryHe7OgC9wjVjYg/exec";
+  fetch(`${GAS_URL}?telegramId=${telegramId}`)
+    .then(res => res.text())
+      .then(result => {
+        console.log(result);
+      })
+	  .catch(err => {
+      console.error(err);
+      showToast("Error connecting to the server");
+    });
+
+  // ثبت رفرال اگر referrerId وجود داشت
+  if (referrerId && telegramId) {
+    const GAS2_URL = "https://script.google.com/macros/s/AKfycbz8inSk721cUuXNWdvN6qbQj7vIal25Skf_rvYRJwAel249E1bcKGokPHYVj3nItbsI/exec";
+    fetch(`${GAS2_URL}?referrerId=${referrerId}&invitedId=${telegramId}&username=${telegramUsername}`)
+      .then(res => res.text())
+      .then(result => {
+        console.log(result);
+      })
+      .catch(err => {
+        console.error("Error:", err);
+      });
+  } else {
+    console.warn("Missing referrer ID or invited ID");
+  }
+};
+	 
+
 	  async function checkUserBeforeLoading() {
       showToastLoading("Checking your tournament status...");
       const userCheckUrl = `${userCheckScript}?telegram_id=${telegramId}`;
