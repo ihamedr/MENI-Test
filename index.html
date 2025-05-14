@@ -414,18 +414,30 @@ button:focus, a:focus, div:focus {
     const telegramId = telegramUser.id;
     const telegramUsername = telegramUser.username || 'unknown';
     const toast = document.getElementById('toast');
-	const urlParams = new URLSearchParams(window.location.search);
-    const referrerId = urlParams.get('referrerId');
 
     const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
     const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
     const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec';
     const secret = 'meni2025!';
-const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSttfqc0zQAm7WoVZQCTuKg7mgt1AE2ywTryHe7OgC9wjVjYg/exec";
-    const GAS2_URL = "https://script.google.com/macros/s/AKfycbz8inSk721cUuXNWdvN6qbQj7vIal25Skf_rvYRJwAel249E1bcKGokPHYVj3nItbsI/exec";
 	  
 	  let currentFilteredMemes = [];
-  
+  window.onload = function() {
+  const tg = window.Telegram.WebApp;
+
+  tg.expand();
+  tg.requestFullscreen();
+
+  const telegramUser = tg.initDataUnsafe.user || {};
+  const telegramId = telegramUser.id;
+  const telegramUsername = telegramUser.username || 'unknown';
+  const toast = document.getElementById('toast');
+
+  // گرفتن آیدی دعوت‌کننده از لینک رفرال
+  const urlParams = new URLSearchParams(window.location.search);
+  const referrerId = urlParams.get('referrerId');
+
+  // ثبت ورود کاربر
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSttfqc0zQAm7WoVZQCTuKg7mgt1AE2ywTryHe7OgC9wjVjYg/exec";
   fetch(`${GAS_URL}?telegramId=${telegramId}`)
     .then(res => res.text())
       .then(result => {
@@ -436,7 +448,9 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSt
       showToast("Error connecting to the server");
     });
 
-	  if (referrerId && telegramId) {
+  // ثبت رفرال اگر referrerId وجود داشت
+  if (referrerId && telegramId) {
+    const GAS2_URL = "https://script.google.com/macros/s/AKfycbz8inSk721cUuXNWdvN6qbQj7vIal25Skf_rvYRJwAel249E1bcKGokPHYVj3nItbsI/exec";
     fetch(`${GAS2_URL}?referrerId=${referrerId}&invitedId=${telegramId}&username=${telegramUsername}`)
       .then(res => res.text())
       .then(result => {
@@ -449,8 +463,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSt
     console.warn("Missing referrer ID or invited ID");
   }
 };
-	 
-	 
+
 	  function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
