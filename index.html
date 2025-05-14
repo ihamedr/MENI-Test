@@ -407,9 +407,14 @@ button:focus, a:focus, div:focus {
 </div>
 	
   <script>
-   const tg = window.Telegram.WebApp;
+  
+	  window.onload = function() {
+      Telegram.WebApp.expand();  // گسترش مینی‌اپ به حالت بزرگتر
+      Telegram.WebApp.requestFullscreen();  // فعال‌سازی حالت تمام‌صفحه
+    };
+	  const tg = window.Telegram.WebApp;
     tg.expand();
-	  const telegramUser = tg.initDataUnsafe.user || {};
+    const telegramUser = tg.initDataUnsafe.user || {};
     const telegramId = telegramUser.id;
     const telegramUsername = telegramUser.username || 'unknown';
     const toast = document.getElementById('toast');
@@ -420,45 +425,7 @@ button:focus, a:focus, div:focus {
     const secret = 'meni2025!';
 
     let currentFilteredMemes = [];
-	 
-	  window.onload = async () => {
-  Telegram.WebApp.ready();
-  Telegram.WebApp.expand();
-  Telegram.WebApp.requestFullscreen();
-
-  const tg = window.Telegram.WebApp;
-  const user = tg.initDataUnsafe.user;
-  const user_id = user?.id;
-  const username = user?.username ? `@${user.username}` : '';
-  const startParam = tg.initDataUnsafe.start_param;
-  const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
-
-  if (!user_id) {
-    console.warn("User ID not found");
-    return;
-  }
-
-  const form = new URLSearchParams();
-  form.append("user_id", user_id);
-  form.append("username", username);
-  form.append("referrer_id", referrer_id);
-
-  fetch("https://referral-meni.onrender.com/save-referral", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: form,
-  })
-    .then(res => res.text())
-    .then(data => console.log("Referral response:", data))
-    .catch(err => console.error("Referral error:", err));
-
-  // اینجا می‌تونی سایر توابع اولیه مثل بررسی عضویت یا بارگذاری دیتا رو فراخوانی کنی
-  await updateBalance();
-  await checkUserBeforeLoading();
-};
-	 
+	  
 	  function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
