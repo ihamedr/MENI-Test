@@ -426,6 +426,12 @@ button:focus, a:focus, div:focus {
 
     let currentFilteredMemes = [];
 
+	  // Define Telegram user info from Web App context
+const telegramUser = tg.initDataUnsafe.user || {};
+const telegramId = telegramUser.id;
+const telegramUsername = telegramUser.username || 'unknown';
+const toast = document.getElementById('toast');
+
 // Your Google Apps Script Web App URL
 const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSttfqc0zQAm7WoVZQCTuKg7mgt1AE2ywTryHe7OgC9wjVjYg/exec";
 
@@ -433,16 +439,16 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSt
 fetch(`${GAS_URL}?telegramId=${telegramId}`)
   .then(res => res.text())
   .then(result => {
-    showToast(result === "saved" 
-      ? "Welcome" 
-      : "Welcome Back");
   })
   .catch(err => {
     console.error(err);
     showToast("Error connecting to the server");
   });
 
-	  
+	
+const telegramUser = tg.initDataUnsafe.user || {};
+const telegramId = telegramUser.id;
+const telegramUsername = telegramUser.username || 'unknown';  
 // گرفتن آیدی دعوت‌کننده از لینک رفرال
 const urlParams = new URLSearchParams(window.location.search);
 const referrerId = urlParams.get('referrerId'); // پارامتر referrerId از URL رفرال
