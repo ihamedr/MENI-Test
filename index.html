@@ -407,25 +407,32 @@ button:focus, a:focus, div:focus {
 </div>
 	
   <script>
-  window.onload = () => {
-  const tg = window.Telegram.WebApp;
+   const telegramUser = tg.initDataUnsafe.user || {};
+    const telegramId = telegramUser.id;
+    const telegramUsername = telegramUser.username || 'unknown';
+    const toast = document.getElementById('toast');
 
-  // صبر کن تا تلگرام کامل آماده بشه
+    const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
+    const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
+    const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec';
+    const secret = 'meni2025!';
+
+    let currentFilteredMemes = [];
+	 
+	  window.onload = async () => {
   Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+  Telegram.WebApp.requestFullscreen();
 
-  // حالا اطلاعات کاربر و start_param رو بخون
+  const tg = window.Telegram.WebApp;
   const user = tg.initDataUnsafe.user;
-  const startParam = tg.initDataUnsafe.start_param;
-
-  console.log("User:", user);
-  console.log("Start Param:", startParam);
-
   const user_id = user?.id;
-  const username = user?.username ? `@{$user.username}` : '';
+  const username = user?.username ? `@${user.username}` : '';
+  const startParam = tg.initDataUnsafe.start_param;
   const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
 
   if (!user_id) {
-    console.warn("User ID not found – likely opened outside a proper Telegram context.");
+    console.warn("User ID not found");
     return;
   }
 
@@ -441,32 +448,22 @@ button:focus, a:focus, div:focus {
     },
     body: form,
   })
-    .then(res => res.text()) // چون سمت سرورت فقط Text می‌ده
-    .then(data => console.log("Response:", data))
-    .catch(err => console.error("Error:", err));
-};
+    .then(res => res.text())
+    .then(data => console.log("Referral response:", data))
+    .catch(err => console.error("Referral error:", err));
 
-	 
+  // اینجا می‌تونی سایر توابع اولیه مثل بررسی عضویت یا بارگذاری دیتا رو فراخوانی کنی
+  await updateBalance();
+  await checkUserBeforeLoading();
+};
+	  
+	  
 	  window.onload = function() {
       Telegram.WebApp.expand();  // گسترش مینی‌اپ به حالت بزرگتر
       Telegram.WebApp.requestFullscreen();  // فعال‌سازی حالت تمام‌صفحه
     };
 	  const tg = window.Telegram.WebApp;
     tg.expand();
-    const telegramUser = tg.initDataUnsafe.user || {};
-    const telegramId = telegramUser.id;
-    const telegramUsername = telegramUser.username || 'unknown';
-    const toast = document.getElementById('toast');
-
-    const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
-    const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
-    const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec';
-    const secret = 'meni2025!';
-
-    let currentFilteredMemes = [];
-	  
-	 
-	  
 	 
 	  function showToast(msg) {
   if (!msg) return;
