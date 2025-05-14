@@ -118,7 +118,7 @@ button:focus, a:focus, div:focus {
   const tg = window.Telegram.WebApp;
   const user = tg.initDataUnsafe.user;
   const user_id = user?.id;
-  const username = user?.username ? @$`{user.username}` : '';
+  const username = user?.username ? `@${user.username}` : '';
   const startParam = tg.initDataUnsafe.start_param;
   const referrer_id = startParam?.startsWith("ref_") ? startParam.slice(4) : '';
 
