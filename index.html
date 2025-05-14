@@ -437,9 +437,6 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbziMDtYvSQ3EYpWUJOFXKSt
 
 // Send Telegram ID to GAS backend
 fetch(`${GAS_URL}?telegramId=${telegramId}`)
-  .then(res => res.text())
-  .then(result => {
-  })
   .catch(err => {
     console.error(err);
     showToast("Error connecting to the server");
