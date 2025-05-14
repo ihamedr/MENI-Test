@@ -407,7 +407,9 @@ button:focus, a:focus, div:focus {
 </div>
 	
   <script>
-   const telegramUser = tg.initDataUnsafe.user || {};
+   const tg = window.Telegram.WebApp;
+    tg.expand();
+	  const telegramUser = tg.initDataUnsafe.user || {};
     const telegramId = telegramUser.id;
     const telegramUsername = telegramUser.username || 'unknown';
     const toast = document.getElementById('toast');
@@ -456,14 +458,6 @@ button:focus, a:focus, div:focus {
   await updateBalance();
   await checkUserBeforeLoading();
 };
-	  
-	  
-	  window.onload = function() {
-      Telegram.WebApp.expand();  // گسترش مینی‌اپ به حالت بزرگتر
-      Telegram.WebApp.requestFullscreen();  // فعال‌سازی حالت تمام‌صفحه
-    };
-	  const tg = window.Telegram.WebApp;
-    tg.expand();
 	 
 	  function showToast(msg) {
   if (!msg) return;
