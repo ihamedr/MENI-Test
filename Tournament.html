@@ -156,22 +156,30 @@
     .nav-bar button:hover {
       color: #ff9900;
     }
-	  .blur-overlay {
+	 .blurOverlay {
   position: fixed;
-  inset: 0;
-  backdrop-filter: blur(6px);
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(31, 31, 31, 0.4); /* نیمه‌شفاف برای حس بلور */
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, opacity 0.3s ease;
 }
 
-.blur-overlay.active {
-  display: flex;
+.blurOverlay.active {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 1;
+  pointer-events: auto;
 }
-
 .blur-overlay img {
   width: 80px;
   height: 80px;
@@ -207,7 +215,7 @@ button:focus, a:focus, div:focus {
 	  <button onclick="navigateWithLoading('tasks.html')">Tasks</button>
   </div>
 	<div class="blur-overlay" id="blurOverlay">
-  <img src="loading.gif" alt="Loading..." />
+  <img id="loadingImage" src="loading1.png" alt="Loading..." />
 </div>
 <script>
   const joinBtn = document.getElementById('joinBtn');
@@ -317,12 +325,27 @@ function hideToast() {
       joinBtn.onclick = checkChannelJoin;
     }
   }
+let loadingInterval;
+
 function navigateWithLoading(url) {
   const overlay = document.getElementById('blurOverlay');
+  const loadingImage = document.getElementById('loadingImage');
+  let current = 1;
+
+  // نمایش بلور
   overlay.classList.add('active');
+
+  // شروع انیمیشن دستی با سوییچ بین دو تصویر
+  loadingInterval = setInterval(() => {
+    current = current === 1 ? 2 : 1;
+    loadingImage.src = `loading${current}.png`;
+  }, 200); // 0.2 ثانیه
+
+  // رفتن به صفحه بعدی
   setTimeout(() => {
+    clearInterval(loadingInterval); // توقف انیمیشن
     window.location.href = url;
-  }, 600); // این مدت زمان می‌تونه تنظیم بشه
+  }, 1000); // زمان کل برای لودینگ قبل از هدایت (می‌تونی بیشتر کنی)
 }
   document.addEventListener("DOMContentLoaded", () => {
     if (tgUser && tgUser.id) {
