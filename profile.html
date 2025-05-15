@@ -113,8 +113,8 @@
 	  }
 	  .wallet-button {
   display: flex;
-  justify-content: flex-end;
-  gap: 1.2rem;
+  justify-content: center;
+  gap: 8px;
   margin-top: 1rem;
   padding-right: 0.5rem;
 }
@@ -237,7 +237,7 @@
   color: #ff9900;
   border: 2px solid #ff9900;
   border-radius: 20px;
-  padding: 0.55rem 1rem;
+  padding: 0.55rem 1.1rem;
   font-size: 0.9rem;
   cursor: pointer;
   margin-left: 0.6rem;
@@ -249,6 +249,54 @@
   background-color: #2a2a2a;
   box-shadow: 0 0 6px rgba(255, 153, 0, 0.5);
 }  
+	 .toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ff9900, #ffbb55);
+  color: #1f1f1f;
+  padding: 0.9rem 1.5rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-family: 'Space Grotesk', sans-serif;
+  box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
+  pointer-events: none;
+  z-index: 10001;
+  opacity: 0;
+}
+.toast {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-20px) scale(0.95);
+}
+.toast.show {
+  animation: toastFadeIn 0.4s ease forwards;
+  pointer-events: auto;
+}
+
+@keyframes toastFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes toastFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) scale(0.95);
+  }
+}  
+	  
 	  button, a, div {
   outline: none;
 }
@@ -259,6 +307,7 @@ button:focus, a:focus, div:focus {
   </style>
 </head>
 <body>
+	<div class="toast" id="toast"></div>
 <h2></h2>
   <div class="profile-header">
     <img src="profile.png" alt="Profile Picture">
@@ -277,7 +326,10 @@ button:focus, a:focus, div:focus {
     <span class="label">MENI Coin Balance</span>
     <span id="coin-balance">0</span>
   </div>
-
+<div class="balance-box">
+  <span class="label">Your Referral Link</span>
+  <span id="referral-link" style="font-size: 0.8rem; word-break: break-all; cursor: pointer; color: #4caf50;"></span>
+</div>
 <button class="accordion">
   Your Memes
   <img class="arrow-img" src="arrow.png" alt="arrow" />
@@ -327,7 +379,34 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+ 
+	  
+	 function showToast(msg) {
+  if (!msg) return;
+  toast.textContent = msg;
+  toast.classList.remove('hide');
+  toast.classList.add('show');
 
+  // بعد از 2.5 ثانیه شروع به خروج کن
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+    
+    // بعد از انیمیشن خروج، ریست کنیم
+    setTimeout(() => {
+      toast.style.animation = '';
+    }, 400);
+  }, 2500);
+}
+
+function hideToast() {
+  toast.classList.remove('show');
+  toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+  setTimeout(() => {
+    toast.style.animation = '';
+  }, 400);
+}  
+	  
 async function saveWalletToSheet(telegramId, walletAddress) {
   try {
     await fetch("https://wallet-proxy.onrender.com/save-wallet", {
@@ -357,6 +436,17 @@ accordions.forEach((btn) => {
 const userId = tgUser?.id;
 const coinBalanceEl = document.getElementById('coin-balance');
 const scriptUrl = "https://script.google.com/macros/s/AKfycbx5fiMinm44VRSb-tHOLj0u2MBol0gswI9tF8GIjjDwA4job9wcqe5IPDKYeu77aHYzKA/exec";
+
+if (userId) {
+  const refLink = `https://t.me/Meni1test_bot/MENI?startapp=${userId}`;
+  document.getElementById("referral-link").textContent = refLink;
+}
+document.getElementById("referral-link").addEventListener("click", () => {
+  const text = document.getElementById("referral-link").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast("Link copied successfully!");
+  });
+});
 
 async function updateBalance() {
   try {
