@@ -12,6 +12,14 @@
       window.location.href = "loading.html";
     }
   </script>
+	<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const startParam = Telegram?.WebApp?.initDataUnsafe?.start_param;
+    if (startParam) {
+      window.location.replace(`/ref.html?ref=${startParam}`);
+    }
+  });
+</script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
    * {
