@@ -156,6 +156,26 @@
     .nav-bar button:hover {
       color: #ff9900;
     }
+	  .blur-overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+
+.blur-overlay.active {
+  display: flex;
+}
+
+.blur-overlay img {
+  width: 80px;
+  height: 80px;
+}
 	  button, a, div {
   outline: none;
 }
@@ -181,11 +201,14 @@ button:focus, a:focus, div:focus {
   </div>
 
   <div class="nav-bar">
-    <button onclick="location.href='profile.html'">Profile</button>
-    <button onclick="location.href='index.html'">Explore</button>
+    <button onclick="navigateWithLoading('profile.html')">Profile</button>
+    <button onclick="navigateWithLoading('index.html')">Explore</button>
 	  <button class="active">Tournament</button>
-	  <button onclick="location.href='tasks.html'">Tasks</button>
+	  <button onclick="navigateWithLoading('tasks.html')">Tasks</button>
   </div>
+	<div class="blur-overlay" id="blurOverlay">
+  <img src="loading.gif" alt="Loading..." />
+</div>
 <script>
   const joinBtn = document.getElementById('joinBtn');
   const toast = document.getElementById('toast');
@@ -294,7 +317,13 @@ function hideToast() {
       joinBtn.onclick = checkChannelJoin;
     }
   }
-
+function navigateWithLoading(url) {
+  const overlay = document.getElementById('blurOverlay');
+  overlay.classList.add('active');
+  setTimeout(() => {
+    window.location.href = url;
+  }, 600); // این مدت زمان می‌تونه تنظیم بشه
+}
   document.addEventListener("DOMContentLoaded", () => {
     if (tgUser && tgUser.id) {
       checkIfUserSaved(tgUser.id);
