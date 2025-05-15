@@ -291,6 +291,16 @@ function hideToast() {
     }
   }
 
+function location.href(url) {
+
+  document.getElementById('blurOverlay').style.display = 'block';
+  document.getElementById('loadingSpinner').style.display = 'block';
+
+  setTimeout(() => {
+    window.location.href = url;
+  }, 1000); 
+}
+
   async function checkJoinTask() {
   joinBtn.textContent = "Checking...";
   joinBtn.disabled = true;
@@ -424,16 +434,6 @@ function hideToast() {
       showToast("Check failed");
     }
   }
-function location.href(url) {
-  // نمایش بلور و لودینگ
-  document.getElementById('blurOverlay').style.display = 'block';
-  document.getElementById('loadingSpinner').style.display = 'block';
-
-  // کمی تأخیر برای نمایش انیمیشن
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1000); // تاخیر ۱ ثانیه‌ای برای نمایش لودینگ قبل از رفتن به صفحه بعد
-}
 
   document.addEventListener("DOMContentLoaded", () => {
     if (userId) {
