@@ -357,7 +357,36 @@
       color: #f5f5f5;
       font-weight: 500;
     }
-	   button, a, div {
+	 
+	  #blurOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(31, 31, 31, 0.4); /* نیمه‌شفاف برای حس بلور */
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, opacity 0.3s ease;
+}
+
+#blurOverlay.active {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 1;
+  pointer-events: auto;
+}
+.blur-overlay img {
+  width: 100px;
+  height: 100px;
+}
+	  button, a, div {
   outline: none;
 }
 
@@ -389,10 +418,12 @@ button:focus, a:focus, div:focus {
   <main class="gallery" id="gallery"></main>
 
   <div class="nav-bar">
-    <button onclick="location.href='profile.html'">Profile</button>
-    <button class="active" onclick="location.href='index.html'">Explore</button>
-   <button onclick="location.href='Tournament.html'">Tournament</button>
-	  <button onclick="location.href='tasks.html'">Tasks</button>
+    <button onclick="navigateWithLoading('profile.html')">Profile</button>
+    <button onclick="navigateWithLoading('index.html')">Explore</button>
+   <button onclick="navigateWithLoading('Tournament.html')">Tournament</button>
+	   <button onclick="navigateWithLoading('tasks.html')">Tasks</button>
+	  <div class="blur-overlay" id="blurOverlay">
+  <img src="loading.gif" alt="Loading..." />
   </div>
 <!-- Meme Modal -->
 <div class="meme-modal hidden" id="memeModal">
@@ -890,6 +921,14 @@ function renderMemes(memes) {
     gallery.appendChild(card);
   });
 } 
+
+function navigateWithLoading(url) {
+  const overlay = document.getElementById('blurOverlay');
+  overlay.classList.add('active');
+  setTimeout(() => {
+    window.location.href = url;
+  }, 1000); // این مدت زمان می‌تونه تنظیم بشه
+}
 	  
     window.onload = () => {
       checkUserBeforeLoading();
