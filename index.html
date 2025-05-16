@@ -385,6 +385,7 @@
 .blur-overlay img {
   width: 100px;
   height: 100px;
+	border-radius: 20px;
 }
 	  button, a, div {
   outline: none;
@@ -928,7 +929,7 @@ function navigateWithLoading(url) {
   overlay.classList.add('active');
   setTimeout(() => {
     window.location.href = url;
-  }, 1500); // این مدت زمان می‌تونه تنظیم بشه
+  }, 600); // این مدت زمان می‌تونه تنظیم بشه
 }
 	  
     window.onload = () => {

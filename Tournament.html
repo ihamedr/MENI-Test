@@ -183,6 +183,7 @@
 .blur-overlay img {
   width: 100px;
   height: 100px;
+	border-radius: 20px;
 }
 	  button, a, div {
   outline: none;
@@ -330,7 +331,7 @@ function navigateWithLoading(url) {
   overlay.classList.add('active');
   setTimeout(() => {
     window.location.href = url;
-  }, 2000); // این مدت زمان می‌تونه تنظیم بشه
+  }, 600); // این مدت زمان می‌تونه تنظیم بشه
 }
   document.addEventListener("DOMContentLoaded", () => {
     if (tgUser && tgUser.id) {
