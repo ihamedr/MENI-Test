@@ -327,10 +327,19 @@ function hideToast() {
   }
 function navigateWithLoading(url) {
   const overlay = document.getElementById('blurOverlay');
-  overlay.classList.add('active');
+  const gif = document.querySelector('#blurOverlay img');
+
+  // ریست کردن گیف با تغییر موقت src
+  const src = gif.src;
+  gif.src = '';
+  gif.offsetHeight; // ترفند برای فورس ری‌پینت
+  gif.src = src;
+
+
+	overlay.classList.add('active');
   setTimeout(() => {
     window.location.href = url;
-  }, 1000); // این مدت زمان می‌تونه تنظیم بشه
+  }, 2000); // این مدت زمان می‌تونه تنظیم بشه
 }
   document.addEventListener("DOMContentLoaded", () => {
     if (tgUser && tgUser.id) {
