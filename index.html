@@ -367,7 +367,7 @@
   background: rgba(31, 31, 31, 0.4); /* نیمه‌شفاف برای حس بلور */
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  z-index: 100;
+  z-index: 100001;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -419,12 +419,13 @@ button:focus, a:focus, div:focus {
 
   <div class="nav-bar">
     <button onclick="navigateWithLoading('profile.html')">Profile</button>
-    <button onclick="navigateWithLoading('index.html')">Explore</button>
+    <button class="active" onclick="navigateWithLoading('index.html')">Explore</button>
    <button onclick="navigateWithLoading('Tournament.html')">Tournament</button>
 	   <button onclick="navigateWithLoading('tasks.html')">Tasks</button>
+	  </div>
 	  <div class="blur-overlay" id="blurOverlay">
   <img src="loading.gif" alt="Loading..." />
-  </div>
+	</div>  
 <!-- Meme Modal -->
 <div class="meme-modal hidden" id="memeModal">
   <div class="meme-modal-content">
