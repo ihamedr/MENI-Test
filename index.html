@@ -926,10 +926,17 @@ function renderMemes(memes) {
 
 function navigateWithLoading(url) {
   const overlay = document.getElementById('blurOverlay');
+  const gif = document.querySelector('#blurOverlay img');
+
+  // افزودن پارامتر تصادفی به URL برای اجبار به reload کامل
+  const baseSrc = gif.src.split('?')[0];
+  gif.src = baseSrc + '?t=' + new Date().getTime();
+
   overlay.classList.add('active');
+
   setTimeout(() => {
     window.location.href = url;
-  }, 600); // این مدت زمان می‌تونه تنظیم بشه
+  }, 1000);
 }
 	  
     window.onload = () => {

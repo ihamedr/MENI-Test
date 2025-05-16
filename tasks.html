@@ -207,6 +207,7 @@
 .blur-overlay img {
   width: 100px;
   height: 100px;
+	border-radius: 20px;
 }
 	  button, a, div {
   outline: none;
@@ -434,10 +435,17 @@ function hideToast() {
   }
 function navigateWithLoading(url) {
   const overlay = document.getElementById('blurOverlay');
+  const gif = document.querySelector('#blurOverlay img');
+
+  // افزودن پارامتر تصادفی به URL برای اجبار به reload کامل
+  const baseSrc = gif.src.split('?')[0];
+  gif.src = baseSrc + '?t=' + new Date().getTime();
+
   overlay.classList.add('active');
+
   setTimeout(() => {
     window.location.href = url;
-  }, 1500); // این مدت زمان می‌تونه تنظیم بشه
+  }, 1000);
 }
 
   document.addEventListener("DOMContentLoaded", () => {
