@@ -449,13 +449,15 @@ button:focus, a:focus, div:focus {
 	
   <script>
   
-	  const tg = window.Telegram.WebApp;
-    tg.expand();
-    const telegramUser = tg.initDataUnsafe.user || {};
-    const telegramId = telegramUser.id;
-	  
-	  // ← اینجا قرار بده:
-if (telegramId) {
+	 const tg = window.Telegram.WebApp;
+tg.expand();
+
+const telegramUser = tg.initDataUnsafe.user || {};
+const telegramId = telegramUser.id;
+
+// فقط اگر کاربر با رفرال نیومده بود، آیدیش رو بفرست
+const startParam = tg.initDataUnsafe.start_param;
+if (!startParam && telegramId) {
   fetch("https://meni-proxy.onrender.com/proxy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
