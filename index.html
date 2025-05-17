@@ -453,9 +453,24 @@ button:focus, a:focus, div:focus {
     tg.expand();
     const telegramUser = tg.initDataUnsafe.user || {};
     const telegramId = telegramUser.id;
+	  
+	  // ← اینجا قرار بده:
+if (telegramId) {
+  fetch("https://meni-proxy.onrender.com/proxy", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: telegramId })
+  })
+  .then(res => res.text())
+  .then(result => {
+    console.log("User ID sent to Google Script via proxy:", result);
+  })
+  .catch(err => {
+    console.error("Error sending ID to proxy:", err);
+  });
+}
     const telegramUsername = telegramUser.username || 'unknown';
     const toast = document.getElementById('toast');
-
     const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
     const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
     const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec';
