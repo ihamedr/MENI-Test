@@ -265,7 +265,13 @@ button:focus, a:focus, div:focus {
 
     const blur = document.getElementById('blurOverlay');
     blur?.classList.add('active');
-
+	if (blur) {
+    // فعال‌سازی با تأخیر برای اعمال درست transition
+    setTimeout(() => {
+      blur.classList.add('active');
+    }, 50);
+  }
+	
     fetch("https://meni-proxy.onrender.com/proxy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
