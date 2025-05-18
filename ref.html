@@ -263,7 +263,9 @@ button:focus, a:focus, div:focus {
 
     if (!userId || !referrerId) return;
 
-    // ارسال به سرور پروکسی
+    const blur = document.getElementById('blurOverlay');
+    blur?.classList.add('active');
+
     fetch("https://meni-proxy.onrender.com/proxy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -274,12 +276,36 @@ button:focus, a:focus, div:focus {
       })
     })
     .then(res => res.text())
-    .then(data => {
-      console.log("Referral result:", data);
+    .then(result => {
+      if (result.includes("stored")) {
+        showToast("Welcome");
+      } else {
+        showToast("Welcome Back");
+      }
     })
-    .catch(err => {
-      console.error("Error sending referral data:", err);
+    .catch(() => {
+      showToast("Welcome Back");
+    })
+    .finally(() => {
+      setTimeout(() => {
+        window.location.replace("index.html");
+      }, 2000); // کمی صبر برای نمایش toast
     });
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+        toast.style.animation = 'toastFadeOut 0.4s ease forwards';
+
+        setTimeout(() => {
+          toast.style.animation = '';
+        }, 400);
+      }, 1500);
+    }
   });
 </script>
 	</body>
