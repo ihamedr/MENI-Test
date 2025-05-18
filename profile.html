@@ -542,6 +542,42 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+const tg = window.Telegram.WebApp;
+  tg.ready();
+
+  const userId = tg.initDataUnsafe.user?.id?.toString();
+
+  async function loadReferrals() {
+    try {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbxyeuKPKe7-lF8eDqp3jXpNET4PvivLs_e8mRBd8Zc-twIGcQLWxtuNg4gsWs03KvlPOQ/exec")
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+  });
+
+      const userReferrals = data.filter(entry => entry.inviter_id === userId);
+      const listEl = document.getElementById('friends-list');
+
+      if (userReferrals.length === 0) {
+        listEl.innerHTML = "<li style='color:#888;'>No referrals yet.</li>";
+        return;
+      }
+
+      userReferrals.forEach(entry => {
+        const li = document.createElement('li');
+        li.textContent = `@${entry.username}`;
+        li.style.marginBottom = "0.6rem";
+        listEl.appendChild(li);
+      });
+
+    } catch (err) {
+      console.error("Error loading referrals:", err);
+      document.getElementById('friends-list').innerHTML = "<li style='color:red;'>Error loading data</li>";
+    }
+  }
+
+  loadReferrals();
+
   </script>
 
 </body>
