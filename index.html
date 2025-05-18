@@ -12,10 +12,13 @@
       window.location.href = "loading.html";
     }
   </script>
-	<script>
+<script>
   document.addEventListener("DOMContentLoaded", function () {
     const startParam = Telegram?.WebApp?.initDataUnsafe?.start_param;
-    if (startParam) {
+
+    // اگر ref قبلاً هندل نشده
+    if (startParam && !sessionStorage.getItem("ref_handled")) {
+      sessionStorage.setItem("ref_handled", "true");
       window.location.replace(`/ref.html?ref=${startParam}`);
     }
   });
