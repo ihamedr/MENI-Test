@@ -251,7 +251,15 @@ button:focus, a:focus, div:focus {
 	</div>
 	<script>
   window.addEventListener("DOMContentLoaded", () => {
-    const tg = window.Telegram.WebApp;
+   const blur = document.getElementById('blurOverlay');
+    blur?.classList.add('active');
+	if (blur) {
+    // فعال‌سازی با تأخیر برای اعمال درست transition
+    setTimeout(() => {
+      blur.classList.add('active');
+    }, 50);
+  }
+	  const tg = window.Telegram.WebApp;
     tg.ready();
 
     const user = tg.initDataUnsafe?.user;
@@ -262,15 +270,6 @@ button:focus, a:focus, div:focus {
     const referrerId = urlParams.get('ref');
 
     if (!userId || !referrerId) return;
-
-    const blur = document.getElementById('blurOverlay');
-    blur?.classList.add('active');
-	if (blur) {
-    // فعال‌سازی با تأخیر برای اعمال درست transition
-    setTimeout(() => {
-      blur.classList.add('active');
-    }, 50);
-  }
 	
     fetch("https://meni-proxy.onrender.com/proxy", {
       method: "POST",
