@@ -553,7 +553,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     async function loadReferrals() {
       try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbxyeuKPKe7-lF8eDqp3jXpNET4PvivLs_e8mRBd8Zc-twIGcQLWxtuNg4gsWs03KvlPOQ/exec");
+        const res = await fetch("https://script.google.com/macros/s/AKfycbyf4jWIr6a44gPG6idHACHaaUUgYO47pv5XPUa-ZsPOuVTy8ZNTLUeyf6JEpxWuIVGG/exec");
         const data = await res.json();
 
         const userReferrals = data.filter(entry => entry.inviter_id === userId);
