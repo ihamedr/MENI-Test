@@ -16,10 +16,9 @@
   document.addEventListener("DOMContentLoaded", function () {
     const startParam = Telegram?.WebApp?.initDataUnsafe?.start_param;
 
-    // اگر کاربر از ref.html نیومده باشه، و start_param وجود داشته باشه
-    const cameFromRef = document.referrer.includes("ref.html");
-
-    if (startParam && !cameFromRef) {
+    // اگر ref قبلاً هندل نشده
+    if (startParam && !sessionStorage.getItem("ref_handled")) {
+      sessionStorage.setItem("ref_handled", "true");
       window.location.replace(`/ref.html?ref=${startParam}`);
     }
   });
