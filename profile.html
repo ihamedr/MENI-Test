@@ -561,7 +561,7 @@ window.onload = function () {
         } else {
           friends.forEach(username => {
             const li = document.createElement("li");
-            li.textContent = @${username};
+            li.textContent = `@${username}`;
             friendsList.appendChild(li);
           });
         }
