@@ -544,38 +544,33 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-window.addEventListener("DOMContentLoaded", () => {
-    const tg = window.Telegram.WebApp;
-    tg.ready();
+window.onload = function () {
+  const tg = window.Telegram.WebApp;
+  tg.ready();
 
-    const userId = tg.initDataUnsafe.user?.id?.toString();
-    const friendsListEl = document.getElementById('friends-list');
+  const userId = tg.initDataUnsafe.user?.id;
 
-    async function loadReferrals() {
-      try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbxZn4xvyqZKH1wZTxRGBmSV6S28lbBYa8urp0AG1G5py1q1h-qm48RXL-p5y-4BGTT2/exec");
-        const data = await res.json();
+  if (userId) {
+    fetch(`https://script.google.com/macros/s/AKfycbzQWJ2iixYsuSxbph92lJXn-Gd44ykbu9N_2zVfbvGV9plXFUeF3LQTh3yK995Pg6Io/exec?id=${userId}`)
+      .then(res => res.json())
+      .then(friends => {
+        const friendsList = document.getElementById("friends-list");
 
-        const userReferrals = data.filter(entry => entry.inviter_id === userId);
-        if (userReferrals.length === 0) {
-          friendsListEl.innerHTML = "<li style='color:#888;'>No referrals yet.</li>";
-          return;
+        if (friends.length === 0) {
+          friendsList.innerHTML = "<li>No invited friends yet.</li>";
+        } else {
+          friends.forEach(username => {
+            const li = document.createElement("li");
+            li.textContent = @${username};
+            friendsList.appendChild(li);
+          });
         }
-
-        userReferrals.forEach(entry => {
-          const li = document.createElement('li');
-          li.textContent = `@${entry.username}`;
-          li.style.marginBottom = "0.6rem";
-          friendsListEl.appendChild(li);
-        });
-      } catch (err) {
-        console.error("Error loading referrals:", err);
-        friendsListEl.innerHTML = "<li style='color:red;'>Error loading data</li>";
-      }
-    }
-
-    loadReferrals();
-  });
+      })
+      .catch(err => {
+        console.error("Error fetching friends list:", err);
+      });
+  }
+}
 
 
   </script>
