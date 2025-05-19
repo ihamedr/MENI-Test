@@ -384,7 +384,7 @@ button:focus, a:focus, div:focus {
 	<div class="toast" id="toast"></div>
 <h2></h2>
   <div class="profile-header">
-    <img src="profile.png" alt="Profile Picture">
+    <img id="profile-avatar" src="" alt="Your Avatar">
     <div class="profile-info">
       <div class="username">@username</div>
       <!-- در پروفایل -->
@@ -671,6 +671,31 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       console.error("Error checking tournament membership:", error);
       document.getElementById("panel2").innerHTML = `<p>Something went wrong.</p>`;
+    }
+  });
+const avatarList = [
+    'avatar1.png',
+    'avatar2.png',
+    'avatar3.png',
+    'avatar4.png',
+    'avatar5.png'
+  ];
+
+  function getOrSetAvatar() {
+    let avatar = localStorage.getItem("user_avatar");
+    if (!avatar) {
+      const randomIndex = Math.floor(Math.random() * avatarList.length);
+      avatar = avatarList[randomIndex];
+      localStorage.setItem("user_avatar", avatar);
+    }
+    return avatar;
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const avatar = getOrSetAvatar();
+    const avatarImg = document.getElementById("profile-avatar");
+    if (avatarImg) {
+      avatarImg.src = avatar;
     }
   });
 
