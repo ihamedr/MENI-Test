@@ -93,7 +93,7 @@
       border: 2px solid #444;
       border-radius: 16px;
       padding: 1rem 1.2rem;
-      margin-bottom: 1.2rem;
+      margin-bottom: 0.6rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -324,6 +324,21 @@
       margin-right: 0.5rem;
     }
 	  
+	  .stats-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.balance-box.half {
+  flex: 1;
+}
+	#friends-list li {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #aaa;
+  }
+  
 	  button, a, div {
   outline: none;
 }
@@ -349,10 +364,16 @@ button:focus, a:focus, div:focus {
     </div>
   </div>
 
-  <div class="balance-box">
-    <span class="label">MENI Coin Balance</span>
+  <div class="stats-container">
+  <div class="balance-box half">
+    <span class="label">MENI Coin</span>
     <span id="coin-balance">0</span>
   </div>
+  <div class="balance-box half">
+    <span class="label">Referrals</span>
+    <span id="referral-count">0</span>
+  </div>
+</div>
 <div class="ref-box">
   <span class="label">Referral Link</span>
   <span class="referral-link" id="referral-link" style="font-size: 0.8rem; word-break: break-all; cursor: pointer; color: #aaa;"></span>
@@ -544,7 +565,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", function () {
   const tg = window.Telegram.WebApp;
   tg.ready();
 
@@ -565,12 +586,18 @@ window.onload = function () {
             friendsList.appendChild(li);
           });
         }
+
+        // نمایش تعداد رفرال‌ها در باکس جداگانه (در صورت وجود)
+        const referralCountBox = document.getElementById("referral-count");
+        if (referralCountBox) {
+          referralCountBox.textContent = friends.length;
+        }
       })
       .catch(err => {
         console.error("Error fetching friends list:", err);
       });
   }
-}
+});
 
 
   </script>
