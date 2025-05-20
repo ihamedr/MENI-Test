@@ -106,33 +106,33 @@
       cursor: default;
     }
 
-    .nav-bar {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #2b2b2b;
-      border-radius: 20px;
-      padding: 0.8rem 2rem;
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-      box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
-      z-index: 10;
-    }
-    .nav-bar button {
-      background: none;
-      border: none;
-      color: #f5f5f5;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-    .nav-bar button.active,
-    .nav-bar button:hover {
-      color: #ff9900;
-    }
+     .nav-bar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2b2b2b;
+  border-radius: 20px;
+  padding: 0.8rem 2rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
+}
+
+.nav-bar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.3s ease;
+}
+
+.nav-bar img {
+  width: 30px;
+  height: 30px;
+  transition: opacity 0.3s ease;
+}
 	  .toast {
   position: fixed;
   top: 20px;
@@ -242,12 +242,20 @@ button:focus, a:focus, div:focus {
       </div>
     </div>
     <button class="join-btn" id="voteBtn">Vote</button>
-  </div>  <div class="nav-bar">
-    <button onclick="navigateWithLoading('profile.html')">Profile</button>
-    <button onclick="navigateWithLoading('index.html')">Explore</button>
-   <button onclick="navigateWithLoading('Tournament.html')">Tournament</button>
-    <button class="active">Tasks</button>
-	 </div>
+  <div class="nav-bar">
+  <button onclick="navigateWithLoading('profile.html')" data-page="profile">
+    <img src="prof-non.png" alt="Profile">
+  </button>
+  <button onclick="navigateWithLoading('index.html')" data-page="index">
+    <img src="exp-non.png" alt="Explore">
+  </button>
+  <button onclick="navigateWithLoading('Tournament.html')" data-page="tournament">
+    <img src="tour-non.png" alt="Tournament">
+  </button>
+  <button  data-page="tasks">
+    <img src="task-act.png" alt="Tasks">
+  </button>
+</div>
 	<div class="blur-overlay" id="blurOverlay">
   <img src="loading.gif" alt="Loading..." />
 </div>
