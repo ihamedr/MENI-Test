@@ -437,36 +437,14 @@ button:focus, a:focus, div:focus {
 		<div  id="walletBtn"></div>
 	</div>
   <script>
- 
-let tonConnectUI;
+ let tonConnectUI;
 
 window.addEventListener("DOMContentLoaded", () => {
-  try {
-    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-      buttonRootId: "walletBtn"
-    });
-  } catch (error) {
-    console.error("Failed to initialize TonConnectUI:", error);
-    return;
-  }
-
-  // مدیریت کلیک روی دکمه برای اتصال به والت
-  document.getElementById('walletBtn').addEventListener('click', async () => {
-    try {
-      // استفاده از Telegram WebApp برای باز کردن deeplink
-      if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.openLink("https://app.tonkeeper.com/ton-connect");
-      } else {
-        window.open("https://app.tonkeeper.com/ton-connect", "_self");
-      }
-      await tonConnectUI.connectWallet();
-    } catch (error) {
-      console.error("Error connecting wallet:", error);
-    }
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn"
   });
 
-  // وقتی اتصال restore شد
   tonConnectUI.connectionRestored.then(async () => {
     if (tonConnectUI.connected) {
       document.getElementById('walletBtn').style.display = 'flex';
@@ -478,31 +456,9 @@ window.addEventListener("DOMContentLoaded", () => {
         await saveWalletToSheet(telegramId, walletAddress);
       }
     }
-  }).catch((error) => {
-    console.error("Error restoring connection:", error);
-  });
-
-  // مدیریت تغییر وضعیت والت
-  tonConnectUI.onStatusChange((wallet) => {
-    if (wallet) {
-      document.getElementById('walletBtn').style.display = 'flex';
-
-      const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
-      const walletAddress = wallet.account.address;
-
-      if (telegramId && walletAddress) {
-        saveWalletToSheet(telegramId, walletAddress)
-          .catch((error) => {
-            console.error("Error saving wallet:", error);
-          });
-      }
-    } else {
-      document.getElementById('walletBtn').style.display = 'none';
-    }
   });
 });
-
-	  
+ 
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
