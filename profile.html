@@ -441,36 +441,37 @@ button:focus, a:focus, div:focus {
 let tonConnectUI;
 
 window.addEventListener("DOMContentLoaded", () => {
-  alert("Starting TonConnectUI initialization...");
-  try {
-    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-      buttonRootId: "walletBtn"
-      // بدون walletsListConfiguration برای استفاده از لیست پیش‌فرض
-    });
-    alert("TonConnectUI initialized successfully");
-  } catch (error) {
-    alert("Failed to initialize TonConnectUI: " + error.message);
-    console.error("Failed to initialize TonConnectUI:", error);
-    return;
-  }
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn",
+    walletsListConfiguration: {
+      includeWallets: [
+        {
+          appName: "tonkeeper",
+          name: "Tonkeeper",
+          image: "https://tonkeeper.com/assets/tonkeeper-logo.png",
+          universalLink: "https://app.tonkeeper.com/ton-connect",
+          bridgeUrl: "https://bridge.tonapi.io/bridge"
+        }
+      ]
+    }
+  });
 
   // مدیریت اتصال اولیه
   document.getElementById('walletBtn').addEventListener('click', async () => {
-    alert("Connecting to wallet...");
     try {
       await tonConnectUI.connectWallet();
-      alert("Wallet connection initiated");
+      console.log('Wallet connection initiated');
     } catch (error) {
-      alert("Failed to connect wallet: " + error.message);
-      console.error("Error connecting wallet:", error);
+      console.error('Error connecting wallet:', error);
+      alert('Failed to connect wallet: ' + error.message);
     }
   });
 
   // وقتی اتصال restore شد یا والت وصل شد
   tonConnectUI.onStatusChange((wallet) => {
     if (wallet) {
-      alert("Wallet connected: " + wallet.account.address);
+      console.log('Wallet connected:', wallet.account.address);
       document.getElementById('walletBtn').style.display = 'flex';
 
       const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
@@ -478,14 +479,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
       if (telegramId && walletAddress) {
         saveWalletToSheet(telegramId, walletAddress)
-          .then(() => alert("Wallet address saved"))
-          .catch((error) => {
-            alert("Error saving wallet: " + error.message);
-            console.error("Error saving wallet:", error);
-          });
+          .then(() => console.log('Wallet address saved'))
+          .catch((error) => console.error('Error saving wallet:', error));
       }
     } else {
-      alert("Wallet disconnected");
+      console.log('Wallet disconnected');
       document.getElementById('walletBtn').style.display = 'none';
     }
   });
@@ -493,7 +491,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // چک کردن اتصال اولیه
   tonConnectUI.connectionRestored.then(async () => {
     if (tonConnectUI.connected) {
-      alert("Connection restored: " + tonConnectUI.wallet?.account?.address);
+      console.log('Connection restored, wallet:', tonConnectUI.wallet?.account?.address);
       document.getElementById('walletBtn').style.display = 'flex';
 
       const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
@@ -503,17 +501,22 @@ window.addEventListener("DOMContentLoaded", () => {
         await saveWalletToSheet(telegramId, walletAddress);
       }
     } else {
-      alert("No wallet connected on restore");
+      console.log('No wallet connected on restore');
     }
   }).catch((error) => {
-    alert("Failed to restore connection: " + error.message);
-    console.error("Error restoring connection:", error);
+    console.error('Error restoring connection:', error);
   });
 });
 
 async function saveWalletToSheet(telegramId, walletAddress) {
-  alert(`Saving Telegram ID: ${telegramId}, Wallet Address: ${walletAddress}`);
   // اینجا کد ذخیره‌سازی آدرس رو پیاده‌سازی کن
+  console.log(`Saving Telegram ID: ${telegramId}, Wallet Address: ${walletAddress}`);
+ 
+  await fetch('/save-wallet', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ telegramId, walletAddress })
+  });
 }
  
 	  
