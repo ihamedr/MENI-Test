@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile - MENI</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
-	 <script src="https://unpkg.com/@tonconnect/sdk@latest"></script>
+	<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -118,24 +118,7 @@
   margin-top: 1rem;
   padding-right: 0.5rem;
 }
-  #walletBtn {
-  background-color: #1c1c1c;
-  color: #ff9900;
-  border: 2px solid #ff9900;
-  border-radius: 20px;
-  padding: 0.55rem 1.1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-left: 0.6rem;
-  transition: all 0.2s ease;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-#walletBtn:hover {
-  background-color: #2a2a2a;
-  box-shadow: 0 0 6px rgba(255, 153, 0, 0.5);
-}  
-  
+    
   .accordion {
   position: relative;
   background-color: #2b2b2b;
@@ -451,58 +434,31 @@ button:focus, a:focus, div:focus {
 </div>
 	<div class="wallet-button">
 	<button id="backButton" onclick="location.href='index.html'">Back to Explore</button>
-		<button id="walletBtn">Connect Wallet</button>
+		<div  id="walletBtn"></div>
 	</div>
   <script>
+ let tonConnectUI;
+
+window.addEventListener("DOMContentLoaded", () => {
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn"
+  });
+
+  tonConnectUI.connectionRestored.then(async () => {
+    if (tonConnectUI.connected) {
+      document.getElementById('walletBtn').style.display = 'flex';
+
+      const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+      const walletAddress = tonConnectUI.wallet?.account?.address;
+
+      if (telegramId && walletAddress) {
+        await saveWalletToSheet(telegramId, walletAddress);
+      }
+    }
+  });
+});
  
-	  window.addEventListener("DOMContentLoaded", async () => {
-    // منتظر می‌مونیم تا Telegram WebApp آماده بشه
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-		  
-	  const connector = new TonConnect({
-  manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json"
-});
-
-const isInTelegram = !!window.Telegram?.WebApp?.initDataUnsafe?.user;
-const walletButton = document.getElementById("walletBtn");
-
-walletButton.addEventListener("click", async () => {
-  try {
-    const walletsList = await connector.getWallets();
-
-    const tonkeeper = walletsList.find(w => w.name.toLowerCase().includes("tonkeeper"));
-    const telegramWallet = walletsList.find(w => w.name.toLowerCase().includes("telegram"));
-
-    const selectedWallet = isInTelegram ? telegramWallet : tonkeeper;
-
-    if (!selectedWallet) {
-      showToast("No compatible wallet found.");
-      return;
-    }
-
-    await connector.connect({
-      universalLink: selectedWallet.universalLink,
-      bridgeUrl: selectedWallet.bridgeUrl,
-      jsBridgeKey: selectedWallet.jsBridgeKey,
-      returnStrategy: "none"
-    });
-
-    const walletAddress = connector.account?.address;
-    const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-
-    if (walletAddress && telegramId) {
-      showToast("Wallet connected successfully!");
-      await saveWalletToSheet(telegramId, walletAddress); // define this function if not already
-    } else {
-      showToast("Failed to get wallet address or Telegram ID.");
-    }
-  } catch (err) {
-    console.error("Connection error:", err);
-    showToast("Failed to connect wallet.");
-  }
-});
- });
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
