@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profile - MENI</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
-	<script src="https://unpkg.com/@tonconnect/ui@1.0.0/dist/tonconnect-ui.min.js"></script>
+	<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 	<script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -442,9 +442,20 @@ let tonConnectUI;
 
 window.addEventListener("DOMContentLoaded", () => {
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-  buttonRootId: "walletBtn"
-});
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn",
+    walletsListConfiguration: {
+      includeWallets: [
+        {
+          appName: "tonkeeper",
+          name: "Tonkeeper",
+          image: "https://tonkeeper.com/assets/tonkeeper-logo.png",
+          universalLink: "https://app.tonkeeper.com/ton-connect",
+          bridgeUrl: "https://bridge.tonapi.io/bridge"
+        }
+      ]
+    }
+  });
 
   // مدیریت اتصال اولیه
   document.getElementById('walletBtn').addEventListener('click', async () => {
