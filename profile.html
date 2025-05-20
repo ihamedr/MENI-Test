@@ -454,7 +454,13 @@ button:focus, a:focus, div:focus {
 		<button id="walletBtn">Connect Wallet</button>
 	</div>
   <script>
- const connector = new TonConnect({
+ 
+	  window.addEventListener("DOMContentLoaded", async () => {
+    // منتظر می‌مونیم تا Telegram WebApp آماده بشه
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+		  
+	  const connector = new TonConnect({
   manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json"
 });
 
@@ -496,7 +502,7 @@ walletButton.addEventListener("click", async () => {
     showToast("Failed to connect wallet.");
   }
 });
- 
+ });
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
