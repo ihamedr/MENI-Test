@@ -457,6 +457,16 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+	async function connectWalletManually() {
+  try {
+    const connectUrl = await tonConnectUI.getConnectUrl();
+    window.open(connectUrl, "_blank");
+  } catch (error) {
+    showToast("Failed to open wallet connection");
+    console.error("Error opening connect URL:", error);
+  }
+}
+document.getElementById("walletBtn").addEventListener("click", connectWalletManually);  
 });
  
 	 function showToast(msg) {
