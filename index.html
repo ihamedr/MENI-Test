@@ -5,970 +5,235 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MENI - Explore Memes</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    if (!sessionStorage.getItem('loadingShown')) {
-      sessionStorage.setItem('loadingShown', 'true');
-      window.location.href = "loading.html";
-    }
-  </script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const startParam = Telegram?.WebApp?.initDataUnsafe?.start_param;
-
-    // اگر ref قبلاً هندل نشده
-    if (startParam && !sessionStorage.getItem("ref_handled")) {
-      sessionStorage.setItem("ref_handled", "true");
-      window.location.replace(`/ref.html?ref=${startParam}`);
-    }
-  });
+	<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+	<script>
+  if (!sessionStorage.getItem('loadingShown')) {
+    sessionStorage.setItem('loadingShown', 'true');
+    window.location.href = "loading.html";
+  }
 </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-   * {
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent; /* مخصوص موبایل برای حذف هایلایت */
-}
-	  body {
+    body {
       background-color: #1f1f1f;
       font-family: 'Space Grotesk', sans-serif;
       color: #f5f5f5;
     }
     header {
-      position: sticky;
-		top: 0;
-		display: flex;
+      display: flex;
       flex-direction: column;
       align-items: center;
       padding: 0.5rem 0;
-      padding-top: calc(env(safe-area-inset-top) + 60px);
-		background-color: #2b2b2b;
+      background-color: #2b2b2b;
       border-bottom: 2px solid #ff9900;
+      position: relative;
     }
-	  .top-bar {
-		 display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 90%;
-  max-width: 900px;
-  position: relative;
+	  .tc-connect-button {
+  font-size: 10px !important;
+  border-radius: 8px !important;
 }
-	  .logo-container { 
-	  position: absolute;;
-		left: 50%;
-		transform: translatex(-50%);
-		  margin-bottom: 2rem;
-		  margin-top: 1.7rem;
-	  }
-	  .logo-container img { height: 100px; }
-	  
-		#filters {
-  margin-top: 0.5rem;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-			flex-wrap: wrap;
-			margin-bottom: 0.3rem;
-}
-
-.filter-btn {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.75rem;
-  padding: 0.4rem 1rem;
-  border: none;
-  border-radius: 12px;
-  background-color: #ff9900;
-  color: #1f1f1f;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s, border 0.3s;
-}
-
-.filter-btn:hover {
-  background-color: #ffa733;
-}
-
-.filter-btn.active {
-  background-color: #1f1f1f; /* دکمه فعال تیره‌تر می‌شود */
-  color: #ff9900;             /* رنگ متن دکمه انتخابی نارنجی می‌شود */
-  border: 2px solid #ff9900;  /* نوار نارنجی دور دکمه فعال اضافه می‌شود */
-}
-    .gallery {
-      column-count: 2;
-      column-gap: 1rem;
-      padding: 1rem;
-    }
-    @media (min-width: 600px) {
-      .gallery { column-count: 3; }
-    }
-    @media (min-width: 900px) {
-      .gallery { column-count: 4; }
-    }
-	  
-
-    .meme-card {
-      background-color: #292929;
-      border: 2px solid #444;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-      display: inline-block;
+    .header-top {
       width: 100%;
-      box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
-      overflow: hidden;
-    }
-
-    .meme-card img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .meme-title {
-      padding: 0.5rem 1rem 0.2rem;
-      font-size: 0.75rem;
-      text-align: center;
-      color: #ff9900;
-    }
-
-    .like-section {
       display: flex;
+      justify-content: center;
       align-items: center;
+      position: relative;
+    }
+    .wallet-button {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .wallet-icon {
+      display: none;
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      align-items: center;
+      background-color: #ff9900;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      justify-content: center;
+    }
+    .wallet-icon img {
+      width: 22px;
+      height: 22px;
+    }
+    .logo-container img { height: 100px; }
+    .categories {
+      margin-top: 0.2rem;
+      display: flex;
       justify-content: center;
       gap: 1rem;
-      padding-bottom: 1rem;
     }
-
-  .icon-btn {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  .icon-btn img {
-    width: 22px;
-    height: 22px;
-    transition: transform 0.2s ease;
-  }
-
-  .icon-btn.pulse img {
-    animation: pulse 0.3s ease;
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-  }
-
-	  .nav-bar {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #2b2b2b;
-  border-radius: 20px;
-  padding: 0.8rem 2rem;
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
-}
-
-.nav-bar button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.3s ease;
-}
-
-.nav-bar img {
-  width: 30px;
-  height: 30px;
-  transition: opacity 0.3s ease;
-}
-    
-  .toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #ff9900, #ffbb55);
-  color: #1f1f1f;
-  padding: 0.9rem 1.5rem;
-  border-radius: 16px;
-  font-size: 0.95rem;
-  font-family: 'Space Grotesk', sans-serif;
-  box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
-  pointer-events: none;
-  z-index: 10001;
-  opacity: 0;
-}
-.toast {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-50%) translateY(-20px) scale(0.95);
-}
-.toast.show {
-  animation: toastFadeIn 0.4s ease forwards;
-  pointer-events: auto;
-}
-
-@keyframes toastFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-}
-
-@keyframes toastFadeOut {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px) scale(0.95);
-  }
-}  
+    .categories button {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.4rem 1rem;
+      border: none;
+      border-radius: 12px;
+      background-color: #ff9900;
+      color: #1f1f1f;
+      cursor: pointer;
+      transition: background-color 0.3s;
     }
-  body.modal-open {
-    overflow: hidden;
-  }
-
-  .meme-modal {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    transition: opacity 0.3s ease;
-  }
-
-  .meme-modal.hidden {
-    display: none;
-  }
-
-  .meme-modal-content {
-    background: #2b2b2b;
-    padding: 1rem;
-    border-radius: 15px;
-    text-align: center;
-    max-width: 90%;
-    box-shadow: 0 0 30px rgba(255, 153, 0, 0.4);
-    animation: zoomIn 0.3s ease;
-  }
-
-  .meme-modal-content img {
-    max-width: 100%;
-    border-radius: 12px;
-  }
-
-  .meta {
-    margin-top: 0.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #ff9900;
-  }
-
-  .icons img {
-	  margin-top: 10px;
-	  object-fit: contain;
-	  width: 30px;
-	  height: 30px;
-	  background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-
-  @keyframes zoomIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-	  @keyframes zoomOut {
-  from { transform: scale(1); opacity: 1; }
-  to { transform: scale(0.8); opacity: 0; }
+    .categories button:hover { background-color: #ffa733; }
+   .gallery {
+  column-count: 2;
+  column-gap: 1rem;
+  padding: 1rem;
 }
 
-.meme-modal-content.hide-anim {
-  animation: zoomOut 0.2s ease forwards;
+@media (min-width: 600px) {
+  .gallery {
+    column-count: 3;
+  }
 }
-	  @keyframes slideLeftOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(-100%); opacity: 0; }
-}
-
-@keyframes slideRightOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(100%); opacity: 0; }
+@media (min-width: 900px) {
+  .gallery {
+    column-count: 4;
+  }
 }
 
-@keyframes slideLeftIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+.meme-card {
+  background-color: #292929;
+  border: 2px solid #444;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: inline-block;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
+  overflow: hidden;
 }
 
-@keyframes slideRightIn {
-  from { transform: translateX(-100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+.meme-card img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-.modal-img-animate {
-  animation-duration: 0.3s;
-  animation-fill-mode: both;
+.meme-title {
+  padding: 0.5rem 1rem 0.2rem;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #ff9900;
 }
-	  body, .container {
-		  text-align: left;
-		  display: block !important;
-	  }
-	  .coin-card {
-      background-color: #2b2b2b;
-      border-radius: 16px;
-      border: 2px solid #444;
-      padding: 0.4rem 0.9rem;
-      margin-bottom: 1.2rem;
-      display: flex;
-      align-items: center;
-      width: fit-content;
-      box-shadow: 0 0 10px rgba(255,153,0,0.1);
-		  algin-self: flex-start !important;
-		  margin-top: 1.2rem;
-    }
-    .coin-card img {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-      margin-right: 0.5rem;
-    }
-    .coin-card span {
-      font-size: 1rem;
-      color: #f5f5f5;
-      font-weight: 500;
-    }
-	 
-	  #blurOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(31, 31, 31, 0.4); /* نیمه‌شفاف برای حس بلور */
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  z-index: 100001;
+
+.like-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease, opacity 0.3s ease;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
 }
-
-#blurOverlay.active {
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  opacity: 1;
-  pointer-events: auto;
-}
-.blur-overlay img {
-  width: 100px;
-  height: 100px;
-	border-radius: 20px;
-}
-	  button, a, div {
-  outline: none;
-}
-
-button:focus, a:focus, div:focus {
-  outline: none;
-}
+    }
+    .like-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .like-btn.liked { color: #ff9900; }
+    .nav-bar {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #2b2b2b;
+      border-radius: 20px;
+      padding: 0.8rem 2rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
+    }
+    .nav-bar button {
+      background: none;
+      border: none;
+      color: #f5f5f5;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .nav-bar button.active,
+	  .nav-bar button:hover { color: #ff9900; }
+	  .nav-bar button:hover { color: #ff9900; }
   </style>
 </head>
 <body>
   <header>
-   <div class="top-bar">
-	  <div class="coin-card">
-    <img src="coin.png" alt="Coin" />
-    <span id="coin-balance">0</span>
-  </div> 
-	  <div class="logo-container">
-      <img src="logo.png" alt="MENI Logo" />
-		  <div class="spacer"></div>
-     </div> 
-	   </div>
-<div id="filters">
-  <button class="filter-btn active" data-type="new">NEW</button>
-  <button class="filter-btn" data-type="popular">POPULAR</button>
-  <button class="filter-btn" data-type="trend">TREND</button>
-</div>
-	 </header> 
-<div class="toast" id="toast"></div>
-  <div id="message" style="display: none; text-align: center; color: #ff9900; margin-top: 2rem; font-size: 1rem;"></div>
-  <main class="gallery" id="gallery"></main>
-
-  <div class="nav-bar">
-  <button onclick="navigateWithLoading('profile.html')" data-page="profile">
-    <img src="prof-non.png" alt="Profile">
-  </button>
-  <button onclick="navigateWithLoading('index.html')" data-page="index">
-    <img src="exp-act.png" alt="Explore">
-  </button>
-  <button onclick="navigateWithLoading('Tournament.html')" data-page="tournament">
-    <img src="tour-non.png" alt="Tournament">
-  </button>
-  <button onclick="navigateWithLoading('tasks.html')" data-page="tasks">
-    <img src="task-non.png" alt="Tasks">
-  </button>
-</div>
-	  <div class="blur-overlay" id="blurOverlay">
-  <img src="loading.gif" alt="Loading..." />
-	</div>  
-<!-- Meme Modal -->
-<div class="meme-modal hidden" id="memeModal">
-  <div class="meme-modal-content">
-    <img id="modalImage" src="" alt="">
-    <div class="meta">
-      <div class="icons">
-        <button class="icon-btn" id="modalLikeBtn">
-          <img src="like1.png" alt="like" />
-        </button>
-        <span class="like-count" id="modalLikeCount">0</span>
-        <button class="icon-btn" id="modalVoteBtn">
-          <img src="vote1.png" alt="vote" />
-        </button>
-        <span class="vote-count" id="modalVoteCount">0</span>
+    <div class="header-top">
+      <div class="wallet-button" id="walletBtn"></div>
+      <div class="wallet-icon" id="walletIcon">
+        <img src="wallet.png" alt="Wallet Icon">
       </div>
-      <div class="user-id" id="modalUserId"></div>
+      <div class="logo-container">
+        <img src="logo.png" alt="MENI Logo" />
+      </div>
     </div>
-  </div>
+    <div class="categories">
+      <button>NEW</button>
+      <button>TREND</button>
+      <button>POPULAR</button>
+    </div>
+  </header>
+<main class="gallery">
+    <!-- 10 Meme Cards -->
+    <div class="meme-card"><img src="meme1.jpg" alt="Meme 1"><div class="meme-title">@creator1</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">12</span></div></div>
+    <div class="meme-card"><img src="meme2.jpg" alt="Meme 2"><div class="meme-title">@creator2</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">9</span></div></div>
+    <div class="meme-card"><img src="meme3.jpg" alt="Meme 3"><div class="meme-title">@creator3</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">8</span></div></div>
+    <div class="meme-card"><img src="meme4.jpg" alt="Meme 4"><div class="meme-title">@creator4</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">15</span></div></div>
+    <div class="meme-card"><img src="meme5.jpg" alt="Meme 5"><div class="meme-title">@creator5</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">6</span></div></div>
+    <div class="meme-card"><img src="meme6.jpg" alt="Meme 6"><div class="meme-title">@creator6</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">10</span></div></div>
+    <div class="meme-card"><img src="meme7.jpg" alt="Meme 7"><div class="meme-title">@creator7</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">3</span></div></div>
+    <div class="meme-card"><img src="meme8.jpg" alt="Meme 8"><div class="meme-title">@creator8</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">7</span></div></div>
+    <div class="meme-card"><img src="meme9.jpg" alt="Meme 9"><div class="meme-title">@creator9</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">4</span></div></div>
+    <div class="meme-card"><img src="meme10.jpg" alt="Meme 10"><div class="meme-title">@creator10</div><div class="like-section"><button class="like-btn" onclick="toggleLike(this)">♥</button><span class="like-count">11</span></div></div>
+  </main>
+  
+
+ <div class="nav-bar">
+  <button onclick="location.href='profile.html'">Profile</button>
+  <button class="active" onclick="location.href='index.html'">Explore</button>
+  <button onclick="location.href='Tournament.html'">Tournament</button>
 </div>
-	
+
   <script>
-  
-	 const tg = window.Telegram.WebApp;
-tg.expand();
-
-const telegramUser = tg.initDataUnsafe.user || {};
-const telegramId = telegramUser.id;
-
-// فقط اگر کاربر با رفرال نیومده بود، آیدیش رو بفرست
-const startParam = tg.initDataUnsafe.start_param;
-if (!startParam && telegramId) {
-  fetch("https://meni-proxy.onrender.com/proxy", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id: telegramId })
-  })
-  .then(res => res.text())
-  .then(result => {
-    console.log("User ID sent to Google Script via proxy:", result);
-  })
-  .catch(err => {
-    console.error("Error sending ID to proxy:", err);
-  });
-}
-    const telegramUsername = telegramUser.username || 'unknown';
-    const toast = document.getElementById('toast');
-    const proxyUrl = 'https://meni-server-2.onrender.com/proxy';
-    const scriptBase = 'https://script.google.com/macros/s/AKfycbzMwCcA6Hmobfmshnv1G93dtJjj-6Bspr-_a5OA-8z5AgUOuN0OGe97zA-QeJx_2hmX/exec';
-    const userCheckScript = 'https://script.google.com/macros/s/AKfycbxrYowBreOpNLjHnlPXfYiTONqiSXd-L6xUHzR7eLF77nOHd2c9wEQF-AJkYqYONJ80/exec';
-    const secret = 'meni2025!';
-	  
-	  let currentFilteredMemes = [];
-  
-	  function showToast(msg) {
-  if (!msg) return;
-  toast.textContent = msg;
-  toast.classList.remove('hide');
-  toast.classList.add('show');
-
-  // بعد از 2.5 ثانیه شروع به خروج کن
-  setTimeout(() => {
-    toast.classList.remove('show');
-    toast.style.animation = 'toastFadeOut 0.4s ease forwards';
-    
-    // بعد از انیمیشن خروج، ریست کنیم
-    setTimeout(() => {
-      toast.style.animation = '';
-    }, 400);
-  }, 2500);
-}
-
-function hideToast() {
-  toast.classList.remove('show');
-  toast.style.animation = 'toastFadeOut 0.4s ease forwards';
-  setTimeout(() => {
-    toast.style.animation = '';
-  }, 400);
-}
-
-function showToastLoading(msg) {
-  const finalMsg = msg && msg.trim() ? msg : "Please wait...";
-  toast.textContent = finalMsg;
-  toast.classList.add('show');
-}
-
-    const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-const userId = tgUser?.id;
-const coinBalanceEl = document.getElementById('coin-balance');
-const scriptUrl = "https://script.google.com/macros/s/AKfycbx5fiMinm44VRSb-tHOLj0u2MBol0gswI9tF8GIjjDwA4job9wcqe5IPDKYeu77aHYzKA/exec";
-
-async function updateBalance() {
-  try {
-    const res = await fetch(`${scriptUrl}?get_balance=1&user_id=${userId}`);
-    const data = await res.json();
-    coinBalanceEl.textContent = data.balance?.toFixed(1) || "0";
-  } catch (err) {
-    console.error("Error fetching balance:", err);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (userId) {
-    updateBalance();
-  }
-});
-	  async function checkUserBeforeLoading() {
-      showToastLoading("Checking your tournament status...");
-      const userCheckUrl = `${userCheckScript}?telegram_id=${telegramId}`;
-      try {
-        const res = await fetch(userCheckUrl);
-        const data = await res.json();
-        if (data.exists) {
-          await fetchMemes();
-        } else {
-          document.getElementById("message").textContent = "You must join a tournament first";
-          document.getElementById("message").style.display = "block";
-        }
-      } catch (err) {
-        console.error("User check error:", err);
-        document.getElementById("message").textContent = "Error checking user status";
-        document.getElementById("message").style.display = "block";
-      } finally {
-        hideToast();
+    function toggleLike(button) {
+      const countSpan = button.nextElementSibling;
+      let count = parseInt(countSpan.textContent);
+      if (button.classList.contains('liked')) {
+        button.classList.remove('liked');
+        countSpan.textContent = count - 1;
+      } else {
+        button.classList.add('liked');
+        countSpan.textContent = count + 1;
       }
     }
 
-async function fetchMemes() {
-      showToastLoading("Loading memes...");
-      const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
-      if (!res.ok) {
-        console.error("Failed to fetch memes:", res.statusText);
-        hideToast();
-        return;
-      }
+    let tonConnectUI;
 
-      const memes = await res.json();
-      const gallery = document.getElementById("gallery");
-      gallery.innerHTML = "";
+window.addEventListener("DOMContentLoaded", () => {
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn"
+  });
 
-      memes.forEach(meme => {
-        if (!meme.id || !meme.url) return;
-
-        const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-        const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
-
-        const hasVoted = voters.includes(String(telegramId));
-        const hasLiked = likers.includes(String(telegramId));
-
-        const card = document.createElement("div");
-        card.className = "meme-card";
-       card.innerHTML = `
-  <img src="${meme.url}" alt="${meme.title || ''}" onclick="openModal('${meme.url}', '@${meme.telegramUsername || 'unknown'}')" style="cursor:pointer;" />
-  <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
-  <div class="like-section">
-    <button class="icon-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
-      <img src="${hasLiked ? 'like2.png' : 'like1.png'}" alt="like" />
-    </button>
-    <span class="like-count">${meme.likes || 0}</span>
-    <button class="icon-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">
-      <img src="${hasVoted ? 'vote2.png' : 'vote1.png'}" alt="vote" />
-    </button>
-    <span class="vote-count">${meme.votes || 0}</span>
-  </div>
-`;
-        gallery.appendChild(card);
-      });
-      hideToast();
-	applyFilter("new"); // پیش‌فرض نمایش جدیدترین‌ها	
+  // بررسی وضعیت اتصال
+  tonConnectUI.connectionRestored.then(() => {
+    if (tonConnectUI.connected) {
+      document.getElementById('walletBtn').style.display = 'none';
+      document.getElementById('walletIcon').style.display = 'flex';
     }
-async function likeMeme(memeId, btn) {
-  const likeCount = btn.nextElementSibling;
-  const img = btn.querySelector('img');
-  if (btn.classList.contains("liked")) return;
-
-  showToastLoading("Sending like...");
-  const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=like&voterId=${telegramId}`;
-  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-
-  hideToast();
-  if (!res.ok) {
-    console.error("Failed to like meme:", res.statusText);
-    return;
-  }
-
-  const result = await res.text();
-  if (result === "Updated") {
-    btn.classList.add("liked", "pulse");
-    img.src = "like2.png";
-    likeCount.textContent = parseInt(likeCount.textContent) + 1;
-    showToast("You liked this meme");
-
-    setTimeout(() => btn.classList.remove("pulse"), 300);
-  } else if (result === "Already liked") {
-    showToast("You already liked this meme");
-  }
-}
-
-async function voteMeme(memeId, btn) {
-  const voteCount = btn.nextElementSibling;
-  const img = btn.querySelector('img');
-  if (btn.classList.contains("voted")) return;
-
-  showToastLoading("Submitting your vote...");
-  const url = `${scriptBase}?secret=${secret}&id=${memeId}&action=vote&voterId=${telegramId}`;
-  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-
-  hideToast();
-  if (!res.ok) {
-    console.error("Failed to vote on meme:", res.statusText);
-    return;
-  }
-
-  const result = await res.text();
-  if (result === "Updated") {
-    btn.classList.add("voted", "pulse");
-    img.src = "vote2.png";
-    voteCount.textContent = parseInt(voteCount.textContent) + 1;
-    showToast("Your vote has been successfully submitted");
-
-    setTimeout(() => btn.classList.remove("pulse"), 300);
-  } else {
-    showToast("You have already voted");
-  }
-}
- const memeModal = document.getElementById('memeModal');
-const modalImage = document.getElementById('modalImage');
-const modalUserId = document.getElementById('modalUserId');
-const modalLikeBtn = document.getElementById('modalLikeBtn');
-const modalVoteBtn = document.getElementById('modalVoteBtn');
-const modalLikeCount = document.getElementById('modalLikeCount');
-const modalVoteCount = document.getElementById('modalVoteCount');
-
-let currentMeme = null;
-
-// تابع بستن مودال با انیمیشن
-function closeModal() {
-  const content = document.querySelector('.meme-modal-content');
-  content.classList.add('hide-anim');
-  setTimeout(() => {
-    memeModal.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-    content.classList.remove('hide-anim');
-    currentMeme = null;
-  }, 200);
-}
-
-// کلیک روی پس‌زمینه برای بستن
-memeModal.addEventListener('click', (e) => {
-  if (e.target === memeModal) closeModal();
-});
-
-function openModal(imageUrl, userId) {
-  const meme = allMemes.find(m => m.url === imageUrl);
-  if (!meme) return;
-
-  currentMeme = meme;
-  modalImage.src = imageUrl;
-  modalUserId.textContent = userId;
-
-  const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
-  const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-
-  const hasLiked = likers.includes(String(telegramId));
-  const hasVoted = voters.includes(String(telegramId));
-
-  modalLikeBtn.className = "icon-btn" + (hasLiked ? " liked" : "");
-  modalLikeBtn.querySelector('img').src = hasLiked ? 'like2.png' : 'like1.png';
-  modalLikeCount.textContent = meme.likes || 0;
-
-  modalVoteBtn.className = "icon-btn" + (hasVoted ? " voted" : "");
-  modalVoteBtn.querySelector('img').src = hasVoted ? 'vote2.png' : 'vote1.png';
-  modalVoteCount.textContent = meme.votes || 0;
-
-  memeModal.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-}
-
-modalLikeBtn.onclick = async () => {
-  if (!currentMeme || modalLikeBtn.classList.contains("liked")) return;
-
-  showToastLoading("Sending like...");
-  const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=like&voterId=${telegramId}`;
-  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-  hideToast();
-
-  if (res.ok && await res.text() === "Updated") {
-    modalLikeBtn.classList.add("liked", "pulse");
-    modalLikeBtn.querySelector('img').src = "like2.png";
-    modalLikeCount.textContent = parseInt(modalLikeCount.textContent) + 1;
-    showToast("You liked this meme");
-    setTimeout(() => modalLikeBtn.classList.remove("pulse"), 300);
-  } else {
-    showToast("You already liked this meme");
-  }
-	// آپدیت در allMemes و currentFilteredMemes
-    [currentFilteredMemes].forEach(arr => {
-      const meme = arr.find(m => m.id === currentMeme.id);
-      if (meme) {
-        meme.likes = parseInt(meme.likes || 0) + 1;
-        meme.likers = (meme.likers || "") + `,${telegramId}`;
-      }
-    });
-
-    renderMemes(currentFilteredMemes);  // به‌روز کردن گالری
-
-};
-
-modalVoteBtn.onclick = async () => {
-  if (!currentMeme || modalVoteBtn.classList.contains("voted")) return;
-
-  showToastLoading("Submitting your vote...");
-  const url = `${scriptBase}?secret=${secret}&id=${currentMeme.id}&action=vote&voterId=${telegramId}`;
-  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(url)}`, { method: "POST" });
-  hideToast();
-
-  if (res.ok && await res.text() === "Updated") {
-    modalVoteBtn.classList.add("voted", "pulse");
-    modalVoteBtn.querySelector('img').src = "vote2.png";
-    modalVoteCount.textContent = parseInt(modalVoteCount.textContent) + 1;
-    showToast("Your vote has been successfully submitted");
-    setTimeout(() => modalVoteBtn.classList.remove("pulse"), 300);
-  } else {
-    showToast("You have already voted");
-  }
-	// آپدیت در allMemes و currentFilteredMemes
-    [currentFilteredMemes].forEach(arr => {
-      const meme = arr.find(m => m.id === currentMeme.id);
-      if (meme) {
-        meme.votes = parseInt(meme.votes || 0) + 1;
-        meme.voters = (meme.voters || "") + `,${telegramId}`;
-      }
-    });
-
-    renderMemes(currentFilteredMemes);  // به‌روز کردن گالری
-};
-
-// ذخیره لیست کل میم‌ها برای استفاده در modal
-let allMemes = [];
-
-async function fetchMemes() {
-  showToastLoading("Loading memes...");
-  const res = await fetch(`${proxyUrl}?url=${encodeURIComponent(scriptBase)}`);
-  if (!res.ok) {
-    console.error("Failed to fetch memes:", res.statusText);
-    hideToast();
-    return;
-  }
-
-  const memes = await res.json();
-  allMemes = memes;
-  const gallery = document.getElementById("gallery");
-  gallery.innerHTML = "";
-
-  memes.forEach(meme => {
-    if (!meme.id || !meme.url) return;
-
-    const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-    const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
-
-    const hasVoted = voters.includes(String(telegramId));
-    const hasLiked = likers.includes(String(telegramId));
-
-    const card = document.createElement("div");
-    card.className = "meme-card";
-    card.innerHTML = `
-  <img src="${meme.url}" alt="${meme.title || ''}" onclick="openModal('${meme.url}', '@${meme.telegramUsername || 'unknown'}')" style="cursor:pointer;" />
-  <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
-  <div class="like-section">
-    <button class="icon-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
-      <img src="${hasLiked ? 'like2.png' : 'like1.png'}" alt="like" />
-    </button>
-    <span class="like-count">${meme.likes || 0}</span>
-    <button class="icon-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">
-      <img src="${hasVoted ? 'vote2.png' : 'vote1.png'}" alt="vote" />
-    </button>
-    <span class="vote-count">${meme.votes || 0}</span>
-  </div>
-`;
-    gallery.appendChild(card);
-  });
-
-  hideToast();
-	applyFilter("new"); // پیش‌فرض نمایش جدیدترین‌ها
-}
-let startX = 0;
-
-// لیسنر برای شروع لمس
-const modalContent = document.querySelector('.meme-modal-content'); // بهتر از modalImage
-
-modalContent.addEventListener("touchstart", (e) => {
-  startX = e.touches[0].clientX;
-});
-
-// لیسنر برای پایان لمس
-modalContent.addEventListener("touchend", (e) => {
-  const endX = e.changedTouches[0].clientX;
-  const diffX = startX - endX;
-
-  if (Math.abs(diffX) > 50) {
-    if (diffX > 0) {
-      showNextMeme(); // swipe left
-    } else {
-      showPreviousMeme(); // swipe right
-    }
-  }
-});
-
-// تابع انیمیشن تصویر با جهت
-function animateImageTransition(callback, direction) {
-  const animOut = direction === "left" ? "slideLeftOut" : "slideRightOut";
-  const animIn = direction === "left" ? "slideLeftIn" : "slideRightIn";
-
-  modalImage.classList.add("modal-img-animate");
-  modalImage.style.animationName = animOut;
-
-  modalImage.addEventListener("animationend", function handler() {
-    modalImage.removeEventListener("animationend", handler);
-    callback(); // باز کردن میم بعدی
-    modalImage.style.animationName = animIn;
-    modalImage.addEventListener("animationend", () => {
-      modalImage.classList.remove("modal-img-animate");
-      modalImage.style.animationName = "";
-    }, { once: true });
-  }, { once: true });
-}
-
-// رفتن به میم بعدی
-function showNextMeme() {
-  if (!currentMeme) return;
-  const currentIndex = currentFilteredMemes.findIndex(m => m.id === currentMeme.id);
-  if (currentIndex === -1) return;
-
-  const nextIndex = (currentIndex + 1) % currentFilteredMemes.length;
-  const next = currentFilteredMemes[nextIndex];
-
-  animateImageTransition(() => {
-    openModal(next.url, '@' + (next.telegramUsername || 'unknown'));
-  }, "left");
-}
-
-// رفتن به میم قبلی
-function showPreviousMeme() {
-  if (!currentMeme) return;
-  const currentIndex = currentFilteredMemes.findIndex(m => m.id === currentMeme.id);
-  if (currentIndex === -1) return;
-
-  const prevIndex = (currentIndex - 1 + currentFilteredMemes.length) % currentFilteredMemes.length;
-  const prev = currentFilteredMemes[prevIndex];
-
-  animateImageTransition(() => {
-    openModal(prev.url, '@' + (prev.telegramUsername || 'unknown'));
-  }, "right");
-}
-	 document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const type = btn.dataset.type;
-    applyFilter(type);
   });
 });
-
-function applyFilter(type) {
-  let sorted = [...allMemes].reverse();
-
-  if (type === "new") {
-    sorted.sort((a, b) => {
-      const da = new Date(a.createdAt || a.timestamp || 0);
-      const db = new Date(b.createdAt || b.timestamp || 0);
-      return db - da;
-    });
-  } else if (type === "popular") {
-    sorted.sort((a, b) => (parseInt(b.likes || 0)) - (parseInt(a.likes || 0)));
-  } else if (type === "trend") {
-    sorted.sort((a, b) => (parseInt(b.votes || 0)) - (parseInt(a.votes || 0)));
-  }
-currentFilteredMemes = sorted;
-  renderMemes(sorted);
-}
-
-function renderMemes(memes) {
-  const gallery = document.getElementById("gallery");
-  gallery.innerHTML = "";
-
-  memes.forEach(meme => {
-    if (!meme.id || !meme.url) return;
-
-    const voters = typeof meme.voters === 'string' ? meme.voters.split(',') : [];
-    const likers = typeof meme.likers === 'string' ? meme.likers.split(',') : [];
-
-    const hasVoted = voters.includes(String(telegramId));
-    const hasLiked = likers.includes(String(telegramId));
-
-    const card = document.createElement("div");
-    card.className = "meme-card";
-    card.innerHTML = `
-      <img src="${meme.url}" alt="${meme.title || ''}" onclick="openModal('${meme.url}', '@${meme.telegramUsername || 'unknown'}')" style="cursor:pointer;" />
-      <div class="meme-title">@${meme.telegramUsername || 'unknown'}</div>
-      <div class="like-section">
-        <button class="icon-btn ${hasLiked ? 'liked' : ''}" onclick="likeMeme('${meme.id}', this)">
-          <img src="${hasLiked ? 'like2.png' : 'like1.png'}" alt="like" />
-        </button>
-        <span class="like-count">${meme.likes || 0}</span>
-        <button class="icon-btn ${hasVoted ? 'voted' : ''}" onclick="voteMeme('${meme.id}', this)">
-          <img src="${hasVoted ? 'vote2.png' : 'vote1.png'}" alt="vote" />
-        </button>
-        <span class="vote-count">${meme.votes || 0}</span>
-      </div>
-    `;
-    gallery.appendChild(card);
-  });
-} 
-
-function navigateWithLoading(url) {
-  const overlay = document.getElementById('blurOverlay');
-  const gif = document.querySelector('#blurOverlay img');
-
-  // افزودن پارامتر تصادفی به URL برای اجبار به reload کامل
-  const baseSrc = gif.src.split('?')[0];
-  gif.src = baseSrc + '?t=' + new Date().getTime();
-
-  overlay.classList.add('active');
-
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1000);
-}
-	  
-    window.onload = () => {
-      checkUserBeforeLoading();
-    };
   </script>
 </body>
 </html>
