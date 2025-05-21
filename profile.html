@@ -371,6 +371,28 @@
       font-size: 0.7rem;
       color: #888;
     }
+	  #manualConnect {
+  background-color: #ff9900;
+  color: #1f1f1f;
+  border: none;
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+#manualConnect:hover {
+  background-color: #ffbb55;
+}
+
+#walletStatus {
+  color: #f5f5f5;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
 	  button, a, div {
   outline: none;
 }
@@ -433,31 +455,84 @@ button:focus, a:focus, div:focus {
   <ul id="friends-list"></ul>
 </div>
 	<div class="wallet-button">
-	<button id="backButton" onclick="location.href='index.html'">Back to Explore</button>
-		<div  id="walletBtn"></div>
-	</div>
+  <button id="backButton" onclick="location.href='index.html'">Back to Explore</button>
+  <button id="manualConnect" onclick="connectWalletManually()">Connect Wallet</button>
+  <div id="walletBtn"></div>
+  <div id="walletStatus" style="color: #f5f5f5; font-size: 0.9rem; margin-top: 0.5rem;">Wallet: Disconnected</div>
+</div>
   <script>
  let tonConnectUI;
 
 window.addEventListener("DOMContentLoaded", () => {
+  // نمونه‌سازی TonConnectUI
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
     buttonRootId: "walletBtn"
   });
 
+  // مدیریت وضعیت اتصال
+  tonConnectUI.onStatusChange((wallet, error) => {
+    const statusEl = document.getElementById("walletStatus");
+    if (error) {
+      showToast(Connection error: `${error.message}`);
+      console.error("TonConnect error:", error);
+      statusEl.textContent = "Wallet: Disconnected";
+    } else if (wallet) {
+      const shortAddress = wallet.account.address.slice(0, 6) + "..." + wallet.account.address.slice(-4);
+      statusEl.textContent = Wallet: Connected (`${shortAddress}`);
+      showToast("Wallet connected successfully!");
+    } else {
+      statusEl.textContent = "Wallet: Disconnected";
+    }
+  });
+
+  // بررسی اتصال قبلی
   tonConnectUI.connectionRestored.then(async () => {
     if (tonConnectUI.connected) {
       document.getElementById('walletBtn').style.display = 'flex';
-
       const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
       const walletAddress = tonConnectUI.wallet?.account?.address;
-
       if (telegramId && walletAddress) {
         await saveWalletToSheet(telegramId, walletAddress);
       }
     }
   });
 });
+
+// تابع اتصال دستی به ولت
+async function connectWalletManually() {
+  try {
+    const connectUrl = await tonConnectUI.getConnectUrl();
+    window.Telegram.WebApp.openLink(connectUrl);
+    showToast("Opening wallet connection...");
+  } catch (error) {
+    showToast("Failed to connect wallet");
+    console.error("Connection error:", error);
+  }
+}
+
+// تابع ذخیره آدرس ولت در سرور
+async function saveWalletToSheet(telegramId, walletAddress) {
+  try {
+    const response = await fetch("https://wallet-proxy.onrender.com/save-wallet", {
+      method: 'POST',
+      body: JSON.stringify({
+        telegramId,
+        walletAddress
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      throw new Error(HTTP error! status: `${response.status}`);
+    }
+    showToast("Wallet saved successfully!");
+  } catch (err) {
+    showToast("Error saving wallet info");
+    console.error("Error saving wallet info:", err);
+  }
+}
 	  
 	 function showToast(msg) {
   if (!msg) return;
@@ -485,22 +560,7 @@ function hideToast() {
   }, 400);
 }  
 	  
-async function saveWalletToSheet(telegramId, walletAddress) {
-  try {
-    await fetch("https://wallet-proxy.onrender.com/save-wallet", {
-      method: 'POST',
-      body: JSON.stringify({
-        telegramId,
-        walletAddress
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  } catch (err) {
-    console.error("Error saving wallet info:", err);
-  }
-}
+
 	  const accordions = document.querySelectorAll(".accordion");
 
 accordions.forEach((btn) => {
