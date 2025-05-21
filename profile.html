@@ -441,19 +441,9 @@ button:focus, a:focus, div:focus {
 
 window.addEventListener("DOMContentLoaded", () => {
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-  buttonRootId: "walletBtn",
-  walletsListConfiguration: {
-    includeWallets: [
-      { name: 'Tonkeeper' },
-      { name: 'MyTonWallet' }
-    ],
-    openWalletsInNewWindow: true
-  },
-  actionsConfiguration: {
-    twaReturnUrl: 'https://t.me/MENI_DAO_BOT/MENI'
-  }
-});
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn"
+  });
 
   tonConnectUI.connectionRestored.then(async () => {
     if (tonConnectUI.connected) {
