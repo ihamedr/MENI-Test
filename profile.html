@@ -437,16 +437,33 @@ button:focus, a:focus, div:focus {
 		<div  id="walletBtn"></div>
 	</div>
   <script>
- let tonConnectUI;
+ 
+let tonConnectUI;
 
 window.addEventListener("DOMContentLoaded", () => {
+  const isInTelegramWebApp = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-    buttonRootId: "walletBtn"
+    buttonRootId: "walletBtn",
+    uiPreferences: {
+        walletsModal: {
+            theme: 'dark', // یا 'light' بسته به تم کلی اپ شما
+            cardStyle: 'square', // یا 'round'
+        },
+    },
+    actionsConfiguration: {
+        
+        ...(isInTelegramWebApp ? {
+            qr: true,
+            universalLink: true,
+        } : {})
+    }
   });
 
   tonConnectUI.connectionRestored.then(async () => {
     if (tonConnectUI.connected) {
+      // اگر اتصال برقرار بود، دکمه اتصال کیف پول را نمایش می‌دهیم
       document.getElementById('walletBtn').style.display = 'flex';
 
       const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
@@ -455,10 +472,15 @@ window.addEventListener("DOMContentLoaded", () => {
       if (telegramId && walletAddress) {
         await saveWalletToSheet(telegramId, walletAddress);
       }
+    } else {
+        document.getElementById('walletBtn').style.display = 'flex';
     }
+  }).catch(e => {
+      console.error("Error restoring connection:", e);.
+      document.getElementById('walletBtn').style.display = 'flex';
   });
-});
-	  
+	  });
+
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
