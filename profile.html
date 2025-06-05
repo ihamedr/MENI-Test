@@ -445,11 +445,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-    buttonRootId: "walletBtn",
+    buttonRootId: "walletBtn", // این ID برای دکمه اتصال خود TonConnectUI است
     uiPreferences: {
         walletsModal: {
-            theme: 'dark', // یا 'light' بسته به تم کلی اپ شما
-            cardStyle: 'square', // یا 'round'
+            theme: 'dark',
+            cardStyle: 'square',
         },
     },
     actionsConfiguration: {
@@ -457,19 +457,57 @@ window.addEventListener("DOMContentLoaded", async () => {
             qr: true,
             universalLink: true,
         } : {})
-    }
+    },
+    twaReturnUrl: 'https://t.me/MENI_DAO_Bot/MENI'
   });
 
-  tonConnectUI.onModalStateChange(async (state) => {
-    if (state.opened && isInTelegramWebApp) {
-      console.log("Ton Connect Modal Opened in Telegram Web App. Consider showing a custom message for external wallets.");
+  if (isInTelegramWebApp) {
+    const originalConnectBtn = document.getElementById('walletBtn');
+    if (originalConnectBtn) {
+        originalConnectBtn.style.display = 'none'; // پنهان کردن دکمه اصلی TonConnectUI
     }
-  });
+
+    const customConnectBtn = document.createElement('button');
+    customConnectBtn.textContent = 'Connect Wallet (TWA)';
+    customConnectBtn.id = 'customTwaConnectBtn';
+    customConnectBtn.style.cssText = `
+        background-color: #ff9900;
+        color: #1f1f1f;
+        border: none;
+        border-radius: 8px;
+        padding: 0.55rem 1.1rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        font-family: 'Space Grotesk', sans-serif;
+        transition: all 0.2s ease;
+    `;
+    customConnectBtn.onmouseover = () => customConnectBtn.style.backgroundColor = '#ffbb55';
+    customConnectBtn.onmouseout = () => customConnectBtn.style.backgroundColor = '#ff9900';
+
+    document.querySelector('.wallet-button').appendChild(customConnectBtn);
+
+    customConnectBtn.addEventListener('click', async () => {
+      const wallets = await tonConnectUI.getWallets();
+      const tonkeeper = wallets.find(w => w.name === 'Tonkeeper');
+
+      if (tonkeeper && tonkeeper.universalLink) {
+        console.log('Opening Tonkeeper via Telegram.WebApp.openLink:', tonkeeper.universalLink);
+        window.Telegram.WebApp.openLink(tonkeeper.universalLink);
+      } else {
+        console.log('Tonkeeper not found or no universalLink, opening default TonConnectUI modal.');
+        await tonConnectUI.openModal();
+      }
+    });
+  }
+
 
   tonConnectUI.connectionRestored.then(async () => {
     if (tonConnectUI.connected) {
-      document.getElementById('walletBtn').style.display = 'flex';
-
+      // اگر از دکمه سفارشی استفاده می‌کنیم، نیازی به نمایش buttonRootId نیست
+      if (!isInTelegramWebApp) { // فقط اگر در TWA نبودیم، دکمه پیش‌فرض رو نشون بده
+        document.getElementById('walletBtn').style.display = 'flex';
+      }
+      
       const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
       const walletAddress = tonConnectUI.wallet?.account?.address;
 
@@ -478,11 +516,16 @@ window.addEventListener("DOMContentLoaded", async () => {
       }
     } else {
         // اگر اتصال برقرار نشد، دکمه را نمایش دهید تا کاربر بتواند دستی وصل شود.
-        document.getElementById('walletBtn').style.display = 'flex';
+        // اگر دکمه سفارشی داریم، این خط برای حالت عادی (نه TWA) است
+        if (!isInTelegramWebApp) {
+            document.getElementById('walletBtn').style.display = 'flex';
+        }
     }
   }).catch(e => {
       console.error("Error restoring connection:", e);
-      document.getElementById('walletBtn').style.display = 'flex';
+      if (!isInTelegramWebApp) {
+        document.getElementById('walletBtn').style.display = 'flex';
+      }
   });
 });
 
@@ -725,8 +768,6 @@ const avatarList = [
     }
   });
 
-
   </script>
-
 </body>
 </html>
