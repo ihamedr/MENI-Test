@@ -438,65 +438,49 @@ button:focus, a:focus, div:focus {
 	</div>
   <script>
  
- let tonConnectUI;
+let tonConnectUI;
+
+const TWA_RETURN_URL = 'https://t.me/MENI_DAO_Bot/MENI'; 
 
 window.addEventListener("DOMContentLoaded", async () => {
-    // بررسی اینکه آیا کد در محیط تلگرام وب‌اپ اجرا می‌شود یا خیر
-    const isInTelegramWebApp = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
+    buttonRootId: "walletBtn",
+    
+    twaReturnUrl: TWA_RETURN_URL, 
+    
+    uiPreferences: {
+        theme: 'dark', 
+    },
+  });
 
-    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-        manifestUrl: "https://meni-test.onrender.com/tonconnect-manifest.json",
-        buttonRootId: "walletBtn",
-        uiPreferences: {
-            walletsModal: {
-                theme: 'dark', // یا 'light'
-                cardStyle: 'square', // یا 'round'
-            },
-        },
-    });
-
-    // اضافه کردن یک listener برای مدیریت کلیک روی دکمه
-    const connectButton = document.getElementById('walletBtn');
-    if (connectButton) {
-        connectButton.addEventListener('click', async () => {
-            if (isInTelegramWebApp) {
-                // اگر در محیط تلگرام هستیم، از openSingleWalletModal استفاده می‌کنیم
-                // این روش، مودال داخلی خود TON Connect UI را باز می‌کند
-                // و لینک عمیق را به صورت درست مدیریت می‌کند.
-                await tonConnectUI.openSingleWalletModal();
-            } else {
-                // اگر در مرورگر عادی هستیم، از روش پیش‌فرض tonConnectUI استفاده می‌کنیم
-                // این بخش نیازی به تغییر ندارد و به درستی کار می‌کند.
-                await tonConnectUI.connectWallet();
-            }
-        });
+  tonConnectUI.onModalStateChange(async (state) => {
+    if (state.opened) {
+      console.log("Ton Connect Modal Opened.");
     }
+  });
 
-    tonConnectUI.onModalStateChange(async (state) => {
-        if (state.opened && isInTelegramWebApp) {
-            console.log("Ton Connect Modal Opened in Telegram Web App. Consider showing a custom message for external wallets.");
-        }
-    });
+  try {
+    const connectionRestored = await tonConnectUI.connectionRestored;
+    if (connectionRestored) {
+      console.log("Connection restored.", tonConnectUI.wallet);
+      document.getElementById('walletBtn').style.display = 'flex';
 
-    tonConnectUI.connectionRestored.then(async () => {
-        if (tonConnectUI.connected) {
-            document.getElementById('walletBtn').style.display = 'flex';
+      const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      const walletAddress = tonConnectUI.wallet?.account?.address;
 
-            const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
-            const walletAddress = tonConnectUI.wallet?.account?.address;
-
-            if (telegramId && walletAddress) {
-                await saveWalletToSheet(telegramId, walletAddress);
-            }
-        } else {
-            document.getElementById('walletBtn').style.display = 'flex';
-        }
-    }).catch(e => {
-        console.error("Error restoring connection:", e);
-        document.getElementById('walletBtn').style.display = 'flex';
-    });
+      if (telegramId && walletAddress) {
+        await saveWalletToSheet(telegramId, walletAddress);
+      }
+    } else {
+        console.log("Connection not restored.");
+    }
+  } catch (e) {
+      console.error("Error restoring connection:", e);
+  } finally {
+      document.getElementById('walletBtn').style.display = 'flex';
+  }
 });
-
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
