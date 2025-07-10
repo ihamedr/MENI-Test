@@ -448,43 +448,44 @@ window.addEventListener("DOMContentLoaded", async () => {
     buttonRootId: "walletBtn",
     uiPreferences: {
         walletsModal: {
-            theme: 'dark',
-            cardStyle: 'square',
+            theme: 'dark', // یا 'light' بسته به تم کلی اپ شما
+            cardStyle: 'square', // یا 'round'
         },
     },
-    walletsListConfiguration: {
-      includeWallets: [
-        {
-          name: 'tonkeeper',
-          universalLink: 'https://app.tonkeeper.com/ton-connect',
-          bridgeUrl: 'https://bridge.tonapi.io/bridge'
-        }
-      ]
+    actionsConfiguration: {
+        ...(isInTelegramWebApp ? {
+            qr: true,
+            universalLink: true,
+        } : {})
     }
   });
 
   tonConnectUI.onModalStateChange(async (state) => {
     if (state.opened && isInTelegramWebApp) {
-      console.log("Ton Connect Modal Opened in Telegram Web App.");
+      console.log("Ton Connect Modal Opened in Telegram Web App. Consider showing a custom message for external wallets.");
     }
   });
 
   tonConnectUI.connectionRestored.then(async () => {
-    document.getElementById('walletBtn').style.display = 'flex';
-
     if (tonConnectUI.connected) {
+      document.getElementById('walletBtn').style.display = 'flex';
+
       const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
       const walletAddress = tonConnectUI.wallet?.account?.address;
 
       if (telegramId && walletAddress) {
         await saveWalletToSheet(telegramId, walletAddress);
       }
+    } else {
+        // اگر اتصال برقرار نشد، دکمه را نمایش دهید تا کاربر بتواند دستی وصل شود.
+        document.getElementById('walletBtn').style.display = 'flex';
     }
   }).catch(e => {
       console.error("Error restoring connection:", e);
       document.getElementById('walletBtn').style.display = 'flex';
   });
 });
+
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
