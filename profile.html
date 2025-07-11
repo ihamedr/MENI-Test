@@ -232,23 +232,34 @@
   vertical-align: middle;
   margin-right: 4px;
 }
-	#backButton {
-  background-color: #1c1c1c;
-  color: #ff9900;
-  border: 2px solid #ff9900;
+	   .nav-bar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2b2b2b;
   border-radius: 20px;
-  padding: 0.55rem 1.1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-left: 0.6rem;
-  transition: all 0.2s ease;
-  font-family: 'Space Grotesk', sans-serif;
+  padding: 0.8rem 2rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
 }
 
-#backButton:hover {
-  background-color: #2a2a2a;
-  box-shadow: 0 0 6px rgba(255, 153, 0, 0.5);
-}  
+.nav-bar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.3s ease;
+}
+
+.nav-bar img {
+  width: 30px;
+  height: 30px;
+  transition: opacity 0.3s ease;
+}
+	
 	 .toast {
   position: fixed;
   top: 20px;
@@ -433,9 +444,24 @@ button:focus, a:focus, div:focus {
   <ul id="friends-list"></ul>
 </div>
 	<div class="wallet-button">
-	<button id="backButton" onclick="location.href='index.html'">Back to Explore</button>
+	
 		<div  id="walletBtn"></div>
 	</div>
+	<div class="nav-bar">
+  <button onclick="navigateWithLoading('profile.html')" data-page="profile">
+    <img src="prof-act.png" alt="Profile">
+  </button>
+  <button onclick="navigateWithLoading('index.html')" data-page="index">
+    <img src="exp-non.png" alt="Explore">
+  </button>
+  <button onclick="navigateWithLoading('Tournament.html')" data-page="tournament">
+    <img src="tour-non.png" alt="Tournament">
+  </button>
+  <button onclick="navigateWithLoading('tasks.html')" data-page="tasks">
+    <img src="task-non.png" alt="Tasks">
+  </button>
+</div>
+	
   <script>
  let tonConnectUI;
 
