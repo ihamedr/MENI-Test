@@ -479,7 +479,20 @@ window.addEventListener("DOMContentLoaded", async () => {
       console.log("✅ Ton Connect Modal Opened in Telegram Web App");
     }
   });
+// اضافه کن بعد از تعریف tonConnectUI
+tonConnectUI.onStatusChange(async (wallet) => {
+  if (wallet?.account?.address) {
+    const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+    const walletAddress = wallet.account.address;
 
+    console.log("🆕 Wallet changed or connected:", walletAddress);
+
+    if (telegramId && walletAddress) {
+      await saveWalletToSheet(telegramId, walletAddress);
+    }
+  }
+});
+	  
   tonConnectUI.connectionRestored.then(async () => {
     document.getElementById('walletBtn').style.display = 'flex';
 
