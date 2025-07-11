@@ -463,24 +463,19 @@ window.addEventListener("DOMContentLoaded", async () => {
     buttonRootId: "walletBtn",
     uiPreferences: {
       walletsModal: {
-        theme: 'dark', // یا 'light' بسته به تم کلی اپ شما
-        cardStyle: 'square', // یا 'round'
+        theme: 'dark',
+        cardStyle: 'square',
       },
     },
     actionsConfiguration: {
       ...(isInTelegramWebApp ? {
-        qr: false,             // ❌ در MiniApp موبایل نیازی نیست
-        universalLink: true,   // ✅ اجباری برای Tonkeeper داخل WebView
+        qr: false,
+        universalLink: true,
       } : {})
     }
   });
 
-  tonConnectUI.onModalStateChange(async (state) => {
-    if (state.opened && isInTelegramWebApp) {
-      console.log("✅ Ton Connect Modal Opened in Telegram Web App");
-    }
-  });
-
+  // 📦 ذخیره اولیه اگر اتصال restore شده باشه
   tonConnectUI.connectionRestored.then(async () => {
     document.getElementById('walletBtn').style.display = 'flex';
 
@@ -498,7 +493,22 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.error("❌ Error restoring connection:", e);
     document.getElementById('walletBtn').style.display = 'flex';
   });
+
+  // 🆕 ثبت تغییر یا اتصال ولت جدید
+  tonConnectUI.onStatusChange(async (wallet) => {
+    if (wallet?.account?.address) {
+      const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+      const walletAddress = wallet.account.address;
+
+      console.log("🆕 Wallet changed or connected:", walletAddress);
+
+      if (telegramId && walletAddress) {
+        await saveWalletToSheet(telegramId, walletAddress);
+      }
+    }
+  });
 });
+
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
