@@ -437,7 +437,6 @@ button:focus, a:focus, div:focus {
 		<div  id="walletBtn"></div>
 	</div>
   <script>
- 
  let tonConnectUI;
 
 // ⛔ هک برای درست باز شدن deeplink در WebView تلگرام
@@ -463,19 +462,24 @@ window.addEventListener("DOMContentLoaded", async () => {
     buttonRootId: "walletBtn",
     uiPreferences: {
       walletsModal: {
-        theme: 'dark',
-        cardStyle: 'square',
+        theme: 'dark', // یا 'light' بسته به تم کلی اپ شما
+        cardStyle: 'square', // یا 'round'
       },
     },
     actionsConfiguration: {
       ...(isInTelegramWebApp ? {
-        qr: false,
-        universalLink: true,
+        qr: false,             // ❌ در MiniApp موبایل نیازی نیست
+        universalLink: true,   // ✅ اجباری برای Tonkeeper داخل WebView
       } : {})
     }
   });
 
-  // 📦 ذخیره اولیه اگر اتصال restore شده باشه
+  tonConnectUI.onModalStateChange(async (state) => {
+    if (state.opened && isInTelegramWebApp) {
+      console.log("✅ Ton Connect Modal Opened in Telegram Web App");
+    }
+  });
+
   tonConnectUI.connectionRestored.then(async () => {
     document.getElementById('walletBtn').style.display = 'flex';
 
@@ -493,22 +497,8 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.error("❌ Error restoring connection:", e);
     document.getElementById('walletBtn').style.display = 'flex';
   });
-
-  // 🆕 ثبت تغییر یا اتصال ولت جدید
-  tonConnectUI.onStatusChange(async (wallet) => {
-    if (wallet?.account?.address) {
-      const telegramId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
-      const walletAddress = wallet.account.address;
-
-      console.log("🆕 Wallet changed or connected:", walletAddress);
-
-      if (telegramId && walletAddress) {
-        await saveWalletToSheet(telegramId, walletAddress);
-      }
-    }
-  });
 });
-
+ 
 	 function showToast(msg) {
   if (!msg) return;
   toast.textContent = msg;
