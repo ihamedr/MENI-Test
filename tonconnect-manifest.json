@@ -1,11 +1,12 @@
 {
   "manifestVersion": "1",
-  "version": "1.0.0",
+  "version": "2.2.0",
   "name": "MENI",
   "description": "Meme Explorer with TON wallet integration",
   "iconUrl": "https://meni-test.onrender.com/logo.png",
   "url": "https://meni-test.onrender.com",
   "termsOfUseUrl": "https://meni-test.onrender.com/terms.html",
   "privacyPolicyUrl": "https://meni-test.onrender.com/privacy.html",
-  "returnUrl": "https://meni-test.onrender.com"
+  "returnUrl": "https://t.me/MENI_DAO_Bot/MENI",
+  "openMethod": "deeplink"
 }
