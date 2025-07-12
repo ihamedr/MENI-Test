@@ -496,10 +496,7 @@ button:focus, a:focus, div:focus {
   <img src="loading.gif" alt="Loading..." />
 	</div>  
   <script>
- let tonConnectUI;
-
-// ⛔ هک برای درست باز شدن deeplink در WebView تلگرام
-window.open = (function (originalOpen) {
+ window.open = (function (originalOpen) {
   return function (url, target, features) {
     if (
       url.startsWith("tonkeeper://") ||
@@ -520,7 +517,8 @@ window.open = (function (originalOpen) {
       url.startsWith("okx://wallet/dapp/url") ||
       url.includes("web3.okx.com")
     ) {
-      return originalOpen.call(window, '_blank', url, features);
+      // 🔧 این خط درست شد:
+      return originalOpen.call(window, url, '_blank', features);
     }
     return originalOpen.call(window, url, target, features);
   };
